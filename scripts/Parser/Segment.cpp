@@ -1,14 +1,8 @@
+#include "Segment.hpp"
 
-struct segment
-{
-    string name;
-    DWORD  address;
-    DWORD  size;
-    string code;
-};
+using namespace std;
 
 vector <segment> segments;
-
 
 void Parse_Segment ()
 {

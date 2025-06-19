@@ -1,0 +1,217 @@
+# depslib dependency file v1.0
+1750347387 source:c:\users\janpi\documents\c++ projects\masmif\main.cpp
+	<iostream>
+	<string>
+	<cstring>
+	<vector>
+	<fstream>
+	<windows.h>
+	"CppCore/include/ReadableWinAPI.hpp"
+	"CppCore/include/FileData.hpp"
+	"scripts\Lexer.hpp"
+
+1750333840 c:\users\janpi\documents\c++ projects\masmif\cppcore\include\readablewinapi.hpp
+	<windows.h>
+	<tchar.h>
+
+1750323524 c:\users\janpi\documents\c++ projects\masmif\scripts\janstr.cpp
+
+1750323524 c:\users\janpi\documents\c++ projects\masmif\scripts\janfile.cpp
+	<windows.h>
+
+1750323524 c:\users\janpi\documents\c++ projects\masmif\scripts\token.cpp
+
+1750323524 c:\users\janpi\documents\c++ projects\masmif\scripts\parser\_functiondeclarations.cpp
+
+1750323524 c:\users\janpi\documents\c++ projects\masmif\scripts\lexicon.cpp
+
+1750334264 c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.cpp
+
+1750323524 c:\users\janpi\documents\c++ projects\masmif\scripts\parser\section.cpp
+	<bitset>
+
+1750323524 c:\users\janpi\documents\c++ projects\masmif\scripts\parser\segment.cpp
+
+1750323524 c:\users\janpi\documents\c++ projects\masmif\scripts\parser\variable.cpp
+
+1750323524 c:\users\janpi\documents\c++ projects\masmif\scripts\parser\_parser.cpp
+
+1750341248 source:c:\users\janpi\documents\c++ projects\masmif\cppcore\src\binarydata.cpp
+	"../include/BinaryData.hpp"
+
+1750341248 c:\users\janpi\documents\c++ projects\masmif\cppcore\include\binarydata.hpp
+	<cstddef>
+	<cstring>
+
+1750333840 source:c:\users\janpi\documents\c++ projects\masmif\cppcore\src\consoleinterface.cpp
+	"../include/ConsoleInterface.hpp"
+
+1750333840 c:\users\janpi\documents\c++ projects\masmif\cppcore\include\consoleinterface.hpp
+	<windows.h>
+	<vector>
+	<string>
+	"ConsoleUtils.hpp"
+	"StringUtils.hpp"
+
+1750333803 c:\users\janpi\documents\c++ projects\masmif\cppcore\include\consoleutils.hpp
+	"ConsoleUtils/Colors.hpp"
+	"ConsoleUtils/Position.hpp"
+	"ConsoleUtils/Write.hpp"
+	"ConsoleUtils/Fill.hpp"
+	"ConsoleUtils/Size.hpp"
+	"ConsoleUtils/Keyboard.hpp"
+	"ConsoleUtils/Event.hpp"
+
+1750333803 c:\users\janpi\documents\c++ projects\masmif\cppcore\include\consoleutils\colors.hpp
+	<windows.h>
+
+1750333803 c:\users\janpi\documents\c++ projects\masmif\cppcore\include\consoleutils\position.hpp
+	<windows.h>
+
+1750333803 c:\users\janpi\documents\c++ projects\masmif\cppcore\include\consoleutils\write.hpp
+	<windows.h>
+	<string>
+
+1750333803 c:\users\janpi\documents\c++ projects\masmif\cppcore\include\consoleutils\fill.hpp
+	<windows.h>
+	<algorithm>
+
+1750333803 c:\users\janpi\documents\c++ projects\masmif\cppcore\include\consoleutils\size.hpp
+	<windows.h>
+
+1750333803 c:\users\janpi\documents\c++ projects\masmif\cppcore\include\consoleutils\keyboard.hpp
+	<windows.h>
+
+1750333803 c:\users\janpi\documents\c++ projects\masmif\cppcore\include\consoleutils\event.hpp
+	<windows.h>
+
+1750333840 c:\users\janpi\documents\c++ projects\masmif\cppcore\include\stringutils.hpp
+	<cstddef>
+	<string>
+	<windows.h>
+
+1750333803 source:c:\users\janpi\documents\c++ projects\masmif\cppcore\src\consoleutils.cpp
+	"ConsoleUtils/Colors.cpp"
+	"ConsoleUtils/Position.cpp"
+	"ConsoleUtils/Write.cpp"
+	"ConsoleUtils/Fill.cpp"
+	"ConsoleUtils/Size.cpp"
+	"ConsoleUtils/Keyboard.cpp"
+	"ConsoleUtils/Event.cpp"
+
+1750333803 c:\users\janpi\documents\c++ projects\masmif\cppcore\src\consoleutils\colors.cpp
+	"../../include/ConsoleUtils/Colors.hpp"
+
+1750333803 c:\users\janpi\documents\c++ projects\masmif\cppcore\src\consoleutils\position.cpp
+	"../../include/ConsoleUtils/Position.hpp"
+
+1750333803 c:\users\janpi\documents\c++ projects\masmif\cppcore\src\consoleutils\write.cpp
+	"../../include/ConsoleUtils/Write.hpp"
+
+1750333803 c:\users\janpi\documents\c++ projects\masmif\cppcore\src\consoleutils\fill.cpp
+	"../../include/ConsoleUtils/Fill.hpp"
+
+1750333803 c:\users\janpi\documents\c++ projects\masmif\cppcore\src\consoleutils\size.cpp
+	"../../include/ConsoleUtils/Size.hpp"
+
+1750333803 c:\users\janpi\documents\c++ projects\masmif\cppcore\src\consoleutils\keyboard.cpp
+	"../../include/ConsoleUtils/Keyboard.hpp"
+
+1750333803 c:\users\janpi\documents\c++ projects\masmif\cppcore\src\consoleutils\event.cpp
+	"../../include/ConsoleUtils/Event.hpp"
+
+1750341248 source:c:\users\janpi\documents\c++ projects\masmif\cppcore\src\filedata.cpp
+	"../include/FileData.hpp"
+
+1750341248 c:\users\janpi\documents\c++ projects\masmif\cppcore\include\filedata.hpp
+	<cstddef>
+	<cstring>
+	<string>
+	<algorithm>
+	<windows.h>
+	"BinaryData.hpp"
+
+1750333840 source:c:\users\janpi\documents\c++ projects\masmif\cppcore\src\stringutils.cpp
+	"../include/StringUtils.hpp"
+
+1750323524 c:\users\janpi\documents\c++ projects\masmif\scripts\struniloadnumber.cpp
+
+1750354345 c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.hpp
+	<unordered_map>
+	<iostream>
+	"Token.hpp"
+	"Lexicon.hpp"
+	"../CppCore/include/FileData.hpp"
+
+1750349376 c:\users\janpi\documents\c++ projects\masmif\scripts\token.hpp
+	"StrUniLoadNumber.hpp"
+	<windows.h>
+	<iostream>
+	<string>
+	<vector>
+
+1750354360 c:\users\janpi\documents\c++ projects\masmif\scripts\lexicon.hpp
+	<unordered_map>
+	"Parser/Section.hpp"
+	"Parser/Segment.hpp"
+	"Parser/Variable.hpp"
+	"Parser/Keyword.hpp"
+	"Parser/Punctator.hpp"
+
+1750344216 c:\users\janpi\documents\c++ projects\masmif\scripts\parser\functiondeclarations.hpp
+
+1750323524 source:c:\users\janpi\documents\c++ projects\masmif\scripts\injector.cpp
+
+1750342223 source:c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.cpp
+	"Lexer.hpp"
+
+1750349204 c:\users\janpi\documents\c++ projects\masmif\scripts\struniloadnumber.hpp
+
+1750344774 source:c:\users\janpi\documents\c++ projects\masmif\scripts\token.cpp
+	"Token.hpp"
+
+1750350691 c:\users\janpi\documents\c++ projects\masmif\scripts\parser\section.hpp
+	<windows.h>
+	<iostream>
+	<bitset>
+	<vector>
+	<string>
+	"../Token.hpp"
+	"Keyword.hpp"
+	"../Lexicon.hpp"
+
+1750350671 c:\users\janpi\documents\c++ projects\masmif\scripts\parser\segment.hpp
+	<windows.h>
+	<iostream>
+	<vector>
+	<string>
+	"../Token.hpp"
+
+1750350647 c:\users\janpi\documents\c++ projects\masmif\scripts\parser\variable.hpp
+	<vector>
+	<string>
+	"Keyword.hpp"
+	"../Token.hpp"
+
+1750355711 c:\users\janpi\documents\c++ projects\masmif\scripts\parser\keyword.hpp
+	<windows.h>
+	<unordered_map>
+
+1750346605 c:\users\janpi\documents\c++ projects\masmif\scripts\parser\punctator.hpp
+	"../Token.hpp"
+
+1750345820 source:c:\users\janpi\documents\c++ projects\masmif\scripts\parser\_parser.cpp
+	"_Parser.hpp"
+
+1750345847 c:\users\janpi\documents\c++ projects\masmif\scripts\parser\_parser.hpp
+	"../Lexicon.hpp"
+
+1750346796 source:c:\users\janpi\documents\c++ projects\masmif\scripts\parser\section.cpp
+	"Section.hpp"
+
+1750347122 source:c:\users\janpi\documents\c++ projects\masmif\scripts\parser\segment.cpp
+	"Segment.hpp"
+
+1750347201 source:c:\users\janpi\documents\c++ projects\masmif\scripts\parser\variable.cpp
+	"Variable.hpp"
+

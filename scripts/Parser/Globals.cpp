@@ -1,0 +1,1 @@
+keyword*   foundKeyword     = nullptr;

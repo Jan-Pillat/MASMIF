@@ -1,50 +1,14 @@
+#include "Token.hpp"
+using std::cout;
 
-    enum TokenType
-    {
-        NOONE = -1,
-        UNDEF,
-
-        PUNCTATOR,
-        KEYWORD,
-
-        IDENTIFIER,
-        NUMBER,
-        TEXT,
-        CODE,
-
-        COMMENTARY,
-
-        LINE_END
-    };
-
-    char tokenTypeName[][0x10] =
-    {
-        { "UNDEF" },
-        { "PUNCTATOR" },
-        { "KEYWORD" },
-        { "IDENTIFIER" },
-        { "NUMBER" },
-        { "TEXT" },
-        { "CODE" },
-        { "COMMENTARY" },
-        { "LINE_END" },
-    };
-
-
-
-
-struct st_token
-{
-    string content;
-    enum TokenType type;
-};
-
+// ---------- VARIABLES ----------
 vector <st_token> tokens;
 int tokens_i = 0;
 
 st_token* gotToken;
 st_token* nextToken;
 
+// ---------- FUNCTIONS ----------
 bool GetToken ()
 {
     if (tokens_i < tokens.size())
@@ -55,6 +19,9 @@ bool GetToken ()
     return false;
 }
 
+//-----------------------------------------------------------
+//-----------------------------------------------------------
+
 bool ShowNextToken ()
 {
     if (tokens_i < tokens.size())
@@ -64,6 +31,9 @@ bool ShowNextToken ()
     }
     return false;
 }
+
+//-----------------------------------------------------------
+//-----------------------------------------------------------
 
 bool LoadNumFromTokens (string beginToken, string finalToken, DWORD* destination)
 {
@@ -95,15 +65,5 @@ bool LoadNumFromTokens (string beginToken, string finalToken, DWORD* destination
     }
     return false;
 }
-
-
-
-
-char token_i = 0;       //indeks to ostatniego wczytanego znaku znalezionego tokenu
-char token[0x100];      //Wczytany token
-char* currentPos;
-
-enum TokenType lastTokenType = NOONE;
-int  currentLine             = 1;
 
 

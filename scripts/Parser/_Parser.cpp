@@ -1,4 +1,4 @@
-
+#include "_Parser.hpp"
 
 void ParseTokens ()
 {
@@ -6,14 +6,12 @@ void ParseTokens ()
     {
         if (gotToken->type == KEYWORD)
         {
-            for (keyword key : generalKeywords)
+            if (auto position = generalKeywords.find(token); position != generalKeywords.end())
             {
-                if (!strcmp(key.name, &gotToken->content[0]))
-                {
-                    foundKeyword = &key;
-                    key.parse();
-                    break;
-                }
+                const auto& [key, attributes] = *position;
+                foundKeyword = &attributes;
+                attributes.parse();
+                break;
             }
         }
     }

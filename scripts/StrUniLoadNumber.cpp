@@ -1,7 +1,6 @@
 
-void JanStr () { return;}   //Safeguard
-
-extern "C" void Get_number (long double* destination, char* txt);
+void ASM_CODE ()
+{
 
 asm(
       "                                                                                                     \n"
@@ -849,14 +848,4 @@ asm(
       " 		ret		                                                                                    \n"
     );
 
-
-template <typename T>
-T StrGetNum (char* txt)
-{
-    cout << "StrGetNum" << endl;
-    long double result = 0.0;
-
-    Get_number  (&result, txt); //result will be in RCX, and txt will be in RDX
-
-    return (T)result;
 }

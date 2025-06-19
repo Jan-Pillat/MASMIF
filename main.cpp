@@ -12,30 +12,22 @@
 #include <vector>
 #include <fstream>
 #include <windows.h>
+#include "CppCore/include/ReadableWinAPI.hpp"
+#include "CppCore/include/FileData.hpp"
 using namespace std;
-#include "scripts\JanStr.cpp"
-#include "scripts\JanFile.cpp"
-#include "scripts\Token.cpp"
-#include "scripts\Parser\_FunctionDeclarations.cpp"
-#include "scripts\Lexicon.cpp"
-#include "scripts\Lexer.cpp"
-#include "scripts\Parser\Section.cpp"
-#include "scripts\Parser\Segment.cpp"
-#include "scripts\Parser\Variable.cpp"
-#include "scripts\Parser\_Parser.cpp"
+#include "scripts\Lexer.hpp"
 
 
 int main()
 {
-    jf_LibraryTest ();
+    FileSelector source;
 
-//    string path;
+    cout << "Enter file path: ";
+    source.GetPath_OpenFile();
+    cout << source.path << endl;
 
-//    cout << "Enter file path: " ;
-//    cin  >> path;
-
-//    TokenizeFile (path);
-//    PrintTokens  ();
+    TokenizeFile (source.path);
+    PrintTokens  ();
 //    ParseTokens  ();
 //    PrintSections();
 //    PrintSegments();

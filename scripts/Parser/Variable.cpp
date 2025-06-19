@@ -1,37 +1,15 @@
+#include "Variable.hpp"
 
-/*
-union VariableValue
-{
-    long long   cpuVal;
-    double      fpuVal;
-    char*       txtVal;
-
-    ~VariableValue()
-    {
-        delete txtVal;
-    }
-};
-*/
-//using VariableValue = variant <long long, double, string>; <-- alternatywa pozwalaj¹ca u¿yæ zmienn¹ string.
-
-struct variable
-{
-    string  name;
-    DWORD   address;
-    VarType type;
-    BYTE    bytes;
-    string  value;
-};
+using namespace std;
 
 vector <variable> variables;
-
 
 void Parse_Variable ()
 {
     variable newVariable = {"", 0x0, NON, 0x0, ""};
 
-    //newVariable.bytes = LOBYTE(foundKeyword->value);
-    //newVariable.type  = HIBYTE(foundKeyword->value);
+    newVariable.bytes = foundKeyword->value.variableDescription.bytes;
+    newVariable.type  = foundKeyword->value.variableDescription.type;
 
     while (GetToken())
     {

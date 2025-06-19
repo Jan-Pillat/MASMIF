@@ -1,0 +1,48 @@
+
+SECTION ".code"   CODE   EXECUTABLE   READABLE   WRITABLE
+SECTION ".text"   CODE   EXECUTABLE   READABLE
+SECTION ".rdata"  INITIALIZED_DATA    READABLE
+SECTION ".data"   INITIALIZED_DATA    READABLE   WRITABLE
+SECTION ".rsrc"   INITIALIZED_DATA    READABLE
+
+SEGMENT [0x401000] (200h)
+{
+	xor eax, eax
+	inc eax
+	\}
+}
+
+SEGMENT CODE [0x401240] (111h)
+{
+	xchg eax, ecx
+	ret
+}
+
+DworD [$FF0] (%11101)
+
+TEXT  [0403000]	 TEXT_EXAMPLE    = "This is an example of a text\"a\""
+;TEXT  [0F03010]	 INCORRECT_TEXT  = "This is an incorrect text
+
+SEGMENT SEGMENT_WITH_NAME  ADDRESS 0x401400  SIZE 0F00
+{
+	push ebp
+	mov ebp, esp
+	leave
+	ret
+	}
+
+SEGMENT ANOTHER_SEGMENT [0x401400] ($100)
+{
+	push eax
+	pop eax
+	ret
+}
+
+
+
+SEGMENT DATA [0x402000] (200h)
+{
+	DWORD player_HP_MAX = 1500
+	
+	player_damage  DWORD  0
+}

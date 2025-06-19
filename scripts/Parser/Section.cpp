@@ -1,9 +1,6 @@
-#include <bitset>
-struct section
-{
-    string name;
-    DWORD  characteristics;
-};
+#include "Section.hpp"
+
+using namespace std;
 
 vector <section> sections;
 
@@ -13,26 +10,24 @@ void Parse_Section ()
 
     while (GetToken())
     {
-        if ((*gotToken).type == TEXT)
+        if (gotToken->type == TEXT)
         {
             newSection.name = (*gotToken).content;
             cout << endl << newSection.name << endl;
         }
 
-        else if ((*gotToken).type == KEYWORD)
+        else if (gotToken->type == KEYWORD)
         {
-            for (keyword key : sectionKeywords)
+            if (auto position = sectionKeywords.find(&gotToken->content[0]); position != variables.end())
             {
-                if (!strcmp(key.name,&(*gotToken).content[0]))
-                {
-                    cout << key.name << " = " << bitset<32>(key.value.integer) << endl;
-                    newSection.characteristics |= key.value.integer;
-                    break;
-                }
+                const auto& [key, attributes] = *position;
+                cout << key << " = " << bitset<32>(attributes.value.integer) << endl;
+                newSection.characteristics |= attributes.value.integer;
+                break;
             }
         }
 
-        else if ((*gotToken).type == LINE_END)
+        else if (gotToken->type == LINE_END)
         {
             cout << "LINE END!" << endl;
             break;

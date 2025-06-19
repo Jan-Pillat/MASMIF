@@ -1,25 +1,18 @@
-
-// enum     TokenType
-// char     tokenTypeName
-// struct   keyword
-// keyword  keywords
-// struct   st_token
-// struct   line
-// vector   lines
-// bool     TryToLoadToken
-// bool     CheckIsTokenKeywordAndSetReadmode
-// void     Tokenize
-// void     TokenizeFile
-// void     PrintTokens
-
-//TO DO:
-// - Jeżeli między klamrami pojawi się \}, to ukośnik musi zniknąć. W wypadku cudzysłowu, ukośniki mają pozostać.
+#include "Lexer.hpp"
 
 using namespace std;
 
-//-----------------------------------------
+char token_i = 0;       //indeks to ostatniego wczytanego znaku znalezionego tokenu
+char token[0x200];      //Wczytany token
 
-punctator foundPunctator;
+enum TokenType lastTokenType = NOONE;
+
+char* currentPos    = nullptr;
+int   currentLine   = 1;
+
+punctator  foundPunctator;
+
+unordered_map <string, keyword>*   currentKeywords  = &generalKeywords;
 
 //-----------------------------------------
 //-----------------------------------------
@@ -80,13 +73,13 @@ bool TryToLoadToken (char* src)
 
 bool CheckIsTokenKeywordAndSetReadmode ()
 {
-    for (keyword* key = currentKeywords;  strcmp(&key->name[0], "");  key++)
+    auto position = (*currentKeywords).find(token);
+    if (position != (*currentKeywords).end())
     {
-        if (!strcmp(key->name, token))
-        {
-            if (key->ownKeywords != NULL) currentKeywords = key->ownKeywords;
-            return true;
-        }
+        const auto& [key, attributes] = *position;
+        if (attributes.ownKeywords != NULL)
+            currentKeywords = attributes.ownKeywords;
+        return true;
     }
     return false;
 }
@@ -96,14 +89,13 @@ bool CheckIsTokenKeywordAndSetReadmode ()
 
 bool CheckIsTokenExtendedPunctator ()
 {
-    for (punctator punct : punctators)
-    {
-        if ( (token[1]=='\0') && (token[0]==punct.sign) )
+    if (token[1]=='\0')
+        if (auto position = punctators.find(token[0]); position != punctators.end())
         {
-            foundPunctator = punct;
+            const auto& [key, attributes] = *position;
+            foundPunctator = &attributes;
             return true;
         }
-    }
     return false;
 }
 
@@ -188,7 +180,7 @@ bool Tokenize (char* src)
         if (token[0]=='\r' || token[0]=='\n')
         {
             currentLine++;
-            currentKeywords = generalKeywords;
+            currentKeywords = &generalKeywords;
 
             if (token[0]=='\r' && *currentPos=='\n')
             {
@@ -371,11 +363,11 @@ void PrintTokens ()
 
 void TokenizeFile (string path)
 {
-    jf_fileData fileData;
+    FileData fileData;
     fileData.LoadTextFile(path);
 
-    cout << "File size is:  " << fileData.GetSize() << endl << endl;
-    cout << "File content is:" << endl << endl << &fileData[0] << endl;
+    cout << "File size is:  " << fileData.GetLength() << endl << endl;
+    cout << "File content is:" << endl << endl << fileData.GetBeginPointer() << endl;
 
     Tokenize (&fileData[0]);
 }
