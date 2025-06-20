@@ -1,4 +1,6 @@
 
+
+
 SECTION ".code"   CODE   EXECUTABLE   READABLE   WRITABLE
 SECTION ".text"   CODE   EXECUTABLE   READABLE
 SECTION ".rdata"  INITIALIZED_DATA    READABLE
@@ -16,12 +18,13 @@ SEGMENT CODE [0x401240] (111h)
 {
 	xchg eax, ecx
 	ret
-}
+\}\}}
 
 DworD [$FF0] (%11101)
 
-TEXT  [0403000]	 TEXT_EXAMPLE    = "This is an example of a text\"a\""
+TEXT  [0403000]	 TEXT_EXAMPLE    = "This is an example of a text\"a\"'" ;comment
 ;TEXT  [0F03010]	 INCORRECT_TEXT  = "This is an incorrect text
+TEXT  [0403000]	 CHARS_EXAMPLE   = 'This is an example of a text without \'null\' char"'
 
 SEGMENT SEGMENT_WITH_NAME  ADDRESS 0x401400  SIZE 0F00
 {
@@ -42,7 +45,8 @@ SEGMENT ANOTHER_SEGMENT [0x401400] ($100)
 
 SEGMENT DATA [0x402000] (200h)
 {
-	DWORD player_HP_MAX = 1500
+	DWORD local_decimal_variable = 1500
+	DWORD local_hexadecimal_variable = 0x10 ;it must be exchanged to 10h
 	
 	player_damage  DWORD  0
 }

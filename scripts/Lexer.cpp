@@ -1,375 +1,321 @@
 #include "Lexer.hpp"
-
 using namespace std;
 
-char token_i = 0;       //indeks to ostatniego wczytanego znaku znalezionego tokenu
-char token[0x200];      //Wczytany token
 
-enum TokenType lastTokenType = NOONE;
+//======================================================
+//======================================================
 
-char* currentPos    = nullptr;
-int   currentLine   = 1;
-
-punctator  foundPunctator;
-
-unordered_map <string, keyword>*   currentKeywords  = &generalKeywords;
-
-//-----------------------------------------
-//-----------------------------------------
-
-bool TryToLoadToken (char* src)
+void Lexer::Tokenize (char* filePath)
 {
-    //Clear token
-    token_i = 0;
-    token[0] = 0;
+    data.LoadTextFile(filePath);
 
-    //Skip blanks
-    while (isblank(*src))    src++;
+    if (data.IsEmpty())
+    {
+        cout << "No data!" << endl;
+        return;
+    }
 
-    //Text end
-    if (*src == '\0')
-    {
-        token[token_i] = '\0';
-        currentPos = src;
-        return false;
-    }
-    //Symbols, texts, numbers and keywords
-    else if (isalnum(*src))
-    {
-        while (true)
-        {
-            while (isalnum(*src))
-                token[token_i++] = toupper(*src++);
+    pointer = data.GetBeginPointer();
 
-            if (*src == '.' || *src  == '_')
-            {
-                token[token_i++] = *src++;
-            }
-            else break;
-        }
-    }
-    //Znaki specjalne
-    else if (ispunct(*src) || *src == '\r' || *src == '\n')
+    while (*pointer != '\0')
     {
-        token[token_i++] = *src++;
+        SkipBlanks();
+
+        if (IsTextBegin     ()) LexText     (); else
+        if (IsCharBegin     ()) LexChars    (); else
+        if (IsWordBegin     ()) LexWord     (); else
+        if (IsNumberBegin   ()) LexNumber   (); else
+        if (IsContentBegin  ()) LexContent  (); else
+        if (IsCommentBegin  ()) SkipComment (); else
+        if (IsSpecialBegin  ()) LexSpecial  (); else
+        if (IsLineEnd       ()) LexLineEnd  (); else pointer++;
     }
-    //Zignorowanie nierozpoznanych znaków + przy okazji nieistotnych (isblank())
-    else
-    {
-        do
-        {
-            src++;
-        }
-        while (!isalnum(*src) && !ispunct(*src) && *src != '\0');
-        return TryToLoadToken(src);
-    }
-    token[token_i] = '\0';
-    currentPos = src;
-    return true;
+
 }
 
-//-----------------------------------------
-//-----------------------------------------
+//======================================================
+//======================================================
 
-bool CheckIsTokenKeywordAndSetReadmode ()
+void Lexer::SkipBlanks ()
 {
-    auto position = (*currentKeywords).find(token);
-    if (position != (*currentKeywords).end())
-    {
-        const auto& [key, attributes] = *position;
-        if (attributes.ownKeywords != NULL)
-            currentKeywords = attributes.ownKeywords;
-        return true;
-    }
-    return false;
+    while (IsBlank(*pointer))   pointer++;
 }
 
-//-----------------------------------------
-//-----------------------------------------
+//======================================================
+//======================================================
 
-bool CheckIsTokenExtendedPunctator ()
+bool Lexer::IsTextBegin    ()
 {
-    if (token[1]=='\0')
-        if (auto position = punctators.find(token[0]); position != punctators.end())
-        {
-            const auto& [key, attributes] = *position;
-            foundPunctator = &attributes;
-            return true;
-        }
-    return false;
+    return (*pointer=='"');
+}
+bool Lexer::IsCharBegin    ()
+{
+    return (*pointer=='\'');
+}
+bool Lexer::IsWordBegin    ()
+{
+    return (IsAlpha(*pointer) || *pointer=='_');
+}
+bool Lexer::IsNumberBegin  ()
+{
+    return (IsDigit(*pointer) || IsSpecialNumBegin());
+}
+bool Lexer::IsContentBegin ()
+{
+    return (*pointer=='{');
+}
+bool Lexer::IsSpecialBegin ()
+{
+    return IsPunct(*pointer);
+}
+bool Lexer::IsCommentBegin ()
+{
+    return (*pointer==';' || *pointer=='#');
+}
+bool Lexer::IsSpecialNumBegin ()
+{
+    return (*pointer=='$' || *pointer=='%');
+}
+bool Lexer::IsLineEnd ()
+{
+    return (*pointer=='\r' || *pointer=='\n');
 }
 
-//-----------------------------------------
-//-----------------------------------------
+//======================================================
+//======================================================
 
-bool FoundWrongTermination ()
+void Lexer::LexText    ()
 {
-    // ANOTHER BEGIN
-    if (foundPunctator.attitudeTowardsAnotherBegin == DONT_ACCEPT_ANOTHER_BEGIN)
+    Token newToken;
+
+    char* begin = ++pointer;
+
+    //Find text termination
+    while (true)
     {
-        if ( (*currentPos     == foundPunctator.sign)
-        &&   (*(currentPos-1) != '\\')  )
+        while (*pointer!='\0' && *pointer!='"' && *pointer!='\r' && *pointer!='\n' && *pointer!='\\')
+            pointer++;
+
+        if (*pointer=='\\')
         {
-            return true;
-        }
-    }
+            newToken.content.append(begin, pointer-begin);
 
-    // LINE END and FILE END
-    if (foundPunctator.attitudeTowardsLineEndsAndFileEnd == DONT_ACCEPT_LINE_END)
-    {
-        if ( (*currentPos == '\r') || (*currentPos == '\n') || (*currentPos == '\0') )
-        {
-            return true;
-        }
-    }
-    else if (foundPunctator.attitudeTowardsLineEndsAndFileEnd == DONT_ACCEPT_FILE_END)
-    {
-        if (*currentPos == '\0')
-        {
-            return true;
-        }
-    }
+            pointer++;
+            if (*pointer == 'a')    newToken.content += '\a'; else
+            if (*pointer == 'b')    newToken.content += '\b'; else
+            if (*pointer == 'f')    newToken.content += '\f'; else
+            if (*pointer == 'n')    newToken.content += '\n'; else
+            if (*pointer == 'r')    newToken.content += '\r'; else
+            if (*pointer == 't')    newToken.content += '\t'; else
+            if (*pointer == 'v')    newToken.content += '\v'; else
+            if (*pointer == '0')    newToken.content += '\0'; else
+            if (*pointer == '"')    newToken.content += '"';  else
+            if (*pointer == '\\')   newToken.content += '\\';
+            else {   newToken.content += '\\';  newToken.content += *pointer;  }
 
-    return false;
-}
-
-bool FoundTermination ()
-{
-    if (*currentPos == foundPunctator.termination)
-    {
-        return true;
-    }
-
-
-    if (foundPunctator.attitudeTowardsLineEndsAndFileEnd == LINE_END_IS_ALSO_TERMINATION)
-    {
-        if ( (*currentPos == '\r') || (*currentPos == '\n') || (*currentPos == '\0') )
-        {
-            return true;
-        }
-    }
-    else
-    {
-        if (*currentPos == '\0')
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-//-----------------------------------------
-//-----------------------------------------
-
-bool Tokenize (char* src)
-{
-    currentPos = src;
-
-    while (TryToLoadToken(currentPos))
-    {
-        cout << "(line:" << currentLine << ") Found token:  " ;//<< (token[0]=='\r') ?"\\r" :(token[0]=='\n') ?"\\n" :token;
-        if (token[0]=='\r') cout << "\\r"; else
-        if (token[0]=='\n') cout << "\\n"; else cout << token;
-
-        st_token newToken;
-        newToken.content = token;
-
-
-        // --------  NEW LINE  --------
-        if (token[0]=='\r' || token[0]=='\n')
-        {
-            currentLine++;
-            currentKeywords = &generalKeywords;
-
-            if (token[0]=='\r' && *currentPos=='\n')
-            {
-                cout << "\\n";
-                currentPos++;
-            }
-
-
-            if (lastTokenType == LINE_END)
-            {
-                cout << "  <--- ignore \n";
-                continue;
-            }
-            else
-            {
-                newToken.type = LINE_END;
-            }
-        }
-        // --------  NUMBER OTHER SYSTEM  --------
-        else if ( (token[0] == '$' || token[0]=='%') && (token[1]=='\0') ) //If the loaded token is one of these symbols...
-        {
-            if (isxdigit(*currentPos))    //...followed by a number, it's an other number system
-            {
-                TryToLoadToken(currentPos);
-                newToken.content += token;
-                newToken.type = NUMBER;
-                cout << token;
-            }
-            else
-            {
-                newToken.type=PUNCTATOR; //otherwise it's a special char
-            }
-        }
-        // --------  EXTENDED PUNCTATORS  --------
-        else if (CheckIsTokenExtendedPunctator())
-        {
-            cout << "...";
-            newToken.type = foundPunctator.type;
-
-            int   beginLine= currentLine;   //W razie błędu odczytu, zostanie podana linia, w której zaczyna się punktator
-            char* beginPos = currentPos;
-
-            while (true)
-            {
-                if (FoundWrongTermination())
-                {
-                    cout << "\nERROR! There is not terminated " << foundPunctator.name << " in line " << beginLine << "!\n";
-                    return false;
-                }
-                else if (FoundTermination())
-                {
-                    char previousChar = *currentPos;
-
-                    *currentPos = '\0';
-
-                    if (foundPunctator.attitudeTowardsSpecials == SAVE_ALL_SPECIALS)
-                    {
-                        //Przepisz wszystko
-                        newToken.content = beginPos;
-                    }
-                    else
-                    {
-                        string temp = beginPos;
-                        char *src = &temp[0];
-                        char *dest= &temp[0];
-                        while (*src != '\0')
-                        {
-                            if (*src == '\\')
-                            {
-                                src++;
-                                if (*src == foundPunctator.termination) //APPLY OWN TERMINATE SPECIAL
-                                {
-                                    *dest++ = *src;
-                                }
-                                else if (foundPunctator.attitudeTowardsSpecials == APPLY_ALL_SPECIALS)
-                                {
-                                    if (*src == 'a')    *dest++ = '\a'; else
-                                    if (*src == 'b')    *dest++ = '\b'; else
-                                    if (*src == 'f')    *dest++ = '\f'; else
-                                    if (*src == 'n')    *dest++ = '\n'; else
-                                    if (*src == 'r')    *dest++ = '\r'; else
-                                    if (*src == 't')    *dest++ = '\t'; else
-                                    if (*src == 'v')    *dest++ = '\v'; else  {   *dest++ = '\\'; *dest++ = *src; }
-                                }
-                                else
-                                {
-                                    *dest++ = '\\'; *dest++ = *src;
-                                }
-                            }
-                            else
-                            {
-                                *dest++ = *src;
-                            }
-                            *src++;
-                        }//while end
-                        *dest = '\0';
-                        newToken.content = (&temp[0]);//It must be as a char table, otherwise '\0' will be ignored and the rest of the text will be rewritten
-                    }
-                    *currentPos = previousChar;
-
-                    if (previousChar == foundPunctator.termination)
-                        currentPos++;
-
-                    break;
-                }
-                else
-                {
-                    //Count lines
-                    if (*currentPos == '\r')
-                    {
-                        currentLine++;
-                        if (*(currentPos+1) == '\n') currentPos++;
-                    }
-                    else if (*currentPos == '\n')
-                    {
-                        currentLine++;
-                    }
-                    //Ignore termination
-                    else if ( (*currentPos == '\\') && (*(currentPos+1) == foundPunctator.termination) )
-                    {
-                        currentPos++;
-                    }
-                    //Next char
-                    currentPos++;
-                }
-            }
-        }
-        // --------  REST  --------
-        else if (CheckIsTokenKeywordAndSetReadmode())
-        {
-            newToken.type=KEYWORD;
-        }
-        else if (isalpha(token[0]))
-        {
-            newToken.type=IDENTIFIER;
-        }
-        else if (isdigit(token[0]))
-        {
-            newToken.type=NUMBER;
-        }
-        else if (ispunct(token[0]))
-        {
-            newToken.type=PUNCTATOR;
+            pointer++;
+            begin = pointer;
         }
         else
         {
-            newToken.type=UNDEF;
+            break;
         }
-
-
-        lastTokenType = newToken.type;
-        tokens.push_back(newToken);
-
-        cout << endl;
     }
-    cout << endl;
-    return true;
+
+    char* end = pointer++;
+
+
+    newToken.content.append(begin, end-begin);
+    newToken.type = TEXT;
+    tokens.push_back (newToken);
 }
-
-//-----------------------------------------
-//-----------------------------------------
-
-void PrintTokens ()
+//------------------------------------------------------
+void Lexer::LexChars    ()
 {
-    int tokenCount = tokens.size();
-    cout << "  Token count = " << tokenCount << endl;
-    for (int i = 0; i<tokenCount; i++)
+    Token newToken;
+
+    char* begin = ++pointer;
+
+    //Find text termination
+    while (true)
     {
-        int typeNum = tokens[i].type;
-        char* typeName = &tokenTypeName [ typeNum ][0];
+        while (*pointer!='\0' && *pointer!='\'' && *pointer!='\r' && *pointer!='\n' && *pointer!='\\')
+            pointer++;
 
-        cout << "    (" << i << ")\n";
-        cout << "    type = " << typeName << endl;
-        cout << "    content = " << tokens[i].content << endl;
+        if (*pointer=='\\')
+        {
+            newToken.content.append(begin, pointer-begin);
+
+            pointer++;
+            if (*pointer == 'a')    newToken.content += '\a'; else
+            if (*pointer == 'b')    newToken.content += '\b'; else
+            if (*pointer == 'f')    newToken.content += '\f'; else
+            if (*pointer == 'n')    newToken.content += '\n'; else
+            if (*pointer == 'r')    newToken.content += '\r'; else
+            if (*pointer == 't')    newToken.content += '\t'; else
+            if (*pointer == 'v')    newToken.content += '\v'; else
+            if (*pointer == '0')    newToken.content += '\0'; else
+            if (*pointer == '\'')   newToken.content += '\''; else
+            if (*pointer == '\\')   newToken.content += '\\';
+            else {   newToken.content += '\\';  newToken.content += *pointer;  }
+
+            pointer++;
+            begin = pointer;
+        }
+        else
+        {
+            break;
+        }
     }
+
+    char* end = pointer++;
+
+
+    newToken.content.append(begin, end-begin);
+    newToken.type = CHARS;
+    tokens.push_back (newToken);
 }
-
-//-----------------------------------------
-//-----------------------------------------
-
-void TokenizeFile (string path)
+//------------------------------------------------------
+void Lexer::LexWord    ()
 {
-    FileData fileData;
-    fileData.LoadTextFile(path);
+    Token newToken;
 
-    cout << "File size is:  " << fileData.GetLength() << endl << endl;
-    cout << "File content is:" << endl << endl << fileData.GetBeginPointer() << endl;
+    char* begin = pointer;
 
-    Tokenize (&fileData[0]);
+    //Find text termination
+    while (IsAlphabetic(*pointer) || *pointer=='_')
+        pointer++;
+
+    char* end = pointer;
+
+
+    newToken.content.assign(begin, end-begin);
+    newToken.type = WORD;
+    tokens.push_back (newToken);
+}
+//------------------------------------------------------
+void Lexer::LexNumber  ()
+{
+    Token newToken;
+    bool  itsFloat = false;
+    char* begin = pointer;      //begin of data to save
+
+    if (IsSpecialNumBegin())
+        pointer++;
+
+    while (true)
+    {
+        while (IsAlOrNum(*pointer))
+            pointer++;
+
+        if (*pointer=='.')
+        {
+            itsFloat=true;
+            pointer++;
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    char* end = pointer;
+
+    string gotTxt (begin, end-begin);
+
+    if (!itsFloat)
+    {
+        int    gotNum = StrGetNum<int>(&gotTxt[0]);
+
+        static const char BinNumToChar[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+
+        gotTxt  = "0";
+        gotTxt += BinNumToChar[(gotNum&0xF0000000)>>28];
+        gotTxt += BinNumToChar[(gotNum&0x0F000000)>>24];
+        gotTxt += BinNumToChar[(gotNum&0x00F00000)>>20];
+        gotTxt += BinNumToChar[(gotNum&0x000F0000)>>16];
+        gotTxt += BinNumToChar[(gotNum&0x0000F000)>>12];
+        gotTxt += BinNumToChar[(gotNum&0x00000F00)>> 8];
+        gotTxt += BinNumToChar[(gotNum&0x000000F0)>> 4];
+        gotTxt += BinNumToChar[(gotNum&0x0000000F)>> 0];
+        gotTxt += "h";
+    }
+
+
+    newToken.content = gotTxt;
+    newToken.type = NUMBER;
+    tokens.push_back (newToken);
+
+}
+//------------------------------------------------------
+void Lexer::LexContent ()
+{
+    Token newToken;
+    pointer++;
+
+    char* begin = pointer;
+
+    //Find text termination
+    while(true)
+    {
+        while (*pointer!='\0' && *pointer!='}')
+            pointer++;
+
+        if (*(pointer-1)=='\\')
+        {
+            newToken.content.append(begin, pointer-1-begin);
+            newToken.content += '}';
+            pointer++;
+            begin = pointer;
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    char* end = pointer++;
+
+
+    newToken.content.append(begin, end-begin);
+    newToken.type = CONTENT;
+    tokens.push_back (newToken);
+}
+//------------------------------------------------------
+void Lexer::SkipComment ()
+{
+    while (!IsLineEnd())
+        pointer++;
+}
+//------------------------------------------------------
+void Lexer::LexSpecial ()
+{
+    Token newToken;
+    newToken.content = *pointer++;
+    newToken.type = SPECIAL;
+    tokens.push_back (newToken);
+}
+//------------------------------------------------------
+void Lexer::LexLineEnd ()
+{
+    while (true)
+    {
+        while (IsLineEnd())
+            pointer++;
+        if (IsCommentBegin())
+            SkipComment();
+        else
+            break;
+    }
+    tokens.emplace_back ("", LINEEND);
 }
 
 
+//======================================================
+//======================================================
+
+void Lexer::PrintTokens ()
+{
+    for (size_t i = 0;  i<tokens.size();  i++)
+        cout << "TOKEN " << i << ':' << endl << "  type: " << tokenTypeDescription[tokens[i].type] << endl << "  content: " << tokens[i].content << endl << endl;
+}

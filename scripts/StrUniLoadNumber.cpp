@@ -80,7 +80,7 @@ asm(
       "                                                                                                     \n"
       " 		xor  eax, eax                                                                               \n"
       " 		test rdx, rdx                                                                               \n"
-      " 		jne  L_CHECK_DECIMAL_INCORRECT_ADDRESS                                                      \n"
+      " 		je   L_CHECK_DECIMAL_INCORRECT_ADDRESS                                                      \n"
       " 		push rsi                                                                                    \n"
       " 		mov  rsi, rdx                                                                               \n"
       " L_CDN_RSI_IS_OK:                                                                                    \n"

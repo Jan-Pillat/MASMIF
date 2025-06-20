@@ -53,28 +53,14 @@
 		<Unit filename="CppCore/src/FileData.cpp" />
 		<Unit filename="CppCore/src/StringUtils.cpp" />
 		<Unit filename="main.cpp" />
-		<Unit filename="scripts/Injector.cpp" />
-		<Unit filename="scripts/Injector.hpp" />
 		<Unit filename="scripts/Lexer.cpp" />
 		<Unit filename="scripts/Lexer.hpp" />
-		<Unit filename="scripts/Lexicon.cpp" />
-		<Unit filename="scripts/Lexicon.hpp" />
-		<Unit filename="scripts/Parser/Globals.cpp" />
-		<Unit filename="scripts/Parser/Globals.hpp" />
-		<Unit filename="scripts/Parser/Keyword.hpp" />
-		<Unit filename="scripts/Parser/Punctator.hpp" />
-		<Unit filename="scripts/Parser/Section.cpp" />
-		<Unit filename="scripts/Parser/Section.hpp" />
-		<Unit filename="scripts/Parser/Segment.cpp" />
-		<Unit filename="scripts/Parser/Segment.hpp" />
-		<Unit filename="scripts/Parser/Variable.cpp" />
-		<Unit filename="scripts/Parser/Variable.hpp" />
-		<Unit filename="scripts/Parser/_Parser.cpp" />
-		<Unit filename="scripts/Parser/_Parser.hpp" />
+		<Unit filename="scripts/Lexicon.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
 		<Unit filename="scripts/StrUniLoadNumber.cpp" />
 		<Unit filename="scripts/StrUniLoadNumber.hpp" />
-		<Unit filename="scripts/Token.cpp" />
-		<Unit filename="scripts/Token.hpp" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

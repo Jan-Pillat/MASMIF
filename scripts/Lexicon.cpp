@@ -1,24 +1,25 @@
+#include
 
 // ---------- SECTION KEYWORDS ----------
 
-unordered_map <string, keyword> sectionKeywords =
+unordered_map <string, DWORD> sectionKeywords =
 {
     // -- WHAT CONTAINS --
-    {"CODE",                {NULL,   NULL,   0x00000020} },
-    {"INITIALIZED_DATA",    {NULL,   NULL,   0x00000040} },
-    {"UNINITIALIZED_DATA",  {NULL,   NULL,   0x00000080} },
+    {"CODE",                0x00000020},
+    {"INITIALIZED_DATA",    0x00000040},
+    {"UNINITIALIZED_DATA",  0x00000080},
     // -- PERMITS --
-    {"DISCARDABLE",         {NULL,   NULL,   0x02000000} },
-    {"NOT_CACHEABLE",       {NULL,   NULL,   0x04000000} },
-    {"NOT_PAGEABLE",        {NULL,   NULL,   0x08000000} },
-    {"SHAREADBLE",          {NULL,   NULL,   0x10000000} },
-    {"EXECUTABLE",          {NULL,   NULL,   0x20000000} },
-    {"READABLE",            {NULL,   NULL,   0x40000000} },
-    {"WRITABLE",            {NULL,   NULL,   0x80000000} },
+    {"DISCARDABLE",         0x02000000},
+    {"NOT_CACHEABLE",       0x04000000},
+    {"NOT_PAGEABLE",        0x08000000},
+    {"SHAREADBLE",          0x10000000},
+    {"EXECUTABLE",          0x20000000},
+    {"READABLE",            0x40000000},
+    {"WRITABLE",            0x80000000},
 };
 
 // ---------- SECTION KEYWORDS ----------
-
+/*
 unordered_map <string, keyword> segmentKeywords =
 {
     // --  --
@@ -34,45 +35,51 @@ unordered_map <string, keyword> variableKeywords =
     {"ADDRESS",             {NULL,   NULL,   NULL} },
     {"EQU",                 {NULL,   NULL,   NULL} },
 };
-
+*/
 // ---------- GENERAL KEYWORDS ----------
 
-unordered_map <string, keyword> generalKeywords =
+unordered_map <string, ParseFunc> generalKeywords =
 {
     // --  --
-    {"SECTION", {sectionKeywords,    Parse_Section,  NULL} },
-    {"SEGMENT", {segmentKeywords,    Parse_Segment,  NULL} },
+    {"SECTION", {ParseSection,  NULL} },
+    {"SEGMENT", {ParseSegment,  NULL} },
 
     // -- VARIABLES --
     //FLOATS
-    {"REAL10",  {variableKeywords,   Parse_Variable, {10, FPU, NOT_APPLICABLE} } },
-    {"REAL8",   {variableKeywords,   Parse_Variable, { 8, FPU, NOT_APPLICABLE} } },
-    {"REAL4",   {variableKeywords,   Parse_Variable, { 4, FPU, NOT_APPLICABLE} } },
+    {"REAL10",  {ParseVariable, {10, FPU, NOT_APPLICABLE} } },
+    {"REAL8",   {ParseVariable, { 8, FPU, NOT_APPLICABLE} } },
+    {"REAL4",   {ParseVariable, { 4, FPU, NOT_APPLICABLE} } },
     //INTEGERS
-    {"OWORD",   {variableKeywords,   Parse_Variable, {16, CPU, UNSIGNED} } },
-    {"TBYTE",   {variableKeywords,   Parse_Variable, {10, CPU, UNSIGNED} } },
-    {"QWORD",   {variableKeywords,   Parse_Variable, { 8, CPU, UNSIGNED} } },
-    {"FWORD",   {variableKeywords,   Parse_Variable, { 6, CPU, UNSIGNED} } },
-    {"DWORD",   {variableKeywords,   Parse_Variable, { 4, CPU, UNSIGNED} } },
-    {"WORD",    {variableKeywords,   Parse_Variable, { 2, CPU, UNSIGNED} } },
-    {"BYTE",    {variableKeywords,   Parse_Variable, { 1, CPU, UNSIGNED} } },
+    {"OWORD",   {ParseVariable, {16, CPU, UNSIGNED} } },
+    {"TBYTE",   {ParseVariable, {10, CPU, UNSIGNED} } },
+    {"QWORD",   {ParseVariable, { 8, CPU, UNSIGNED} } },
+    {"FWORD",   {ParseVariable, { 6, CPU, UNSIGNED} } },
+    {"DWORD",   {ParseVariable, { 4, CPU, UNSIGNED} } },
+    {"WORD",    {ParseVariable, { 2, CPU, UNSIGNED} } },
+    {"BYTE",    {ParseVariable, { 1, CPU, UNSIGNED} } },
     //SIGNED
-    {"SOWORD",  {variableKeywords,   Parse_Variable, {16, CPU, SIGNED} } },
-    {"STBYTE",  {variableKeywords,   Parse_Variable, {10, CPU, SIGNED} } },
-    {"SQWORD",  {variableKeywords,   Parse_Variable, { 8, CPU, SIGNED} } },
-    {"SFWORD",  {variableKeywords,   Parse_Variable, { 6, CPU, SIGNED} } },
-    {"SDWORD",  {variableKeywords,   Parse_Variable, { 4, CPU, SIGNED} } },
-    {"SWORD",   {variableKeywords,   Parse_Variable, { 2, CPU, SIGNED} } },
-    {"SBYTE",   {variableKeywords,   Parse_Variable, { 1, CPU, SIGNED} } },
+    {"SOWORD",  {ParseVariable, {16, CPU, SIGNED} } },
+    {"STBYTE",  {ParseVariable, {10, CPU, SIGNED} } },
+    {"SQWORD",  {ParseVariable, { 8, CPU, SIGNED} } },
+    {"SFWORD",  {ParseVariable, { 6, CPU, SIGNED} } },
+    {"SDWORD",  {ParseVariable, { 4, CPU, SIGNED} } },
+    {"SWORD",   {ParseVariable, { 2, CPU, SIGNED} } },
+    {"SBYTE",   {ParseVariable, { 1, CPU, SIGNED} } },
     //ADDITIONAL
-    {"TEXT",    {variableKeywords,   Parse_Variable, NULL} },
+    {"TEXT",    {ParseVariable, NULL} },
+/*
+    // -- PUNCTATORS --
+    {";",       ParseComment,   NULL} },
+    {"#",       ParseComment,   NULL} },
+    {"\"",      ParseText,      NULL} },
+    {"{",       ParseContent,   NULL} },*/
 };
 
 
 
 
 // ---------- PUNCTAOTRS ----------
-
+/*
 unordered_map <char, punctator> punctators =
 {
     { ';', {NULL, COMMENTARY, LINE_END_IS_ALSO_TERMINATION,  SAVE_ALL_SPECIALS,                  NONE,                       "semicolon"        }  },
@@ -80,3 +87,4 @@ unordered_map <char, punctator> punctators =
     { '"', {'"',  TEXT,       DONT_ACCEPT_LINE_END,          APPLY_ALL_SPECIALS,                 NONE,                       "quotation mark"   }  },
     { '{', {'}',  CODE,       DONT_ACCEPT_FILE_END,          APPLY_ONLY_OWN_TERMINATE_SPECIAL,   DONT_ACCEPT_ANOTHER_BEGIN,  "curly brace"      }  }
 };
+*/
