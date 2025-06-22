@@ -4,6 +4,18 @@ using namespace std;
 
 //======================================================
 //======================================================
+Lexer::Lexer ()
+{
+
+}
+Lexer::Lexer (char* filePath)
+{
+    Tokenize (filePath);
+}
+
+
+//======================================================
+//======================================================
 
 void Lexer::Tokenize (char* filePath)
 {
@@ -126,7 +138,7 @@ void Lexer::LexText    ()
 
 
     newToken.content.append(begin, end-begin);
-    newToken.type = TEXT;
+    newToken.type = TYPE_TEXT;
     tokens.push_back (newToken);
 }
 //------------------------------------------------------
@@ -172,7 +184,7 @@ void Lexer::LexChars    ()
 
 
     newToken.content.append(begin, end-begin);
-    newToken.type = CHARS;
+    newToken.type = TYPE_CHARS;
     tokens.push_back (newToken);
 }
 //------------------------------------------------------
@@ -190,7 +202,7 @@ void Lexer::LexWord    ()
 
 
     newToken.content.assign(begin, end-begin);
-    newToken.type = WORD;
+    newToken.type = TYPE_WORD;
     tokens.push_back (newToken);
 }
 //------------------------------------------------------
@@ -243,7 +255,7 @@ void Lexer::LexNumber  ()
 
 
     newToken.content = gotTxt;
-    newToken.type = NUMBER;
+    newToken.type = TYPE_NUMBER;
     tokens.push_back (newToken);
 
 }
@@ -278,7 +290,7 @@ void Lexer::LexContent ()
 
 
     newToken.content.append(begin, end-begin);
-    newToken.type = CONTENT;
+    newToken.type = TYPE_CONTENT;
     tokens.push_back (newToken);
 }
 //------------------------------------------------------
@@ -292,7 +304,7 @@ void Lexer::LexSpecial ()
 {
     Token newToken;
     newToken.content = *pointer++;
-    newToken.type = SPECIAL;
+    newToken.type = TYPE_SPECIAL;
     tokens.push_back (newToken);
 }
 //------------------------------------------------------
@@ -307,15 +319,6 @@ void Lexer::LexLineEnd ()
         else
             break;
     }
-    tokens.emplace_back ("", LINEEND);
+    tokens.emplace_back ("", TYPE_LINEEND);
 }
 
-
-//======================================================
-//======================================================
-
-void Lexer::PrintTokens ()
-{
-    for (size_t i = 0;  i<tokens.size();  i++)
-        cout << "TOKEN " << i << ':' << endl << "  type: " << tokenTypeDescription[tokens[i].type] << endl << "  content: " << tokens[i].content << endl << endl;
-}

@@ -1,8 +1,9 @@
 # depslib dependency file v1.0
-1750414870 source:c:\users\janpi\documents\c++ projects\masmif\main.cpp
+1750616136 source:c:\users\janpi\documents\c++ projects\masmif\main.cpp
 	<iostream>
 	<windows.h>
 	"scripts\Lexer.hpp"
+	"scripts\Parser.hpp"
 	"CppCore/include/ReadableWinAPI.hpp"
 
 1750333840 c:\users\janpi\documents\c++ projects\masmif\cppcore\include\readablewinapi.hpp
@@ -132,20 +133,17 @@
 
 1750323524 c:\users\janpi\documents\c++ projects\masmif\scripts\struniloadnumber.cpp
 
-1750431285 c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.hpp
+1750595156 c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.hpp
 	<string>
 	<vector>
 	<iostream>
 	"../CppCore/include/StringUtils.hpp"
 	"../CppCore/include/FileData.hpp"
 	"StrUniLoadNumber.hpp"
+	"Token.hpp"
 
-1750349376 c:\users\janpi\documents\c++ projects\masmif\scripts\token.hpp
-	"StrUniLoadNumber.hpp"
-	<windows.h>
-	<iostream>
+1750611264 c:\users\janpi\documents\c++ projects\masmif\scripts\token.hpp
 	<string>
-	<vector>
 
 1750354360 c:\users\janpi\documents\c++ projects\masmif\scripts\lexicon.hpp
 	<unordered_map>
@@ -159,7 +157,7 @@
 
 1750323524 source:c:\users\janpi\documents\c++ projects\masmif\scripts\injector.cpp
 
-1750431928 source:c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.cpp
+1750611313 source:c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.cpp
 	"Lexer.hpp"
 
 1750349204 c:\users\janpi\documents\c++ projects\masmif\scripts\struniloadnumber.hpp
@@ -213,4 +211,19 @@
 	"Variable.hpp"
 
 1750432462 source:c:\users\janpi\documents\c++ projects\masmif\scripts\struniloadnumber.cpp
+
+1750615140 source:c:\users\janpi\documents\c++ projects\masmif\scripts\lexicon.cpp
+	"Parser.hpp"
+
+1750616101 c:\users\janpi\documents\c++ projects\masmif\scripts\parser.hpp
+	<unordered_map>
+	<windows.h>
+	<vector>
+	"Token.hpp"
+	"StrUniLoadNumber.hpp"
+	"Lexer.hpp"
+
+1750615626 source:c:\users\janpi\documents\c++ projects\masmif\scripts\parser.cpp
+	"Parser.hpp"
+	<iostream>
 

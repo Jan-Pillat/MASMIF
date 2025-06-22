@@ -1,8 +1,18 @@
-#include
+#include "Parser.hpp"
+
+using namespace std;
+
+// ---------- ASSEMBLY KEYWORDS ----------
+
+unordered_map <string, BYTE> Parser::assemblyKeyword =
+{
+    // -- WHAT CONTAINS --
+    {"NOP",                0x90},
+};
 
 // ---------- SECTION KEYWORDS ----------
 
-unordered_map <string, DWORD> sectionKeywords =
+unordered_map <string, DWORD> Parser::sectionKeywords =
 {
     // -- WHAT CONTAINS --
     {"CODE",                0x00000020},
@@ -18,27 +28,9 @@ unordered_map <string, DWORD> sectionKeywords =
     {"WRITABLE",            0x80000000},
 };
 
-// ---------- SECTION KEYWORDS ----------
-/*
-unordered_map <string, keyword> segmentKeywords =
-{
-    // --  --
-    {"ADDRESS",             {NULL,   NULL,   NULL} },
-    {"SIZE",                {NULL,   NULL,   NULL} },
-};
-
-// ---------- VARIABLE KEYWORDS ----------
-
-unordered_map <string, keyword> variableKeywords =
-{
-    // --  --
-    {"ADDRESS",             {NULL,   NULL,   NULL} },
-    {"EQU",                 {NULL,   NULL,   NULL} },
-};
-*/
 // ---------- GENERAL KEYWORDS ----------
 
-unordered_map <string, ParseFunc> generalKeywords =
+unordered_map <string, Parser::FuncParse> Parser::generalKeywords =
 {
     // --  --
     {"SECTION", {ParseSection,  NULL} },
@@ -46,45 +38,26 @@ unordered_map <string, ParseFunc> generalKeywords =
 
     // -- VARIABLES --
     //FLOATS
-    {"REAL10",  {ParseVariable, {10, FPU, NOT_APPLICABLE} } },
-    {"REAL8",   {ParseVariable, { 8, FPU, NOT_APPLICABLE} } },
-    {"REAL4",   {ParseVariable, { 4, FPU, NOT_APPLICABLE} } },
+    {"REAL10",  {ParseVariable, (10, FPU, NOT_APPLICABLE) } },
+    {"REAL8",   {ParseVariable, ( 8, FPU, NOT_APPLICABLE) } },
+    {"REAL4",   {ParseVariable, ( 4, FPU, NOT_APPLICABLE) } },
     //INTEGERS
-    {"OWORD",   {ParseVariable, {16, CPU, UNSIGNED} } },
-    {"TBYTE",   {ParseVariable, {10, CPU, UNSIGNED} } },
-    {"QWORD",   {ParseVariable, { 8, CPU, UNSIGNED} } },
-    {"FWORD",   {ParseVariable, { 6, CPU, UNSIGNED} } },
-    {"DWORD",   {ParseVariable, { 4, CPU, UNSIGNED} } },
-    {"WORD",    {ParseVariable, { 2, CPU, UNSIGNED} } },
-    {"BYTE",    {ParseVariable, { 1, CPU, UNSIGNED} } },
+    {"OWORD",   {ParseVariable, (16, CPU, UNSIGNED) } },
+    {"TBYTE",   {ParseVariable, (10, CPU, UNSIGNED) } },
+    {"QWORD",   {ParseVariable, ( 8, CPU, UNSIGNED) } },
+    {"FWORD",   {ParseVariable, ( 6, CPU, UNSIGNED) } },
+    {"DWORD",   {ParseVariable, ( 4, CPU, UNSIGNED) } },
+    {"WORD",    {ParseVariable, ( 2, CPU, UNSIGNED) } },
+    {"BYTE",    {ParseVariable, ( 1, CPU, UNSIGNED) } },
     //SIGNED
-    {"SOWORD",  {ParseVariable, {16, CPU, SIGNED} } },
-    {"STBYTE",  {ParseVariable, {10, CPU, SIGNED} } },
-    {"SQWORD",  {ParseVariable, { 8, CPU, SIGNED} } },
-    {"SFWORD",  {ParseVariable, { 6, CPU, SIGNED} } },
-    {"SDWORD",  {ParseVariable, { 4, CPU, SIGNED} } },
-    {"SWORD",   {ParseVariable, { 2, CPU, SIGNED} } },
-    {"SBYTE",   {ParseVariable, { 1, CPU, SIGNED} } },
+    {"SOWORD",  {ParseVariable, (16, CPU, SIGNED) } },
+    {"STBYTE",  {ParseVariable, (10, CPU, SIGNED) } },
+    {"SQWORD",  {ParseVariable, ( 8, CPU, SIGNED) } },
+    {"SFWORD",  {ParseVariable, ( 6, CPU, SIGNED) } },
+    {"SDWORD",  {ParseVariable, ( 4, CPU, SIGNED) } },
+    {"SWORD",   {ParseVariable, ( 2, CPU, SIGNED) } },
+    {"SBYTE",   {ParseVariable, ( 1, CPU, SIGNED) } },
     //ADDITIONAL
     {"TEXT",    {ParseVariable, NULL} },
-/*
-    // -- PUNCTATORS --
-    {";",       ParseComment,   NULL} },
-    {"#",       ParseComment,   NULL} },
-    {"\"",      ParseText,      NULL} },
-    {"{",       ParseContent,   NULL} },*/
 };
 
-
-
-
-// ---------- PUNCTAOTRS ----------
-/*
-unordered_map <char, punctator> punctators =
-{
-    { ';', {NULL, COMMENTARY, LINE_END_IS_ALSO_TERMINATION,  SAVE_ALL_SPECIALS,                  NONE,                       "semicolon"        }  },
-    { '#', {NULL, COMMENTARY, LINE_END_IS_ALSO_TERMINATION,  SAVE_ALL_SPECIALS,                  NONE,                       "hashtag"          }  },
-    { '"', {'"',  TEXT,       DONT_ACCEPT_LINE_END,          APPLY_ALL_SPECIALS,                 NONE,                       "quotation mark"   }  },
-    { '{', {'}',  CODE,       DONT_ACCEPT_FILE_END,          APPLY_ONLY_OWN_TERMINATE_SPECIAL,   DONT_ACCEPT_ANOTHER_BEGIN,  "curly brace"      }  }
-};
-*/

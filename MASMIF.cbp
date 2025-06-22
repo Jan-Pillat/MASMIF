@@ -53,14 +53,16 @@
 		<Unit filename="CppCore/src/FileData.cpp" />
 		<Unit filename="CppCore/src/StringUtils.cpp" />
 		<Unit filename="main.cpp" />
+		<Unit filename="scripts/Declaration.hpp" />
 		<Unit filename="scripts/Lexer.cpp" />
 		<Unit filename="scripts/Lexer.hpp" />
-		<Unit filename="scripts/Lexicon.cpp">
-			<Option compile="0" />
-			<Option link="0" />
-		</Unit>
+		<Unit filename="scripts/Lexicon.cpp" />
+		<Unit filename="scripts/Lexicon.hpp" />
+		<Unit filename="scripts/Parser.cpp" />
+		<Unit filename="scripts/Parser.hpp" />
 		<Unit filename="scripts/StrUniLoadNumber.cpp" />
 		<Unit filename="scripts/StrUniLoadNumber.hpp" />
+		<Unit filename="scripts/Token.hpp" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>
