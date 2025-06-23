@@ -7,6 +7,8 @@ SECTION ".rdata"  INITIALIZED_DATA    READABLE
 SECTION ".data"   INITIALIZED_DATA    READABLE   WRITABLE
 SECTION ".rsrc"   INITIALIZED_DATA    READABLE
 
+MERGE   ".code"   ".text"
+
 SEGMENT [0x401000] (200h)
 {
 	xor eax, eax
@@ -20,11 +22,17 @@ SEGMENT CODE [0x401240] (111h)
 	ret
 \}\}}
 
-DworD [$FF0] (%11101)
 
-TEXT  [0403000]	 TEXT_EXAMPLE    = "This is an example of a text\"a\"'" ;comment
-;TEXT  [0F03010]	 INCORRECT_TEXT  = "This is an incorrect text
-TEXT  [0403000]	 CHARS_EXAMPLE   = 'This is an example of a text without \'null\' char"'
+word  [0x403000] { 0x3322 }
+
+DworD [$FF0] (%11101)
+DWORD [$401304] dword_test { 3.0 }
+REAL4 [$401304] real4_test { 4.0 }
+
+TEXT  [04200000]	 TEXT_EXAMPLE    = "This is an example of a text\"a\"'" ;comment
+;TEXT  [0F03010]	 INCORRECT_TEXT  = "This is an incorrect text	<-- in currenty version it isn't a problem, because the termination is also the line end
+TEXt  [04300000]	 CHARS_EXAMPLE   = 'This is an example of a text without \'null\' char"'
+
 
 SEGMENT SEGMENT_WITH_NAME  ADDRESS 0x401400  SIZE 0F00
 {
@@ -49,4 +57,26 @@ SEGMENT DATA [0x402000] (200h)
 	DWORD local_hexadecimal_variable = 0x10 ;it must be exchanged to 10h
 	
 	player_damage  DWORD  0
+}
+
+
+PROC script [0x401234] (UNTIL NOP) PARAM testArg:eax , testArg:STACK
+{
+	push eax
+	push edx
+	
+	xor  eax, eax
+	inc  eax, eax
+	add  eax, ecx
+	xchg edx, eax
+	
+	pop edx
+	pop eax
+	ret
+}
+
+
+SEGMENT TEST_KEYWORDS	ADDRESS 0xFFF999	SIZE 200h	IT_WILL_BE INGORED
+{
+	;that was a test
 }

@@ -4,6 +4,20 @@
     #include <string>
     using std::string;
 
+static constexpr char tokenTypeDescription[0x10][0x10] =
+{
+    "UNDEFINED",
+
+    "TEXT",
+    "CHARS",
+    "WORD",
+    "NUMBER",
+    "CONTENT",
+    "SPECIAL",
+
+    "LINE END",
+};
+
 enum TokenType
 {
     TYPE_UNDEF,

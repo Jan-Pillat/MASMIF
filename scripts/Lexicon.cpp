@@ -6,8 +6,10 @@ using namespace std;
 
 unordered_map <string, BYTE> Parser::assemblyKeyword =
 {
-    // -- WHAT CONTAINS --
-    {"NOP",                0x90},
+    {"NOP",     0x90},
+    {"INT3",    0xCC},
+    {"PUSHAD",  0x60},
+    {"POPAD",   0x61},
 };
 
 // ---------- SECTION KEYWORDS ----------
@@ -32,9 +34,13 @@ unordered_map <string, DWORD> Parser::sectionKeywords =
 
 unordered_map <string, Parser::FuncParse> Parser::generalKeywords =
 {
-    // --  --
+    // -- CONTAINERS --
     {"SECTION", {ParseSection,  NULL} },
     {"SEGMENT", {ParseSegment,  NULL} },
+    {"PROC",    {ParseProcedure,NULL} },
+
+    // -- OPERATION --
+    {"MERGE",   {ParseMerge,    NULL} },
 
     // -- VARIABLES --
     //FLOATS
@@ -42,7 +48,7 @@ unordered_map <string, Parser::FuncParse> Parser::generalKeywords =
     {"REAL8",   {ParseVariable, ( 8, FPU, NOT_APPLICABLE) } },
     {"REAL4",   {ParseVariable, ( 4, FPU, NOT_APPLICABLE) } },
     //INTEGERS
-    {"OWORD",   {ParseVariable, (16, CPU, UNSIGNED) } },
+ // {"OWORD",   {ParseVariable, (16, CPU, UNSIGNED) } },
     {"TBYTE",   {ParseVariable, (10, CPU, UNSIGNED) } },
     {"QWORD",   {ParseVariable, ( 8, CPU, UNSIGNED) } },
     {"FWORD",   {ParseVariable, ( 6, CPU, UNSIGNED) } },
@@ -50,7 +56,7 @@ unordered_map <string, Parser::FuncParse> Parser::generalKeywords =
     {"WORD",    {ParseVariable, ( 2, CPU, UNSIGNED) } },
     {"BYTE",    {ParseVariable, ( 1, CPU, UNSIGNED) } },
     //SIGNED
-    {"SOWORD",  {ParseVariable, (16, CPU, SIGNED) } },
+ // {"SOWORD",  {ParseVariable, (16, CPU, SIGNED) } },
     {"STBYTE",  {ParseVariable, (10, CPU, SIGNED) } },
     {"SQWORD",  {ParseVariable, ( 8, CPU, SIGNED) } },
     {"SFWORD",  {ParseVariable, ( 6, CPU, SIGNED) } },
@@ -58,6 +64,6 @@ unordered_map <string, Parser::FuncParse> Parser::generalKeywords =
     {"SWORD",   {ParseVariable, ( 2, CPU, SIGNED) } },
     {"SBYTE",   {ParseVariable, ( 1, CPU, SIGNED) } },
     //ADDITIONAL
-    {"TEXT",    {ParseVariable, NULL} },
+//  {"TEXT",    {ParseVariable, NULL} },
 };
 

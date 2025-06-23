@@ -53,11 +53,12 @@
 		<Unit filename="CppCore/src/FileData.cpp" />
 		<Unit filename="CppCore/src/StringUtils.cpp" />
 		<Unit filename="main.cpp" />
-		<Unit filename="scripts/Declaration.hpp" />
+		<Unit filename="scripts/Assembler.cpp" />
+		<Unit filename="scripts/Assembler.hpp" />
+		<Unit filename="scripts/Declarations.hpp" />
 		<Unit filename="scripts/Lexer.cpp" />
 		<Unit filename="scripts/Lexer.hpp" />
 		<Unit filename="scripts/Lexicon.cpp" />
-		<Unit filename="scripts/Lexicon.hpp" />
 		<Unit filename="scripts/Parser.cpp" />
 		<Unit filename="scripts/Parser.hpp" />
 		<Unit filename="scripts/StrUniLoadNumber.cpp" />

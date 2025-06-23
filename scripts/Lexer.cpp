@@ -195,7 +195,7 @@ void Lexer::LexWord    ()
     char* begin = pointer;
 
     //Find text termination
-    while (IsAlphabetic(*pointer) || *pointer=='_')
+    while (IsAlOrDigit(*pointer) || *pointer=='_')
         pointer++;
 
     char* end = pointer;
@@ -209,52 +209,29 @@ void Lexer::LexWord    ()
 void Lexer::LexNumber  ()
 {
     Token newToken;
-    bool  itsFloat = false;
     char* begin = pointer;      //begin of data to save
 
+    // --- SKIP SPECIAL CHAR ---
     if (IsSpecialNumBegin())
         pointer++;
 
+    // --- FIND END ---
     while (true)
     {
         while (IsAlOrNum(*pointer))
             pointer++;
 
         if (*pointer=='.')
-        {
-            itsFloat=true;
             pointer++;
-        }
         else
-        {
             break;
-        }
     }
 
     char* end = pointer;
 
-    string gotTxt (begin, end-begin);
 
-    if (!itsFloat)
-    {
-        int    gotNum = StrGetNum<int>(&gotTxt[0]);
-
-        static const char BinNumToChar[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
-
-        gotTxt  = "0";
-        gotTxt += BinNumToChar[(gotNum&0xF0000000)>>28];
-        gotTxt += BinNumToChar[(gotNum&0x0F000000)>>24];
-        gotTxt += BinNumToChar[(gotNum&0x00F00000)>>20];
-        gotTxt += BinNumToChar[(gotNum&0x000F0000)>>16];
-        gotTxt += BinNumToChar[(gotNum&0x0000F000)>>12];
-        gotTxt += BinNumToChar[(gotNum&0x00000F00)>> 8];
-        gotTxt += BinNumToChar[(gotNum&0x000000F0)>> 4];
-        gotTxt += BinNumToChar[(gotNum&0x0000000F)>> 0];
-        gotTxt += "h";
-    }
-
-
-    newToken.content = gotTxt;
+    // --- SAVE TOKEN ---
+    newToken.content.assign(begin, end-begin);
     newToken.type = TYPE_NUMBER;
     tokens.push_back (newToken);
 

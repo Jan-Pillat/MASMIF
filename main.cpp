@@ -1,26 +1,13 @@
 
 #include <iostream>
 #include <windows.h>
+#include "scripts\Token.hpp"
 #include "scripts\Lexer.hpp"
 #include "scripts\Parser.hpp"
+#include "scripts\Assembler.hpp"
 #include "CppCore/include/ReadableWinAPI.hpp"
 
 using namespace std;
-
-
-static constexpr char tokenTypeDescription[0x10][0x10] =
-{
-    "UNDEFINED",
-
-    "TEXT",
-    "CHARS",
-    "WORD",
-    "NUMBER",
-    "CONTENT",
-    "SPECIAL",
-
-    "LINE END",
-};
 
 
 void PrintTokens (Lexer& lexer)
@@ -40,6 +27,8 @@ int main()
     PrintTokens     (lexer);
 
     Parser parser(lexer.tokens);
+
+    Assembler assembler (parser);
 
     system ("pause");
     return 0;

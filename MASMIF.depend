@@ -1,9 +1,11 @@
 # depslib dependency file v1.0
-1750616136 source:c:\users\janpi\documents\c++ projects\masmif\main.cpp
+1750681274 source:c:\users\janpi\documents\c++ projects\masmif\main.cpp
 	<iostream>
 	<windows.h>
+	"scripts\Token.hpp"
 	"scripts\Lexer.hpp"
 	"scripts\Parser.hpp"
+	"scripts\Assembler.hpp"
 	"CppCore/include/ReadableWinAPI.hpp"
 
 1750333840 c:\users\janpi\documents\c++ projects\masmif\cppcore\include\readablewinapi.hpp
@@ -142,7 +144,7 @@
 	"StrUniLoadNumber.hpp"
 	"Token.hpp"
 
-1750611264 c:\users\janpi\documents\c++ projects\masmif\scripts\token.hpp
+1750654545 c:\users\janpi\documents\c++ projects\masmif\scripts\token.hpp
 	<string>
 
 1750354360 c:\users\janpi\documents\c++ projects\masmif\scripts\lexicon.hpp
@@ -157,7 +159,7 @@
 
 1750323524 source:c:\users\janpi\documents\c++ projects\masmif\scripts\injector.cpp
 
-1750611313 source:c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.cpp
+1750689046 source:c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.cpp
 	"Lexer.hpp"
 
 1750349204 c:\users\janpi\documents\c++ projects\masmif\scripts\struniloadnumber.hpp
@@ -212,18 +214,36 @@
 
 1750432462 source:c:\users\janpi\documents\c++ projects\masmif\scripts\struniloadnumber.cpp
 
-1750615140 source:c:\users\janpi\documents\c++ projects\masmif\scripts\lexicon.cpp
+1750688668 source:c:\users\janpi\documents\c++ projects\masmif\scripts\lexicon.cpp
 	"Parser.hpp"
 
-1750616101 c:\users\janpi\documents\c++ projects\masmif\scripts\parser.hpp
+1750686813 c:\users\janpi\documents\c++ projects\masmif\scripts\parser.hpp
 	<unordered_map>
+	<algorithm>
 	<windows.h>
 	<vector>
 	"Token.hpp"
 	"StrUniLoadNumber.hpp"
 	"Lexer.hpp"
+	"Declarations.hpp"
 
-1750615626 source:c:\users\janpi\documents\c++ projects\masmif\scripts\parser.cpp
+1750688629 source:c:\users\janpi\documents\c++ projects\masmif\scripts\parser.cpp
 	"Parser.hpp"
 	<iostream>
+
+1750688593 c:\users\janpi\documents\c++ projects\masmif\scripts\declarations.hpp
+	<windows.h>
+	<string>
+
+1750688750 source:c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.cpp
+	"Assembler.hpp"
+	<iostream>
+
+1750684827 c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.hpp
+	<vector>
+	<windows.h>
+	"Declarations.hpp"
+	"Parser.hpp"
+	"../CppCore/include/FileData.hpp"
+	"../CppCore/include/ReadableWinAPI.hpp"
 
