@@ -29,9 +29,13 @@ DworD [$FF0] (%11101)
 DWORD [$401304] dword_test { 3.0 }
 REAL4 [$401304] real4_test { 4.0 }
 
-TEXT  [04200000]	 TEXT_EXAMPLE    = "This is an example of a text\"a\"'" ;comment
-;TEXT  [0F03010]	 INCORRECT_TEXT  = "This is an incorrect text	<-- in currenty version it isn't a problem, because the termination is also the line end
-TEXt  [04300000]	 CHARS_EXAMPLE   = 'This is an example of a text without \'null\' char"'
+; CURRENTLY TEXT ISN'T A VARIABLE
+;TEXT  [04200000]	 TEXT_EXAMPLE    = "This is an example of a text\"a\"'" ;comment
+;;TEXT  [0F03010]	 INCORRECT_TEXT  = "This is an incorrect text	<-- in currenty version it isn't a problem, because the termination is also the line end
+;TEXt  [04300000]	 CHARS_EXAMPLE   = 'This is an example of a text without \'null\' char"'
+;
+BYTE  [04200000]	 TEXT_EXAMPLE    = "This is an example of a text\"a\"'" ;comment
+BYTE  [04300000]	 CHARS_EXAMPLE   = 'This is an example of a text without \'null\' char"'
 
 
 SEGMENT SEGMENT_WITH_NAME  ADDRESS 0x401400  SIZE 0F00
@@ -76,7 +80,17 @@ PROC script [0x401234] (UNTIL NOP) PARAM testArg:eax , testArg:STACK
 }
 
 
-SEGMENT TEST_KEYWORDS	ADDRESS 0xFFF999	SIZE 200h	IT_WILL_BE INGORED
+SEGMENT TEST_KEYWORDS_AND_CONTENT_CONVERSION_TEST	ADDRESS 0xFFF999	SIZE 200h	IT_WILL_BE INGORED
 {
-	;that was a test
+	##;#that was a test
+	
+	0xFF
+	00x100
+	$FF
+	$100
+	%11
+	
+	mov eax, [$100+%10]
 }
+
+PROC proc_with_unknown_content	[$401235]

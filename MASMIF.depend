@@ -159,7 +159,7 @@
 
 1750323524 source:c:\users\janpi\documents\c++ projects\masmif\scripts\injector.cpp
 
-1750689046 source:c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.cpp
+1750846859 source:c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.cpp
 	"Lexer.hpp"
 
 1750349204 c:\users\janpi\documents\c++ projects\masmif\scripts\struniloadnumber.hpp
@@ -227,19 +227,19 @@
 	"Lexer.hpp"
 	"Declarations.hpp"
 
-1750688629 source:c:\users\janpi\documents\c++ projects\masmif\scripts\parser.cpp
+1750845563 source:c:\users\janpi\documents\c++ projects\masmif\scripts\parser.cpp
 	"Parser.hpp"
 	<iostream>
 
-1750688593 c:\users\janpi\documents\c++ projects\masmif\scripts\declarations.hpp
+1750840952 c:\users\janpi\documents\c++ projects\masmif\scripts\declarations.hpp
 	<windows.h>
 	<string>
 
-1750688750 source:c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.cpp
+1750876596 source:c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.cpp
 	"Assembler.hpp"
 	<iostream>
 
-1750684827 c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.hpp
+1750872379 c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.hpp
 	<vector>
 	<windows.h>
 	"Declarations.hpp"

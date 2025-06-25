@@ -326,6 +326,13 @@ void    Parser::ParseVariable    ()
                     }
                 }
             }
+            else if ( (gotToken->content == "=") || (gotToken->content == ":") )
+            {
+                if (GetTokenOnlyToLineEnd())
+                {
+                    newVariable.content = gotToken->content;
+                }
+            }
         }
         // ---------- CONTENT ----------
         if (gotToken->type == TYPE_CONTENT)

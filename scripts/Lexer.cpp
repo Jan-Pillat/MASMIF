@@ -100,7 +100,8 @@ void Lexer::LexText    ()
 {
     Token newToken;
 
-    char* begin = ++pointer;
+    bool  hasFinishChar =  false;
+    char* begin         =  pointer++;
 
     //Find text termination
     while (true)
@@ -110,26 +111,18 @@ void Lexer::LexText    ()
 
         if (*pointer=='\\')
         {
-            newToken.content.append(begin, pointer-begin);
-
             pointer++;
-            if (*pointer == 'a')    newToken.content += '\a'; else
-            if (*pointer == 'b')    newToken.content += '\b'; else
-            if (*pointer == 'f')    newToken.content += '\f'; else
-            if (*pointer == 'n')    newToken.content += '\n'; else
-            if (*pointer == 'r')    newToken.content += '\r'; else
-            if (*pointer == 't')    newToken.content += '\t'; else
-            if (*pointer == 'v')    newToken.content += '\v'; else
-            if (*pointer == '0')    newToken.content += '\0'; else
-            if (*pointer == '"')    newToken.content += '"';  else
-            if (*pointer == '\\')   newToken.content += '\\';
-            else {   newToken.content += '\\';  newToken.content += *pointer;  }
 
-            pointer++;
-            begin = pointer;
+            if (*pointer=='"')
+                pointer++;
         }
         else
         {
+            if (*pointer=='"')
+            {
+                pointer++;
+                hasFinishChar = true;
+            }
             break;
         }
     }
@@ -138,6 +131,11 @@ void Lexer::LexText    ()
 
 
     newToken.content.append(begin, end-begin);
+
+    if (!hasFinishChar)
+        newToken.content += '"';
+
+    newToken.content += ",0";
     newToken.type = TYPE_TEXT;
     tokens.push_back (newToken);
 }
@@ -146,7 +144,9 @@ void Lexer::LexChars    ()
 {
     Token newToken;
 
-    char* begin = ++pointer;
+    bool hasFinishChar = false;
+    char* begin = pointer++;
+
 
     //Find text termination
     while (true)
@@ -156,26 +156,18 @@ void Lexer::LexChars    ()
 
         if (*pointer=='\\')
         {
-            newToken.content.append(begin, pointer-begin);
-
             pointer++;
-            if (*pointer == 'a')    newToken.content += '\a'; else
-            if (*pointer == 'b')    newToken.content += '\b'; else
-            if (*pointer == 'f')    newToken.content += '\f'; else
-            if (*pointer == 'n')    newToken.content += '\n'; else
-            if (*pointer == 'r')    newToken.content += '\r'; else
-            if (*pointer == 't')    newToken.content += '\t'; else
-            if (*pointer == 'v')    newToken.content += '\v'; else
-            if (*pointer == '0')    newToken.content += '\0'; else
-            if (*pointer == '\'')   newToken.content += '\''; else
-            if (*pointer == '\\')   newToken.content += '\\';
-            else {   newToken.content += '\\';  newToken.content += *pointer;  }
 
-            pointer++;
-            begin = pointer;
+            if (*pointer=='\'')
+                pointer++;
         }
         else
         {
+            if (*pointer=='\'')
+            {
+                pointer++;
+                hasFinishChar = true;
+            }
             break;
         }
     }
@@ -184,6 +176,10 @@ void Lexer::LexChars    ()
 
 
     newToken.content.append(begin, end-begin);
+
+    if (!hasFinishChar)
+        newToken.content += '\'';
+
     newToken.type = TYPE_CHARS;
     tokens.push_back (newToken);
 }

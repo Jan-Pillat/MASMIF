@@ -19,14 +19,16 @@ public:
 
 private:
 
-    void LoadBaseInfo   ();
-    void LoadDLLs       ();
-    void WriteMASMCode  ();
-    void InvokeMASM     ();
+    void LoadPEHeaders      ();
+    void ScanAndDeclareDLLs ();
+    void WriteMASMCode      ();
+    void InvokeMASM         ();
 
-    void ConvertDWORDToHexString (DWORD number, string& destination);
+    void   ConvertNumberToHexString (string& destination, long long number);
+    string ConvertContentNumbers    (string& content);
 
-    DWORD   virtualBase;
+    IMAGE_NT_HEADERS   PEHeaders;
+    DWORD   programBase;
     string  MASMcode;
     vector  <Declaration>& declarations;
 

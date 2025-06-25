@@ -106,7 +106,7 @@ struct DeclarationComparison
 {
     operator () (const Declaration& l,  const Declaration& r)
     {
-        if (l.address >= r.address)
+        if (l.address <= r.address)
             return true;
         else
             return false;

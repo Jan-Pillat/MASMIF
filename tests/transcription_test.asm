@@ -1,92 +1,140 @@
-.686                   
+.686p                  
 .model flat, stdcall   
 option casemap:none    
                        
 program SEGMENT        
                        
                        
+PUBLIC	script
+PUBLIC	proc_with_unknown_content
+PUBLIC	real4_test
+PUBLIC	dword_test
+PUBLIC	TEXT_EXAMPLE
+PUBLIC	CHARS_EXAMPLE
 
-;---------- SEGMENT ----------
-ORG 0BFE999h
-__S0_TEST_KEYWORDS	PROC
-__S0_TEST_KEYWORDS	ENDP
 
-	;that was a test
+;========== SEGMENT:   ==========
+____S0	PROC
+____S0	ENDP
 
-__S0_TEST_KEYWORDS__END	PROC
-__S0_TEST_KEYWORDS__END	ENDP
+	xor eax, eax
+	inc eax
+	}
 
-ORG 2000h
-__V0_	WORD	 0x3322 
+____S0_END	PROC
+____S0_END	ENDP
 
-;---------- SEGMENT ----------
-ORG 1000h
-__S1_DATA	PROC
-__S1_DATA	ENDP
 
-	DWORD local_decimal_variable = 1500
-	DWORD local_hexadecimal_variable = 0x10 ;it must be exchanged to 10h
+
+;---------- PROCEDURE:  script ----------
+ORG 234h
+script	PROC
+
+	push eax
+	push edx
 	
-	player_damage  DWORD  0
+	xor  eax, eax
+	inc  eax, eax
+	add  eax, ecx
+	xchg edx, eax
+	
+	pop edx
+	pop eax
+	ret
 
-__S1_DATA__END	PROC
-__S1_DATA__END	ENDP
+script	ENDP
 
 
-;---------- SEGMENT ----------
+;---------- PROCEDURE:  proc_with_unknown_content ----------
+ORG 235h
+proc_with_unknown_content	PROC
+proc_with_unknown_content	ENDP
+
+
+;========== SEGMENT:  CODE ==========
+ORG 240h
+____S1	PROC
+____S1	ENDP
+
+	xchg eax, ecx
+	ret
+}}
+____S1_END	PROC
+____S1_END	ENDP
+
+ORG 304h
+real4_test	REAL4	 4.0 
+ORG 304h
+dword_test	DWORD	 3.0 
+
+
+;========== SEGMENT:  ANOTHER_SEGMENT ==========
 ORG 400h
-__S2_ANOTHER_SEGMENT	PROC
-__S2_ANOTHER_SEGMENT	ENDP
+____S2	PROC
+____S2	ENDP
 
 	push eax
 	pop eax
 	ret
 
-__S2_ANOTHER_SEGMENT__END	PROC
-__S2_ANOTHER_SEGMENT__END	ENDP
+____S2_END	PROC
+____S2_END	ENDP
 
 
-;---------- SEGMENT ----------
+
+;========== SEGMENT:  SEGMENT_WITH_NAME ==========
 ORG 400h
-__S3_SEGMENT_WITH_NAME	PROC
-__S3_SEGMENT_WITH_NAME	ENDP
+____S3	PROC
+____S3	ENDP
 
 	push ebp
 	mov ebp, esp
 	leave
 	ret
 	
-__S3_SEGMENT_WITH_NAME__END	PROC
-__S3_SEGMENT_WITH_NAME__END	ENDP
+____S3_END	PROC
+____S3_END	ENDP
 
-ORG 304h
-__V1_real4_test	REAL4	 4.0 
-ORG 304h
-__V2_dword_test	DWORD	 3.0 
-
-;---------- SEGMENT ----------
-ORG 240h
-__S4_CODE	PROC
-__S4_CODE	ENDP
-
-	xchg eax, ecx
-	ret
-}}
-__S4_CODE__END	PROC
-__S4_CODE__END	ENDP
+ORG 640h
+TEXT_EXAMPLE	BYTE	"This is an example of a text\"a\"'",0
 
 
-;---------- SEGMENT ----------
-ORG 0h
-__S5_	PROC
-__S5_	ENDP
+;========== SEGMENT:  DATA ==========
+ORG 1000h
+____S4	PROC
+____S4	ENDP
 
-	xor eax, eax
-	inc eax
-	}
+	DWORD local_decimal_variable = 1500
+	DWORD local_hexadecimal_variable = 10h ;it must be exchanged to 10h
+	
+	player_damage  DWORD  0
 
-__S5___END	PROC
-__S5___END	ENDP
+____S4_END	PROC
+____S4_END	ENDP
+
+ORG 2000h
+	WORD	 3322h 
+ORG 18CE0h
+CHARS_EXAMPLE	BYTE	'This is an example of a text without \'null\' char"'
+
+
+;========== SEGMENT:  TEST_KEYWORDS_AND_CONTENT_CONVERSION_TEST ==========
+ORG 0BFE999h
+____S5	PROC
+____S5	ENDP
+
+	;#;#that was a test
+	
+	0FFh
+	100h
+	0FFh
+	100h
+	11b
+	
+	mov eax, [100h+10b]
+
+____S5_END	PROC
+____S5_END	ENDP
 
 program ENDS           
                        

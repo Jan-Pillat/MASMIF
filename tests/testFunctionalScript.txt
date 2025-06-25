@@ -1,0 +1,18 @@
+
+
+
+DWORD	[0x401040]	{ 0xAABBCCDD }	DWORD_TEST
+QWORD	[0x401044]	{ -1 }			QWORD_TEST
+
+PROC	[0x401020]	PROC_TEST
+{
+	mov eax, DWORD_TEST
+	ret
+}
+
+SEGMENT	[0x401000]	BEGIN
+{
+	call PROC_TEST
+	xchg dword ptr [QWORD_TEST], eax
+	ret
+}
