@@ -21,16 +21,26 @@ private:
 
     void LoadPEHeaders      ();
     void ScanAndDeclareDLLs ();
+    void SortDeclarations   ();
     void WriteMASMCode      ();
     void InvokeMASM         ();
 
-    void   ConvertNumberToHexString (string& destination, long long number);
-    string ConvertContentNumbers    (string& content);
+    DWORD RvaToOffset       (DWORD rva);
 
-    IMAGE_NT_HEADERS   PEHeaders;
+    FileData baseData;
+
+    IMAGE_NT_HEADERS32*   PEHeaders;
+    IMAGE_SECTION_HEADER* sectionHeaders;
+
+    vector <string> dllNames;
+
     DWORD   programBase;
+
     string  MASMcode;
     vector  <Declaration>& declarations;
+
+    void   ConvertNumberToHexString (string& destination, long long number);
+    string ConvertContentNumbers    (string& content);
 
 };
 

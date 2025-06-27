@@ -74,7 +74,8 @@ enum DeclarationType
     SECTION,
     SEGMENT,
     VARIABLE,
-    PROCEDURE
+    PROCEDURE,
+    DLL
 };
 
 struct Declaration

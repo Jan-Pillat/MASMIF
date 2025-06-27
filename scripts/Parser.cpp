@@ -26,9 +26,6 @@ Parser::Parser   (vector<Token>& gotTokens) : tokens(gotTokens)
         }
     }
 
-    sort  (declarations.begin(), declarations.end(), DeclarationComparison());
-
-
     cout << "declarations count:   " << declarations.size()     << endl;
 
     for (size_t i = 0;  i<declarations.size();  i++)

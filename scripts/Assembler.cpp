@@ -10,6 +10,7 @@ Assembler::Assembler (Parser& gotParser) :  declarations(gotParser.declarations)
     cout << "Assembler Init" << endl;
     LoadPEHeaders           ();
     ScanAndDeclareDLLs      ();
+    SortDeclarations        ();
     WriteMASMCode           ();
     InvokeMASM              ();
 }
@@ -17,11 +18,36 @@ Assembler::Assembler (Parser& gotParser) :  declarations(gotParser.declarations)
 //======================================================
 //======================================================
 
+DWORD Assembler::RvaToOffset (DWORD rva)
+{
+    cout << "RvaToOffset" << endl;
+
+    for (int i = PEHeaders->FileHeader.NumberOfSections-1;  i>=0;   i--)
+    {
+        cout << "check section " << i << endl;
+        DWORD begin = sectionHeaders[i].VirtualAddress;
+        DWORD size  = sectionHeaders[i].Misc.VirtualSize;
+
+        if (rva >= begin  &&  rva < begin+size)
+            return rva - begin + sectionHeaders[i].PointerToRawData;
+    }
+    return 0;
+}
+
 void Assembler::LoadPEHeaders ()
 {
-    PEHeaders.OptionalHeader.ImageBase = 0x400000;
-    PEHeaders.OptionalHeader.BaseOfCode = 0x1000;
-    programBase         = PEHeaders.OptionalHeader.ImageBase + PEHeaders.OptionalHeader.BaseOfCode;
+    cout << "LoadPEHeaders" << endl;
+
+    baseData.LoadBinaryFile("base.exe");
+
+    if (baseData.IsEmpty())
+        cout << "No base.exe!" << endl;
+
+    PEHeaders       = reinterpret_cast<IMAGE_NT_HEADERS32*>(baseData.GetBeginPointer() + reinterpret_cast<IMAGE_DOS_HEADER*>(baseData.GetBeginPointer())->e_lfanew);
+
+    sectionHeaders  = reinterpret_cast<IMAGE_SECTION_HEADER*>((char*)PEHeaders+sizeof(IMAGE_NT_HEADERS32));
+
+    programBase     = PEHeaders->OptionalHeader.ImageBase + PEHeaders->OptionalHeader.BaseOfCode;
 }
 
 //======================================================
@@ -29,7 +55,58 @@ void Assembler::LoadPEHeaders ()
 
 void Assembler::ScanAndDeclareDLLs ()
 {
+    cout << "ScanAndDeclareDLLs" << endl;
 
+    char* pointer   = baseData.GetBeginPointer();
+
+    cout << "Get VirtualAddress" << endl;
+    DWORD importTableRva = PEHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress;
+
+    cout << "Check VirtualAddress" << endl;
+    if (importTableRva == 0)
+    {
+        cout << "  No import table!" << endl;
+        return;
+    }
+    else
+    {
+        cout << "  Import table is OK, equals " << hex << importTableRva << dec<< endl;
+    }
+
+    IMAGE_IMPORT_DESCRIPTOR* dllDescriptor  = reinterpret_cast<IMAGE_IMPORT_DESCRIPTOR*>(pointer+RvaToOffset(importTableRva));
+
+    //if RvaToOffset returned 0
+    if (dllDescriptor == reinterpret_cast<IMAGE_IMPORT_DESCRIPTOR*>(pointer))
+        return;
+
+    while (dllDescriptor->Name != 0)
+    {
+        dllNames.emplace_back (&baseData[RvaToOffset(dllDescriptor->Name)]);
+
+        DWORD  dllFuncPointerRVA    = dllDescriptor->FirstThunk + PEHeaders->OptionalHeader.ImageBase - 4; //-4 because loop always makes +4
+        DWORD* dllFuncNameRVAs      = reinterpret_cast<DWORD*>(pointer+RvaToOffset(dllDescriptor->OriginalFirstThunk));
+
+        if (dllFuncPointerRVA != 0)
+        while (*dllFuncNameRVAs != 0)
+        {
+            Declaration dllDeclaration;
+
+            dllDeclaration.address  = dllFuncPointerRVA+=4;
+            dllDeclaration.type     = DLL;
+            dllDeclaration.name     = reinterpret_cast<char*>(pointer+2+RvaToOffset(*dllFuncNameRVAs++));
+
+            declarations.push_back (dllDeclaration);
+        }
+        dllDescriptor++;
+    }
+}
+
+//======================================================
+//======================================================
+
+void Assembler::SortDeclarations ()
+{
+    sort  (declarations.begin(), declarations.end(), DeclarationComparison());
 }
 
 //======================================================
@@ -141,6 +218,17 @@ void Assembler::WriteMASMCode ()
 
             procedureCount++;
         }
+        else if (declarations[i].type == DLL)
+        {
+            cout << "  It IS dll func" << endl;
+
+            // -- LABEL BEGIN DECLARATION --
+            MASMcode_Declarations   +=  declarations[i].name + "_pointer" + ":\r\n";
+            // -- MARGIN --
+            MASMcode_Declarations   +=  "\r\n";
+
+            segmentCount++;
+        }
         else
         {
             cout << "  unrecognized type" << endl;
@@ -175,9 +263,11 @@ void Assembler::InvokeMASM ()
     {
         string mlCommand = "C:\\masm32\\bin\\ml.exe /c /coff test_result.asm";
 
-        string base; ConvertNumberToHexString (base, PEHeaders.OptionalHeader.ImageBase);
+        string base; ConvertNumberToHexString (base, PEHeaders->OptionalHeader.ImageBase);
         base.resize (base.size()-1);
         base = "0x" + base;
+
+        cout << "base = " << base << endl;
 
         string linkCommand = "C:\\masm32\\bin\\link.exe /subsystem:windows /map /pdb:test_result_PDB /base:" + base + ' ' + "test_result.obj";
 

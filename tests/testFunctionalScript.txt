@@ -14,5 +14,6 @@ SEGMENT	[0x401000]	BEGIN
 {
 	call PROC_TEST
 	xchg dword ptr [QWORD_TEST], eax
+	call dword ptr [ExitProcess_pointer]
 	ret
 }
