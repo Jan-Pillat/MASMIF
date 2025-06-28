@@ -30,6 +30,8 @@ private:
     void ParseVariable          ();
     void ParseProcedure         ();
     void ParseMerge             ();
+    void ParseThunk             ();
+    void ParseDeclaration       ();
 
     vector   <Token>&   tokens;
     size_t   iterator   = 0;
@@ -39,7 +41,7 @@ private:
     struct FuncParse
     {
         void        (Parser::*func)();
-        FuncArgs    arguments;
+        FuncArgs    argument;
     };
 
     static unordered_map <string, BYTE>        assemblyKeyword;
@@ -48,6 +50,7 @@ private:
 
     vector <Declaration>    declarations;
     vector <Merge>          merges;
+    vector <Thunk>          thunks;
 };
 
 

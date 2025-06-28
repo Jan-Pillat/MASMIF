@@ -35,16 +35,21 @@ union FuncArgs
     long long           integer;
     VariableAttributes  attributes;
 
-    keywordValue (BYTE b, VarType t, VarSign s)
+    FuncArgs (BYTE b, VarType t, VarSign s)
     {
         attributes.bytes    = b;
         attributes.type     = t;
         attributes.sign     = s;
     }
 
-    keywordValue (DWORD i)
+    FuncArgs (DWORD i)
     {
         integer = i;
+    }
+
+    FuncArgs ()
+    {
+        integer = 0;
     }
 };
 
@@ -56,6 +61,14 @@ struct Merge
     string  second;
 };
 
+// ======================== THUNK DECLARATION ========================
+
+struct Thunk
+{
+    DWORD   count       = 0;
+    DWORD   address     = 0;
+};
+
 // ======================== ELEMENT DECLARATION ========================
 
 static constexpr char declarationTypeDescription[0x8][0x10] =
@@ -64,7 +77,10 @@ static constexpr char declarationTypeDescription[0x8][0x10] =
     "SECTION",
     "SEGMENT",
     "VARIABLE",
-    "PROCEDURE"
+    "PROCEDURE",
+    "DLL",
+    "THUNK",
+    "DECLARATION",
 };
 
 enum DeclarationType
@@ -75,7 +91,9 @@ enum DeclarationType
     SEGMENT,
     VARIABLE,
     PROCEDURE,
-    DLL
+    DLL,
+    THUNK,
+    DECLARATION,
 };
 
 struct Declaration
