@@ -214,10 +214,10 @@
 
 1750432462 source:c:\users\janpi\documents\c++ projects\masmif\scripts\struniloadnumber.cpp
 
-1750688668 source:c:\users\janpi\documents\c++ projects\masmif\scripts\lexicon.cpp
+1751124654 source:c:\users\janpi\documents\c++ projects\masmif\scripts\lexicon.cpp
 	"Parser.hpp"
 
-1750686813 c:\users\janpi\documents\c++ projects\masmif\scripts\parser.hpp
+1751124603 c:\users\janpi\documents\c++ projects\masmif\scripts\parser.hpp
 	<unordered_map>
 	<algorithm>
 	<windows.h>
@@ -227,19 +227,19 @@
 	"Lexer.hpp"
 	"Declarations.hpp"
 
-1751058059 source:c:\users\janpi\documents\c++ projects\masmif\scripts\parser.cpp
+1751126196 source:c:\users\janpi\documents\c++ projects\masmif\scripts\parser.cpp
 	"Parser.hpp"
 	<iostream>
 
-1751051332 c:\users\janpi\documents\c++ projects\masmif\scripts\declarations.hpp
+1751124362 c:\users\janpi\documents\c++ projects\masmif\scripts\declarations.hpp
 	<windows.h>
 	<string>
 
-1751058254 source:c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.cpp
+1751129388 source:c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.cpp
 	"Assembler.hpp"
 	<iostream>
 
-1751058129 c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.hpp
+1751129884 c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.hpp
 	<vector>
 	<windows.h>
 	"Declarations.hpp"

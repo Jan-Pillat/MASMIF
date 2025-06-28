@@ -5,11 +5,13 @@ using namespace std;
 
 //======================================================
 //======================================================
-Assembler::Assembler (Parser& gotParser) :  declarations(gotParser.declarations)
+Assembler::Assembler (Parser& gotParser) :  declarations(gotParser.declarations), thunks(gotParser.thunks)
 {
     cout << "Assembler Init" << endl;
     LoadPEHeaders           ();
     ScanAndDeclareDLLs      ();
+    ScanAndDeclareThunks    ();
+    DeclareIncludes         ();
     SortDeclarations        ();
     WriteMASMCode           ();
     InvokeMASM              ();
@@ -18,13 +20,13 @@ Assembler::Assembler (Parser& gotParser) :  declarations(gotParser.declarations)
 //======================================================
 //======================================================
 
-DWORD Assembler::RvaToOffset (DWORD rva)
+DWORD Assembler::RvaToOffset (DWORD rva) //rva - relative virtual address
 {
-    cout << "RvaToOffset" << endl;
+    if (PEHeaders == nullptr)
+        return 0;
 
     for (int i = PEHeaders->FileHeader.NumberOfSections-1;  i>=0;   i--)
     {
-        cout << "check section " << i << endl;
         DWORD begin = sectionHeaders[i].VirtualAddress;
         DWORD size  = sectionHeaders[i].Misc.VirtualSize;
 
@@ -33,6 +35,18 @@ DWORD Assembler::RvaToOffset (DWORD rva)
     }
     return 0;
 }
+
+DWORD Assembler::VaToOffset (DWORD va) //va - virtual address
+{
+    if (PEHeaders == nullptr)
+        return 0;
+
+    return RvaToOffset (va - PEHeaders->OptionalHeader.ImageBase);
+}
+
+//======================================================
+//======================================================
+
 
 void Assembler::LoadPEHeaders ()
 {
@@ -43,7 +57,15 @@ void Assembler::LoadPEHeaders ()
     if (baseData.IsEmpty())
         cout << "No base.exe!" << endl;
 
-    PEHeaders       = reinterpret_cast<IMAGE_NT_HEADERS32*>(baseData.GetBeginPointer() + reinterpret_cast<IMAGE_DOS_HEADER*>(baseData.GetBeginPointer())->e_lfanew);
+    DOSHeader       = reinterpret_cast<IMAGE_DOS_HEADER*>(baseData.GetBeginPointer());
+
+    if (DOSHeader->e_magic != IMAGE_DOS_SIGNATURE)
+        return;
+
+    PEHeaders       = reinterpret_cast<IMAGE_NT_HEADERS32*>(baseData.GetBeginPointer() + DOSHeader->e_lfanew);
+
+    if (PEHeaders->Signature != IMAGE_NT_SIGNATURE)
+        return;
 
     sectionHeaders  = reinterpret_cast<IMAGE_SECTION_HEADER*>((char*)PEHeaders+sizeof(IMAGE_NT_HEADERS32));
 
@@ -57,6 +79,11 @@ void Assembler::ScanAndDeclareDLLs ()
 {
     cout << "ScanAndDeclareDLLs" << endl;
 
+    // -- SAFEGUARD --
+    if (baseData.IsEmpty())
+        return;
+
+    // -- MORE READABLE POINTER --
     char* pointer   = baseData.GetBeginPointer();
 
     cout << "Get VirtualAddress" << endl;
@@ -91,13 +118,113 @@ void Assembler::ScanAndDeclareDLLs ()
         {
             Declaration dllDeclaration;
 
-            dllDeclaration.address  = dllFuncPointerRVA+=4;
+            dllDeclaration.address  = dllFuncPointerRVA+=pointerSize;
             dllDeclaration.type     = DLL;
+            dllDeclaration.size     = pointerSize;
             dllDeclaration.name     = reinterpret_cast<char*>(pointer+2+RvaToOffset(*dllFuncNameRVAs++));
 
             declarations.push_back (dllDeclaration);
         }
         dllDescriptor++;
+    }
+}
+
+//======================================================
+//======================================================
+
+void Assembler::ScanAndDeclareThunks ()
+{
+    cout << "ScanAndDeclareThunks" << endl;
+    for (int i = 0;  i<thunks.size();  i++)
+    {
+        char* thunkPointer      =   baseData.GetBeginPointer() + VaToOffset(thunks[i].address);
+        DWORD currentAddress    =   thunks[i].address - thunkSize; //-thunkSize because loop uses +=thunkSize
+        DWORD count             =   0;
+
+        cout << "Start thunk jumps finding\n";
+        while ((unsigned char)*(thunkPointer) == 0xFF  &&  *(thunkPointer+1) == 0x25) //jmp dword ptr []
+        {
+            if (thunks[i].count > 0   &&   count++ >= thunks[i].count)
+                break;
+
+            cout << "Jump nr." << count << endl;
+
+            Declaration thunkDeclaration;
+
+            thunkDeclaration.type    = THUNK;
+            thunkDeclaration.size    = thunkSize;
+            thunkDeclaration.address = currentAddress+=thunkSize;
+
+            thunkPointer += 2;
+
+            DWORD pointerValue = *reinterpret_cast<DWORD*>(thunkPointer);
+            cout << "pointerValue = " << pointerValue << endl;
+
+            thunkPointer += 4;
+
+            for (int decl_i=0;  decl_i<declarations.size();  decl_i++)
+            {
+                if (declarations[decl_i].type == DLL)
+                {
+                    cout << hex;
+                    cout << "    declarations[decl_i].address = "   << declarations[decl_i].address << endl;
+                    cout << "    pointerValue = "                   << pointerValue                 << endl;
+                    cout << dec;
+                }
+
+                if ( (declarations[decl_i].type == DLL)  &&  (declarations[decl_i].address == pointerValue) )
+                {
+                    cout << "Found matching dll! (" << declarations[decl_i].name << ")" << endl;
+                    thunkDeclaration.name = declarations[decl_i].name;
+                    break;
+                }
+            }
+
+            declarations.push_back (thunkDeclaration);
+        }
+        cout << "Finish thunk jumps finding\n";
+    }
+}
+
+//======================================================
+//======================================================
+bool IsFileExist(const char* path)
+{
+    DWORD   attributes = GetFileAttributesA(path);
+    return (attributes != INVALID_FILE_ATTRIBUTES) && !(attributes & FILE_ATTRIBUTE_DIRECTORY);
+}
+
+void Assembler::DeclareIncludes ()
+{
+    cout << "DeclareIncludes" << endl;
+
+    if (!autoInclude)
+    {
+        cout << "    autoInclude = false";
+        return;
+    }
+
+
+    for (int i = 0;  i<dllNames.size();  i++)
+    {
+        string pathOfIncludeINC = masmPath + "\\include\\" + dllNames[i];
+        pathOfIncludeINC.resize( pathOfIncludeINC.size()-4 ); //delete .dll
+        pathOfIncludeINC += ".inc";
+
+        string pathOfIncludeLIB = masmPath + "\\lib\\" + dllNames[i];
+        pathOfIncludeLIB.resize( pathOfIncludeLIB.size()-4 ); //delete .dll
+        pathOfIncludeLIB += ".lib";
+
+        if (IsFileExist (&pathOfIncludeINC[0]) && IsFileExist (&pathOfIncludeLIB[0]))
+        {
+            MASMcode_Includes   +=  "include ";
+            MASMcode_Includes   +=  &pathOfIncludeINC[2];
+            MASMcode_Includes   +=  "\r\n";
+
+            MASMcode_Includes   +=  "includelib ";
+            MASMcode_Includes   +=  &pathOfIncludeLIB[2];
+            MASMcode_Includes   +=  "\r\n";
+        }
     }
 }
 
@@ -112,21 +239,39 @@ void Assembler::SortDeclarations ()
 //======================================================
 //======================================================
 
+bool Assembler::IsNextDeclarationGroupable (size_t i)
+{
+    if ( (i+1<declarations.size())
+      && (declarations[i+1].type == declarations[i].type)
+      && (declarations[i+1].address - declarations[i].address == declarations[i].size) )
+    {
+        return true;
+    }
+
+    return false;
+}
+
+//------------------------------------------------------
+
 void Assembler::WriteMASMCode ()
 {
     // ---------- DEBUG INFO ----------
     cout << "WriteMASMCode" << endl;
 
-    // ---------- VARIABLES ----------
-    string  MASMcode_Publications;
-    string  MASMcode_Declarations;
+    // ---------- SAFEGUARD ----------
+    if (baseData.IsEmpty())
+        return;
 
+    // ---------- VARIABLES ----------
     int segmentCount    = 0;
     int variableCount   = 0;
     int procedureCount  = 0;
+    int dllCount        = 0;
+    int thunkCount      = 0;
 
-    //DWORD lastOrigin    = 0;    <-- to remove unnecessary ORG between variables
     DWORD origin        = 0;
+
+    Declaration  previousDeclaration;
 
     // ---------- DEBUG INFO ----------
     cout << "declarations count = " << declarations.size() << endl;
@@ -137,21 +282,84 @@ void Assembler::WriteMASMCode ()
         cout << "i = " << i << endl;
 
 
+        if (declarations[i].type == DECLARATION)
+        {
+            cout << "  It IS declaration" << endl;
+
+            if ( declarations[i].name != "" )
+                MASMcode_DeclarationSegments += "\r\n\r\n;---------- " + declarations[i].name + " ----------\r\n";
+            else
+                MASMcode_DeclarationSegments += "\r\n\r\n;---------- DECLARATION SEGMENT ----------\r\n";
+
+
+            // -- DECLARATION SEGMENT --
+            MASMcode_DeclarationSegments   +=  declarations[i].content + "\r\n";
+
+            // -- MARGIN --
+            MASMcode_Declarations   +=  "\r\n";
+
+            continue;
+        }
+
+
         if (declarations[i].address < programBase)
         {
             cout << "  Incorrect address: " << hex << "0x" << declarations[i].address << dec << endl;
             continue;
         }
 
-        // -- SIGNATURE --
+
+
+        // ---- SIGNATURE ----
         if (declarations[i].type == SEGMENT)
+        {
             MASMcode_Declarations += "\r\n\r\n;========== SEGMENT:  " + declarations[i].name + " ==========\r\n";
+        }
 
         else if ( (declarations[i].type == PROCEDURE) /*&& (declarations[i].content != "")*/ )
+        {
             MASMcode_Declarations += "\r\n\r\n;---------- PROCEDURE:  " + declarations[i].name + " ----------\r\n";
+        }
 
-        // -- ORIGIN --
-        //lastOrigin  = origin;
+        else if (declarations[i].type == VARIABLE)
+        {
+            if ( IsNextDeclarationGroupable(i) )
+            {
+                MASMcode_Declarations += "\r\n\r\n;---------- VARIABLES:  ----------\r\n";
+            }
+            else
+            {
+                MASMcode_Declarations += "\r\n\r\n;---------- VARIABLE:  " + declarations[i].name + " ----------\r\n";
+            }
+        }
+
+        else if (declarations[i].type == DLL)
+        {
+            if ( IsNextDeclarationGroupable(i) )
+            {
+                MASMcode_Declarations += "\r\n\r\n;---------- DLL POINTERS:  ----------\r\n";
+            }
+            else
+            {
+                MASMcode_Declarations += "\r\n\r\n;---------- DLL POINTER:  " + declarations[i].name + " ----------\r\n";
+            }
+        }
+
+        else if (declarations[i].type == THUNK)
+        {
+            if ( IsNextDeclarationGroupable(i) )
+            {
+                MASMcode_Declarations += "\r\n\r\n;---------- THUNKS:  ----------\r\n";
+            }
+            else
+            {
+                MASMcode_Declarations += "\r\n\r\n;---------- THUNK:  " + declarations[i].name + " ----------\r\n";
+            }
+        }
+
+
+
+        // ---- ORIGIN ----
         origin      = declarations[i].address-programBase;
 
         if (origin > 0)
@@ -161,7 +369,8 @@ void Assembler::WriteMASMCode ()
             MASMcode_Declarations   += "\r\n";
         }
 
-        // -- DECLARATION
+
+        // ---- DECLARATION ----
         if (declarations[i].type == SEGMENT)
         {
             cout << "  It IS segment" << endl;
@@ -187,11 +396,19 @@ void Assembler::WriteMASMCode ()
             MASMcode_Declarations   +=  "____DATA_"        + to_string(variableCount) + ":\r\n";
             MASMcode_Publications   += "PUBLIC\t____DATA_" + to_string(variableCount) + "\r\n";
 
-            // -- DECLARATION --
-            MASMcode_Declarations   += declarations[i].name;
+            while (true)
+            {
+                // -- DECLARATION --
+                MASMcode_Declarations   += declarations[i].name;
 
-            // -- CONTENT --
-            MASMcode_Declarations   += '\t' + declarations[i].declaration + '\t' + ConvertContentNumbers(declarations[i].content) + "\r\n";
+                // -- CONTENT --
+                MASMcode_Declarations   += '\t' + declarations[i].declaration + '\t' + ConvertContentNumbers(declarations[i].content) + "\r\n";
+
+                if ( IsNextDeclarationGroupable(i) )
+                    i++;
+                else
+                    break;
+            }
 
             // -- LABEL END DECLARATION --
             MASMcode_Declarations   +=  "____ENDD_"        + to_string(variableCount) + ":\r\n";
@@ -222,17 +439,51 @@ void Assembler::WriteMASMCode ()
         {
             cout << "  It IS dll func" << endl;
 
-            // -- LABEL BEGIN DECLARATION --
-            MASMcode_Declarations   +=  declarations[i].name + "_pointer" + ":\r\n";
+            // -- DLL FUNC POINTER DECLARATIONS --
+            while (true)
+            {
+                MASMcode_Declarations   +=  declarations[i].name + "_pointer" + "\tDWORD\t0FEFEFEFEh" + "\r\n";
+
+                if ( IsNextDeclarationGroupable(i) )
+                    i++;
+                else
+                    break;
+            }
+
             // -- MARGIN --
             MASMcode_Declarations   +=  "\r\n";
 
-            segmentCount++;
+            dllCount++;
+        }
+        else if (declarations[i].type == THUNK)
+        {
+            cout << "  It IS jump thunk" << endl;
+
+            // -- JUMP THUNK DECLARATIONS --
+            while (true)
+            {
+                if (autoInclude)
+                    MASMcode_Declarations += "_";
+
+                MASMcode_Declarations   +=  declarations[i].name + ":\tjmp dword ptr [" + declarations[i].name + "_pointer]\r\n";
+
+                if ( IsNextDeclarationGroupable(i) )
+                    i++;
+                else
+                    break;
+            }
+
+            // -- MARGIN --
+            MASMcode_Declarations   +=  "\r\n";
+
+            thunkCount++;
         }
         else
         {
-            cout << "  unrecognized type" << endl;
+            cout << "  unrecognized type  (" << declarations[i].type << ")\n";
         }
+
+        previousDeclaration = declarations[i];
     }
 
     // ---------- PREPARE FINAL MASM CODE ----------
@@ -240,12 +491,19 @@ void Assembler::WriteMASMCode ()
     MASMcode += ".model flat, stdcall   \r\n";
     MASMcode += "option casemap:none    \r\n";
     MASMcode += "                       \r\n";
+
+    MASMcode += MASMcode_Includes;
+    MASMcode += "\r\n\r\n\r\n";
+    MASMcode += MASMcode_Publications;
+    MASMcode += MASMcode_DeclarationSegments;
+
+    MASMcode += "\r\n;########## ALL DATA CONTAINER: ##########\r\n";
+    MASMcode += "                       \r\n";
     MASMcode += ".code                  \r\n";
     MASMcode += "____start:             \r\n";
     MASMcode += "                       \r\n";
     MASMcode += "                       \r\n";
 
-    MASMcode += MASMcode_Publications;
     MASMcode += MASMcode_Declarations;
 
     MASMcode += "END ____start          \r\n";
@@ -257,6 +515,9 @@ void Assembler::WriteMASMCode ()
 void Assembler::InvokeMASM ()
 {
     cout << "InvokeMASM" << endl;
+
+    if (baseData.IsEmpty())
+        return;
 
     FileData fileData       (MASMcode);
     if (fileData.SaveTextFile   ("test_result.asm"))

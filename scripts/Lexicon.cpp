@@ -35,34 +35,38 @@ unordered_map <string, DWORD> Parser::sectionKeywords =
 unordered_map <string, Parser::FuncParse> Parser::generalKeywords =
 {
     // -- CONTAINERS --
-    {"SECTION", {ParseSection,  NULL} },
-    {"SEGMENT", {ParseSegment,  NULL} },
-    {"PROC",    {ParseProcedure,NULL} },
+    {"SECTION",     {ParseSection,      NULL} },
+    {"SEGMENT",     {ParseSegment,      NULL} },
+    {"PROC",        {ParseProcedure,    NULL} },
+    {"DECLARATION", {ParseDeclaration,  NULL} },
+
+    // -- THUNK --
+    {"THUNK",       {ParseThunk,        NULL} },
 
     // -- OPERATION --
-    {"MERGE",   {ParseMerge,    NULL} },
+    {"MERGE",       {ParseMerge,        NULL} },
 
     // -- VARIABLES --
     //FLOATS
-    {"REAL10",  {ParseVariable, (10, FPU, NOT_APPLICABLE) } },
-    {"REAL8",   {ParseVariable, ( 8, FPU, NOT_APPLICABLE) } },
-    {"REAL4",   {ParseVariable, ( 4, FPU, NOT_APPLICABLE) } },
+    {"REAL10",  {ParseVariable, FuncArgs(10, FPU, NOT_APPLICABLE) } },
+    {"REAL8",   {ParseVariable, FuncArgs( 8, FPU, NOT_APPLICABLE) } },
+    {"REAL4",   {ParseVariable, FuncArgs( 4, FPU, NOT_APPLICABLE) } },
     //INTEGERS
- // {"OWORD",   {ParseVariable, (16, CPU, UNSIGNED) } },
-    {"TBYTE",   {ParseVariable, (10, CPU, UNSIGNED) } },
-    {"QWORD",   {ParseVariable, ( 8, CPU, UNSIGNED) } },
-    {"FWORD",   {ParseVariable, ( 6, CPU, UNSIGNED) } },
-    {"DWORD",   {ParseVariable, ( 4, CPU, UNSIGNED) } },
-    {"WORD",    {ParseVariable, ( 2, CPU, UNSIGNED) } },
-    {"BYTE",    {ParseVariable, ( 1, CPU, UNSIGNED) } },
+ // {"OWORD",   {ParseVariable, FuncArgs(16, CPU, UNSIGNED) } },
+    {"TBYTE",   {ParseVariable, FuncArgs(10, CPU, UNSIGNED) } },
+    {"QWORD",   {ParseVariable, FuncArgs( 8, CPU, UNSIGNED) } },
+    {"FWORD",   {ParseVariable, FuncArgs( 6, CPU, UNSIGNED) } },
+    {"DWORD",   {ParseVariable, FuncArgs{ 4, CPU, UNSIGNED} } },
+    {"WORD",    {ParseVariable, FuncArgs( 2, CPU, UNSIGNED) } },
+    {"BYTE",    {ParseVariable, FuncArgs( 1, CPU, UNSIGNED) } },
     //SIGNED
- // {"SOWORD",  {ParseVariable, (16, CPU, SIGNED) } },
-    {"STBYTE",  {ParseVariable, (10, CPU, SIGNED) } },
-    {"SQWORD",  {ParseVariable, ( 8, CPU, SIGNED) } },
-    {"SFWORD",  {ParseVariable, ( 6, CPU, SIGNED) } },
-    {"SDWORD",  {ParseVariable, ( 4, CPU, SIGNED) } },
-    {"SWORD",   {ParseVariable, ( 2, CPU, SIGNED) } },
-    {"SBYTE",   {ParseVariable, ( 1, CPU, SIGNED) } },
+ // {"SOWORD",  {ParseVariable, FuncArgs(16, CPU, SIGNED) } },
+    {"STBYTE",  {ParseVariable, FuncArgs(10, CPU, SIGNED) } },
+    {"SQWORD",  {ParseVariable, FuncArgs( 8, CPU, SIGNED) } },
+    {"SFWORD",  {ParseVariable, FuncArgs( 6, CPU, SIGNED) } },
+    {"SDWORD",  {ParseVariable, FuncArgs( 4, CPU, SIGNED) } },
+    {"SWORD",   {ParseVariable, FuncArgs( 2, CPU, SIGNED) } },
+    {"SBYTE",   {ParseVariable, FuncArgs( 1, CPU, SIGNED) } },
     //ADDITIONAL
 //  {"TEXT",    {ParseVariable, NULL} },
 };
