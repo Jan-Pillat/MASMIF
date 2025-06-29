@@ -5,6 +5,7 @@
 #include <windows.h>
 #include "Declarations.hpp"
 #include "Parser.hpp"
+#include "PEData.hpp"
 #include "../CppCore/include/FileData.hpp"
 #include "../CppCore/include/ReadableWinAPI.hpp"
 
@@ -15,11 +16,11 @@ class Assembler
 
 public:
 
-    Assembler (Parser& gotParser);
+    Assembler (Parser& gotParser, PEData& gotPEData);
 
 private:
 
-    void LoadPEHeaders        ();
+    void LoadSectionBase      ();
     void ScanAndDeclareDLLs   ();
     void ScanAndDeclareThunks ();
     void DeclareIncludes      ();
@@ -28,17 +29,15 @@ private:
     void InvokeMASM           ();
 
     DWORD RvaToOffset       (DWORD rva);
+    char* RvaToPointer      (DWORD rva);
     DWORD VaToOffset        (DWORD va);
+    char* VaToPointer       (DWORD va);
 
-    FileData baseData;
-
-    IMAGE_DOS_HEADER*       DOSHeader;
-    IMAGE_NT_HEADERS32*     PEHeaders;
-    IMAGE_SECTION_HEADER*   sectionHeaders;
+    PEData&  baseData;
 
     vector <string> dllNames;
 
-    DWORD   programBase = 0;
+    DWORD   sectionBase = 0;
     BYTE    pointerSize = 4;
     BYTE    thunkSize   = 6;
 
@@ -46,7 +45,7 @@ private:
     vector  <Declaration>& declarations;
     bool    IsNextDeclarationGroupable(size_t i);
 
-    vector <Thunk>  thunks;
+    vector <Thunk>&  thunks;
 
     void   ConvertNumberToHexString (string& destination, long long number);
     string ConvertContentNumbers    (string& content);

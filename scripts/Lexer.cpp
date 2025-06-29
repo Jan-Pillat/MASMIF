@@ -4,11 +4,11 @@ using namespace std;
 
 //======================================================
 //======================================================
-Lexer::Lexer ()
+Lexer::Lexer (vector<Token>& gotTokens) : tokens(gotTokens)
 {
 
 }
-Lexer::Lexer (char* filePath)
+Lexer::Lexer (vector<Token>& gotTokens, char* filePath) : tokens(gotTokens)
 {
     Tokenize (filePath);
 }

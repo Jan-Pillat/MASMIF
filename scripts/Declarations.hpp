@@ -3,10 +3,11 @@
 
     #include <windows.h>
     #include <string>
+    #include "../CppCore/include/BinaryData.hpp"
     using std::string;
 
 
-// ======================== PARSING FUNC DECLARATION ========================
+// ======================== PARSING FUNC DECLARATIONS ========================
 
 enum VarType
 {
@@ -69,7 +70,7 @@ struct Thunk
     DWORD   address     = 0;
 };
 
-// ======================== ELEMENT DECLARATION ========================
+// ======================== DECLARATION DECLARATIONS ========================
 
 static constexpr char declarationTypeDescription[0x8][0x10] =
 {
@@ -132,9 +133,23 @@ struct DeclarationComparison
     }
 };
 
+// ======================== PE DECLARATIONS ========================
+
+struct PESection
+{
+    IMAGE_SECTION_HEADER    header;
+    BinaryData              rawData;
+
+    PESection (IMAGE_SECTION_HEADER* gotHeader, char* gotRawData)
+    {
+        header = *gotHeader;
+        rawData.SetData(gotRawData, header.SizeOfRawData);
+    }
+};
+
 #endif
 
-// ---------- OLD, MORE COMPLICATED ----------
+// ---------- OLD AND MORE COMPLICATED ----------
 /*
 #ifndef _HPP_Declarations_
 #define _HPP_Declarations_

@@ -59,6 +59,8 @@
 		<Unit filename="scripts/Lexer.cpp" />
 		<Unit filename="scripts/Lexer.hpp" />
 		<Unit filename="scripts/Lexicon.cpp" />
+		<Unit filename="scripts/PEData.cpp" />
+		<Unit filename="scripts/PEData.hpp" />
 		<Unit filename="scripts/Parser.cpp" />
 		<Unit filename="scripts/Parser.hpp" />
 		<Unit filename="scripts/StrUniLoadNumber.cpp" />

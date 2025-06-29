@@ -5,10 +5,14 @@ using namespace std;
 
 //======================================================
 //======================================================
-Assembler::Assembler (Parser& gotParser) :  declarations(gotParser.declarations), thunks(gotParser.thunks)
+Assembler::Assembler (Parser& gotParser, PEData& gotPEData) :  declarations(gotParser.declarations), thunks(gotParser.thunks), baseData(gotPEData)
 {
     cout << "Assembler Init" << endl;
-    LoadPEHeaders           ();
+
+    if (baseData.data.IsEmpty())
+        return;
+
+    LoadSectionBase         ();
     ScanAndDeclareDLLs      ();
     ScanAndDeclareThunks    ();
     DeclareIncludes         ();
@@ -22,54 +26,45 @@ Assembler::Assembler (Parser& gotParser) :  declarations(gotParser.declarations)
 
 DWORD Assembler::RvaToOffset (DWORD rva) //rva - relative virtual address
 {
-    if (PEHeaders == nullptr)
-        return 0;
-
-    for (int i = PEHeaders->FileHeader.NumberOfSections-1;  i>=0;   i--)
+    for (int i = 0;  i<baseData.sections.size();   i++)
     {
-        DWORD begin = sectionHeaders[i].VirtualAddress;
-        DWORD size  = sectionHeaders[i].Misc.VirtualSize;
+        DWORD begin = baseData.sections[i].header.VirtualAddress;
+        DWORD size  = baseData.sections[i].header.Misc.VirtualSize;
 
         if (rva >= begin  &&  rva < begin+size)
-            return rva - begin + sectionHeaders[i].PointerToRawData;
+            return rva - begin + baseData.sections[i].header.PointerToRawData;
     }
     return 0;
 }
 
+char* Assembler::RvaToPointer (DWORD rva) //rva - relative virtual address
+{
+    return baseData.data.GetBeginPointer()+RvaToOffset(rva);
+}
+
 DWORD Assembler::VaToOffset (DWORD va) //va - virtual address
 {
-    if (PEHeaders == nullptr)
-        return 0;
+    return RvaToOffset (va - baseData.OptionalHeader.ImageBase);
+}
 
-    return RvaToOffset (va - PEHeaders->OptionalHeader.ImageBase);
+char* Assembler::VaToPointer (DWORD va) //va - virtual address
+{
+    return baseData.data.GetBeginPointer()+VaToOffset(va);
 }
 
 //======================================================
 //======================================================
 
 
-void Assembler::LoadPEHeaders ()
+void Assembler::LoadSectionBase ()
 {
-    cout << "LoadPEHeaders" << endl;
+    if (0<baseData.sections.size())
+        sectionBase     = baseData.sections[0].header.VirtualAddress;
 
-    baseData.LoadBinaryFile("base.exe");
 
-    if (baseData.IsEmpty())
-        cout << "No base.exe!" << endl;
-
-    DOSHeader       = reinterpret_cast<IMAGE_DOS_HEADER*>(baseData.GetBeginPointer());
-
-    if (DOSHeader->e_magic != IMAGE_DOS_SIGNATURE)
-        return;
-
-    PEHeaders       = reinterpret_cast<IMAGE_NT_HEADERS32*>(baseData.GetBeginPointer() + DOSHeader->e_lfanew);
-
-    if (PEHeaders->Signature != IMAGE_NT_SIGNATURE)
-        return;
-
-    sectionHeaders  = reinterpret_cast<IMAGE_SECTION_HEADER*>((char*)PEHeaders+sizeof(IMAGE_NT_HEADERS32));
-
-    programBase     = PEHeaders->OptionalHeader.ImageBase + PEHeaders->OptionalHeader.BaseOfCode;
+    for (int i=1;  i<baseData.sections.size();  i++)
+        if (baseData.sections[i].header.VirtualAddress < sectionBase)
+            sectionBase = baseData.sections[i].header.VirtualAddress;
 }
 
 //======================================================
@@ -80,14 +75,14 @@ void Assembler::ScanAndDeclareDLLs ()
     cout << "ScanAndDeclareDLLs" << endl;
 
     // -- SAFEGUARD --
-    if (baseData.IsEmpty())
+    if (baseData.data.IsEmpty())
         return;
 
     // -- MORE READABLE POINTER --
-    char* pointer   = baseData.GetBeginPointer();
+    char* pointer   = baseData.data.GetBeginPointer();
 
     cout << "Get VirtualAddress" << endl;
-    DWORD importTableRva = PEHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress;
+    DWORD importTableRva = baseData.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress;
 
     cout << "Check VirtualAddress" << endl;
     if (importTableRva == 0)
@@ -108,9 +103,9 @@ void Assembler::ScanAndDeclareDLLs ()
 
     while (dllDescriptor->Name != 0)
     {
-        dllNames.emplace_back (&baseData[RvaToOffset(dllDescriptor->Name)]);
+        dllNames.emplace_back (&baseData.data[RvaToOffset(dllDescriptor->Name)]);
 
-        DWORD  dllFuncPointerRVA    = dllDescriptor->FirstThunk + PEHeaders->OptionalHeader.ImageBase - 4; //-4 because loop always makes +4
+        DWORD  dllFuncPointerRVA    = dllDescriptor->FirstThunk + baseData.OptionalHeader.ImageBase - 4; //-4 because loop always makes +4
         DWORD* dllFuncNameRVAs      = reinterpret_cast<DWORD*>(pointer+RvaToOffset(dllDescriptor->OriginalFirstThunk));
 
         if (dllFuncPointerRVA != 0)
@@ -137,7 +132,7 @@ void Assembler::ScanAndDeclareThunks ()
     cout << "ScanAndDeclareThunks" << endl;
     for (int i = 0;  i<thunks.size();  i++)
     {
-        char* thunkPointer      =   baseData.GetBeginPointer() + VaToOffset(thunks[i].address);
+        char* thunkPointer      =   baseData.data.GetBeginPointer() + VaToOffset(thunks[i].address);
         DWORD currentAddress    =   thunks[i].address - thunkSize; //-thunkSize because loop uses +=thunkSize
         DWORD count             =   0;
 
@@ -258,10 +253,6 @@ void Assembler::WriteMASMCode ()
     // ---------- DEBUG INFO ----------
     cout << "WriteMASMCode" << endl;
 
-    // ---------- SAFEGUARD ----------
-    if (baseData.IsEmpty())
-        return;
-
     // ---------- VARIABLES ----------
     int segmentCount    = 0;
     int variableCount   = 0;
@@ -302,7 +293,7 @@ void Assembler::WriteMASMCode ()
         }
 
 
-        if (declarations[i].address < programBase)
+        if (declarations[i].address < sectionBase)
         {
             cout << "  Incorrect address: " << hex << "0x" << declarations[i].address << dec << endl;
             continue;
@@ -360,7 +351,7 @@ void Assembler::WriteMASMCode ()
 
 
         // ---- ORIGIN ----
-        origin      = declarations[i].address-programBase;
+        origin      = declarations[i].address-sectionBase;
 
         if (origin > 0)
         {
@@ -516,15 +507,12 @@ void Assembler::InvokeMASM ()
 {
     cout << "InvokeMASM" << endl;
 
-    if (baseData.IsEmpty())
-        return;
-
     FileData fileData       (MASMcode);
     if (fileData.SaveTextFile   ("test_result.asm"))
     {
         string mlCommand = "C:\\masm32\\bin\\ml.exe /c /coff test_result.asm";
 
-        string base; ConvertNumberToHexString (base, PEHeaders->OptionalHeader.ImageBase);
+        string base; ConvertNumberToHexString (base, baseData.OptionalHeader.ImageBase);
         base.resize (base.size()-1);
         base = "0x" + base;
 

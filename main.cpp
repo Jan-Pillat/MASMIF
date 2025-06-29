@@ -1,11 +1,12 @@
 
 #include <iostream>
 #include <windows.h>
+#include "scripts\PEData.hpp"
 #include "scripts\Token.hpp"
 #include "scripts\Lexer.hpp"
 #include "scripts\Parser.hpp"
 #include "scripts\Assembler.hpp"
-#include "CppCore/include/ReadableWinAPI.hpp"
+#include "CppCore\include\ReadableWinAPI.hpp"
 
 using namespace std;
 
@@ -16,19 +17,29 @@ void PrintTokens (Lexer& lexer)
         cout << "TOKEN " << i << ':' << endl << "  type: " << tokenTypeDescription[lexer.tokens[i].type] << endl << "  content: " << lexer.tokens[i].content << endl << endl;
 }
 
+// ========== BASE FILE ========== \\
+
+
+// ========== MAIN ========== \\
 
 int main()
 {
-    FileSelector selector;
-    selector.GetPath_OpenFile();
+    FileSelector userScript;
+    userScript.GetPath_OpenFile();
 
-    Lexer lexer;
-    lexer.Tokenize  (selector.path);
-    PrintTokens     (lexer);
+    if (userScript.path[0] == '\0')
+        return 1;
 
-    Parser parser(lexer.tokens);
+    vector   <Token>    tokens;
 
-    Assembler assembler (parser);
+    PEData peData       ("base.exe");
+
+    Lexer   lexer       (tokens, &userScript.path[0]);
+    PrintTokens         (lexer);
+
+    Parser  parser      (tokens);
+
+    Assembler assembler (parser, peData);
 
     system ("pause");
     return 0;

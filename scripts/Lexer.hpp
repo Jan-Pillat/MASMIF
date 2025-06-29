@@ -16,12 +16,12 @@
 class Lexer
 {
 public:
-    Lexer           ();
-    Lexer           (char* filePath);
+    Lexer           (vector<Token>& gotTokens);
+    Lexer           (vector<Token>& gotTokens, char* filePath);
 
     void Tokenize   (char* filePath);
 
-    vector   <Token>    tokens;
+    vector   <Token>&   tokens;
 
 private:
     void LexText    ();
