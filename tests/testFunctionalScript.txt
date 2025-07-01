@@ -1,8 +1,10 @@
 
 
 
+WORD	[NEW]		{ 0x2211     }	NEW_SECTION_VAR_TEST1
 DWORD	[0x401070]	{ 0xAABBCCDD }	DWORD_TEST
-QWORD	[0x401074]	{ -1 }			QWORD_TEST
+QWORD	[0x401074]	{ -1         }	QWORD_TEST
+DWORD	[NEW]		{ 0x44332211 }	NEW_SECTION_VAR_TEST2
 
 THUNK	[0x40101A]
 
@@ -12,26 +14,49 @@ PROC	[0x401050]	PROC_TEST
 	ret
 }
 
-SEGMENT	[0x401000]	BEGIN
-{
-	call REAL_BEGIN
-}
+SEGMENT	[0x401000]	BEGIN	{	call REAL_BEGIN		}
 
 PROC	[0x401030]	REAL_BEGIN
 {
 	invoke PROC_TEST
-	xchg dword ptr [QWORD_TEST], eax
+	;xchg dword ptr [QWORD_TEST], eax
+	call NOT_EAX
 	call ExitProcess
 	call dword ptr [ExitProcess_pointer]
 	ret
 }
 
-DECLARATION		NR 0
+DECLARATION NR 0
 {
 	include \masm32\include\windows.inc
 }
 
-DECLARATION  PROTOTYPES		NR 2
+DECLARATION NR 2 PROTOTYPES
 {
-	PROC_TEST PROTO 
+	PROC_TEST	PROTO 
+	NOT_EAX		PROTO 
+}
+
+PROC	[NEW]	NOT_EAX
+{
+	push eax
+	push eax
+	push eax
+	push eax
+	push eax
+	push eax
+	push eax
+	push eax
+	
+	pop eax
+	pop eax
+	pop eax
+	pop eax
+	pop eax
+	pop eax
+	pop eax
+	pop eax
+	
+	not eax
+	ret
 }

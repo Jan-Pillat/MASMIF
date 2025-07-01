@@ -12,7 +12,7 @@ Assembler::Assembler (Parser& gotParser, PEData& gotPEData) :  declarations(gotP
     if (baseData.data.IsEmpty())
         return;
 
-    LoadSectionBase         ();
+    LoadBeginBase           ();
     ScanAndDeclareDLLs      ();
     ScanAndDeclareThunks    ();
     DeclareIncludes         ();
@@ -56,15 +56,17 @@ char* Assembler::VaToPointer (DWORD va) //va - virtual address
 //======================================================
 
 
-void Assembler::LoadSectionBase ()
+void Assembler::LoadBeginBase ()
 {
     if (0<baseData.sections.size())
-        sectionBase     = baseData.sections[0].header.VirtualAddress;
+        beginBase     = baseData.sections[0].header.VirtualAddress;
 
 
     for (int i=1;  i<baseData.sections.size();  i++)
-        if (baseData.sections[i].header.VirtualAddress < sectionBase)
-            sectionBase = baseData.sections[i].header.VirtualAddress;
+        if (baseData.sections[i].header.VirtualAddress < beginBase)
+            beginBase = baseData.sections[i].header.VirtualAddress;
+
+    beginBase += baseData.OptionalHeader.ImageBase;
 }
 
 //======================================================
@@ -262,8 +264,6 @@ void Assembler::WriteMASMCode ()
 
     DWORD origin        = 0;
 
-    Declaration  previousDeclaration;
-
     // ---------- DEBUG INFO ----------
     cout << "declarations count = " << declarations.size() << endl;
 
@@ -272,7 +272,7 @@ void Assembler::WriteMASMCode ()
     {
         cout << "i = " << i << endl;
 
-
+        // ---- DECLARATION SEGMENTS ARE FIRST ----
         if (declarations[i].type == DECLARATION)
         {
             cout << "  It IS declaration" << endl;
@@ -287,13 +287,14 @@ void Assembler::WriteMASMCode ()
             MASMcode_DeclarationSegments   +=  declarations[i].content + "\r\n";
 
             // -- MARGIN --
-            MASMcode_Declarations   +=  "\r\n";
+            MASMcode_DeclarationSegments   +=  "\r\n";
 
             continue;
         }
 
 
-        if (declarations[i].address < sectionBase)
+
+        if ( (declarations[i].address < beginBase) && (!declarations[i].intoNewSection) )
         {
             cout << "  Incorrect address: " << hex << "0x" << declarations[i].address << dec << endl;
             continue;
@@ -301,139 +302,137 @@ void Assembler::WriteMASMCode ()
 
 
 
+        // ---- DESTINATION ----
+        string* destination = &MASMcode_Declarations;
+
+        if (declarations[i].intoNewSection)
+        {
+            if (declarations[i].type == SEGMENT)
+            {
+                destination = &MASMcode_NewRest;
+            }
+
+            else if (declarations[i].type == PROCEDURE)
+            {
+                destination = &MASMcode_NewCode;
+            }
+
+            else if (declarations[i].type == VARIABLE)
+            {
+                destination = &MASMcode_NewData;
+            }
+        }
+
+
+
         // ---- SIGNATURE ----
         if (declarations[i].type == SEGMENT)
         {
-            MASMcode_Declarations += "\r\n\r\n;========== SEGMENT:  " + declarations[i].name + " ==========\r\n";
+            *destination += "\r\n\r\n;========== SEGMENT:  " + declarations[i].name + " ==========\r\n";
         }
 
         else if ( (declarations[i].type == PROCEDURE) /*&& (declarations[i].content != "")*/ )
         {
-            MASMcode_Declarations += "\r\n\r\n;---------- PROCEDURE:  " + declarations[i].name + " ----------\r\n";
+            *destination += "\r\n\r\n;---------- PROCEDURE:  " + declarations[i].name + " ----------\r\n";
         }
 
         else if (declarations[i].type == VARIABLE)
         {
             if ( IsNextDeclarationGroupable(i) )
-            {
-                MASMcode_Declarations += "\r\n\r\n;---------- VARIABLES:  ----------\r\n";
-            }
+                *destination += "\r\n\r\n;---------- VARIABLES:  ----------\r\n";
             else
-            {
-                MASMcode_Declarations += "\r\n\r\n;---------- VARIABLE:  " + declarations[i].name + " ----------\r\n";
-            }
+                *destination += "\r\n\r\n;---------- VARIABLE:  " + declarations[i].name + " ----------\r\n";
         }
 
         else if (declarations[i].type == DLL)
         {
             if ( IsNextDeclarationGroupable(i) )
-            {
-                MASMcode_Declarations += "\r\n\r\n;---------- DLL POINTERS:  ----------\r\n";
-            }
+                *destination += "\r\n\r\n;---------- DLL POINTERS:  ----------\r\n";
             else
-            {
-                MASMcode_Declarations += "\r\n\r\n;---------- DLL POINTER:  " + declarations[i].name + " ----------\r\n";
-            }
+                *destination += "\r\n\r\n;---------- DLL POINTER:  " + declarations[i].name + " ----------\r\n";
         }
 
         else if (declarations[i].type == THUNK)
         {
             if ( IsNextDeclarationGroupable(i) )
-            {
-                MASMcode_Declarations += "\r\n\r\n;---------- THUNKS:  ----------\r\n";
-            }
+                *destination += "\r\n\r\n;---------- THUNKS:  ----------\r\n";
             else
+                *destination += "\r\n\r\n;---------- THUNK:  " + declarations[i].name + " ----------\r\n";
+        }
+
+
+
+        // -------- ORIGIN NAD LABEL BEGIN --------
+        if (!declarations[i].intoNewSection)
+        {
+            // ---- ORIGIN ----
+            origin      = declarations[i].address-beginBase;
+
+            if (origin > 0)
             {
-                MASMcode_Declarations += "\r\n\r\n;---------- THUNK:  " + declarations[i].name + " ----------\r\n";
+                *destination   += "ORG ";
+                ConvertNumberToHexString (*destination, origin);
+                *destination   += "\r\n";
             }
-        }
 
-
-
-        // ---- ORIGIN ----
-        origin      = declarations[i].address-sectionBase;
-
-        if (origin > 0)
-        {
-            MASMcode_Declarations   += "ORG ";
-            ConvertNumberToHexString (MASMcode_Declarations, origin);
-            MASMcode_Declarations   += "\r\n";
-        }
-
-
-        // ---- DECLARATION ----
-        if (declarations[i].type == SEGMENT)
-        {
-            cout << "  It IS segment" << endl;
 
             // -- LABEL BEGIN DECLARATION --
-            MASMcode_Declarations   +=  "____SEGM_"        + to_string(segmentCount) + ":\r\n";
-            MASMcode_Publications   += "PUBLIC\t____SEGM_" + to_string(segmentCount) + "\r\n";
-            // -- CONTENT --
-            MASMcode_Declarations   +=  ConvertContentNumbers(declarations[i].content) + "\r\n";
-            // -- LABEL END DECLARATION --
-            MASMcode_Declarations   +=  "____ENDS_"        + to_string(segmentCount) + ":\r\n";
-            MASMcode_Publications   += "PUBLIC\t____ENDS_" + to_string(segmentCount) + "\r\n";
-            // -- MARGIN --
-            MASMcode_Declarations   +=  "\r\n";
+            if (declarations[i].type == SEGMENT)
+            {
+                *destination            +=  "____SEGM_"        + to_string(segmentCount) + ":\r\n";
+                MASMcode_Publications   += "PUBLIC\t____SEGM_" + to_string(segmentCount) + "\r\n";
+            }
+            else if (declarations[i].type == VARIABLE)
+            {
+                *destination            +=  "____DATA_"        + to_string(variableCount) + ":\r\n";
+                MASMcode_Publications   += "PUBLIC\t____DATA_" + to_string(variableCount) + "\r\n";
+            }
+            else if (declarations[i].type == PROCEDURE)
+            {
+                *destination            +=  "____PROC_"        + to_string(procedureCount) + ":\r\n";
+                MASMcode_Publications   += "PUBLIC\t____PROC_" + to_string(procedureCount) + "\r\n";
+            }
+        }
 
-            segmentCount++;
+
+
+        // -------- CONTENT --------
+        if (declarations[i].type == SEGMENT)
+        {
+            *destination   +=  ConvertContentNumbers(declarations[i].content) + "\r\n";
         }
         else if (declarations[i].type == VARIABLE)
         {
-            cout << "  It IS variable" << endl;
-
-            // -- LABEL BEGIN DECLARATION --
-            MASMcode_Declarations   +=  "____DATA_"        + to_string(variableCount) + ":\r\n";
-            MASMcode_Publications   += "PUBLIC\t____DATA_" + to_string(variableCount) + "\r\n";
-
             while (true)
             {
                 // -- DECLARATION --
-                MASMcode_Declarations   += declarations[i].name;
+                *destination   += declarations[i].name;
 
                 // -- CONTENT --
-                MASMcode_Declarations   += '\t' + declarations[i].declaration + '\t' + ConvertContentNumbers(declarations[i].content) + "\r\n";
+                *destination   += '\t' + declarations[i].declaration + '\t' + ConvertContentNumbers(declarations[i].content) + "\r\n";
 
                 if ( IsNextDeclarationGroupable(i) )
                     i++;
                 else
                     break;
             }
-
-            // -- LABEL END DECLARATION --
-            MASMcode_Declarations   +=  "____ENDD_"        + to_string(variableCount) + ":\r\n";
-            MASMcode_Publications   += "PUBLIC\t____ENDD_" + to_string(variableCount) + "\r\n";
-
-            variableCount++;
         }
         else if (declarations[i].type == PROCEDURE)
         {
-            cout << "  It IS procedure" << endl;
-            // -- LABEL BEGIN DECLARATION --
-            MASMcode_Declarations   +=  "____PROC_"        + to_string(procedureCount) + ":\r\n";
-            MASMcode_Publications   += "PUBLIC\t____PROC_" + to_string(procedureCount) + "\r\n";
             // -- PROCEDURE DECLARATION --
-            MASMcode_Declarations   += declarations[i].name + "\tPROC\r\n";
+            *destination   += declarations[i].name + "\tPROC\r\n";
             // -- CONTENT --
             if (declarations[i].content!="")
-                MASMcode_Declarations   += ConvertContentNumbers(declarations[i].content) + "\r\n";
+                *destination   += ConvertContentNumbers(declarations[i].content) + "\r\n";
             // -- FINISH --
-            MASMcode_Declarations   += declarations[i].name + "\tENDP\r\n";
-            // -- LABEL END DECLARATION --
-            MASMcode_Declarations   +=  "____ENDP_"        + to_string(procedureCount) + ":\r\n";
-            MASMcode_Publications   += "PUBLIC\t____ENDP_" + to_string(procedureCount) + "\r\n";
-
-            procedureCount++;
+            *destination   += declarations[i].name + "\tENDP\r\n";
         }
         else if (declarations[i].type == DLL)
         {
-            cout << "  It IS dll func" << endl;
-
             // -- DLL FUNC POINTER DECLARATIONS --
             while (true)
             {
-                MASMcode_Declarations   +=  declarations[i].name + "_pointer" + "\tDWORD\t0FEFEFEFEh" + "\r\n";
+                *destination   +=  declarations[i].name + "_pointer" + "\tDWORD\t0FEFEFEFEh" + "\r\n";
 
                 if ( IsNextDeclarationGroupable(i) )
                     i++;
@@ -442,21 +441,19 @@ void Assembler::WriteMASMCode ()
             }
 
             // -- MARGIN --
-            MASMcode_Declarations   +=  "\r\n";
+            *destination   +=  "\r\n";
 
             dllCount++;
         }
         else if (declarations[i].type == THUNK)
         {
-            cout << "  It IS jump thunk" << endl;
-
             // -- JUMP THUNK DECLARATIONS --
             while (true)
             {
                 if (autoInclude)
-                    MASMcode_Declarations += "_";
+                    *destination += "_";
 
-                MASMcode_Declarations   +=  declarations[i].name + ":\tjmp dword ptr [" + declarations[i].name + "_pointer]\r\n";
+                *destination   +=  declarations[i].name + ":\tjmp dword ptr [" + declarations[i].name + "_pointer]\r\n";
 
                 if ( IsNextDeclarationGroupable(i) )
                     i++;
@@ -465,7 +462,7 @@ void Assembler::WriteMASMCode ()
             }
 
             // -- MARGIN --
-            MASMcode_Declarations   +=  "\r\n";
+            *destination   +=  "\r\n";
 
             thunkCount++;
         }
@@ -474,8 +471,33 @@ void Assembler::WriteMASMCode ()
             cout << "  unrecognized type  (" << declarations[i].type << ")\n";
         }
 
-        previousDeclaration = declarations[i];
-    }
+
+
+        // -------- LABEL END DECLARATION --------
+        if (!declarations[i].intoNewSection)
+        {
+            if (declarations[i].type == SEGMENT)
+            {
+                *destination            +=  "____ENDS_"        + to_string(segmentCount) + ":\r\n";
+                MASMcode_Publications   += "PUBLIC\t____ENDS_" + to_string(segmentCount) + "\r\n";
+                segmentCount++;
+                // -- MARGIN --
+                *destination            +=  "\r\n";
+            }
+            else if (declarations[i].type == VARIABLE)
+            {
+                *destination            +=  "____ENDD_"        + to_string(variableCount) + ":\r\n";
+                MASMcode_Publications   += "PUBLIC\t____ENDD_" + to_string(variableCount) + "\r\n";
+                variableCount++;
+            }
+            else if (declarations[i].type == PROCEDURE)
+            {
+                *destination            +=  "____ENDP_"        + to_string(procedureCount) + ":\r\n";
+                MASMcode_Publications   += "PUBLIC\t____ENDP_" + to_string(procedureCount) + "\r\n";
+                procedureCount++;
+            }
+        }
+    } // LOOP END (for)
 
     // ---------- PREPARE FINAL MASM CODE ----------
     MASMcode += ".686p                  \r\n";
@@ -488,15 +510,56 @@ void Assembler::WriteMASMCode ()
     MASMcode += MASMcode_Publications;
     MASMcode += MASMcode_DeclarationSegments;
 
-    MASMcode += "\r\n;########## ALL DATA CONTAINER: ##########\r\n";
+    MASMcode += "\r\n";
+    MASMcode += ";################################################\r\n";
+    MASMcode += ";########## ORIGINAL PROGRAM SECTIONS: ##########\r\n";
+    MASMcode += ";################################################\r\n";
     MASMcode += "                       \r\n";
-    MASMcode += ".code                  \r\n";
+    MASMcode += "____main SEGMENT PARA 'CODE'\r\n";
     MASMcode += "____start:             \r\n";
     MASMcode += "                       \r\n";
     MASMcode += "                       \r\n";
 
     MASMcode += MASMcode_Declarations;
+    MASMcode += "____main ENDS\r\n";
 
+    if (MASMcode_NewCode != "")
+    {
+        MASMcode += "\r\n\r\n";
+        MASMcode += ";#######################################\r\n";
+        MASMcode += ";########## NEW CODE SECTION: ##########\r\n";
+        MASMcode += ";#######################################\r\n";
+        MASMcode += "\r\n";
+        MASMcode += "____code SEGMENT PARA 'CODE'";
+        MASMcode += MASMcode_NewCode;
+        MASMcode += "____code ENDS";
+    }
+
+    if (MASMcode_NewData != "")
+    {
+        MASMcode += "\r\n\r\n";
+        MASMcode += ";#######################################\r\n";
+        MASMcode += ";########## NEW DATA SECTION: ##########\r\n";
+        MASMcode += ";#######################################\r\n";
+        MASMcode += "\r\n";
+        MASMcode += "____data SEGMENT PARA 'DATA'";
+        MASMcode += MASMcode_NewData;
+        MASMcode += "____data ENDS";
+    }
+
+    if (MASMcode_NewRest != "")
+    {
+        MASMcode += "\r\n\r\n";
+        MASMcode += ";#######################################\r\n";
+        MASMcode += ";########## NEW REST SECTION: ##########\r\n";
+        MASMcode += ";#######################################\r\n";
+        MASMcode += "\r\n";
+        MASMcode += "____rest SEGMENT PARA 'CODE'";
+        MASMcode += MASMcode_NewRest;
+        MASMcode += "____rest ENDS";
+    }
+
+    MASMcode += "\r\n\r\n";
     MASMcode += "END ____start          \r\n";
 }
 
@@ -510,17 +573,38 @@ void Assembler::InvokeMASM ()
     FileData fileData       (MASMcode);
     if (fileData.SaveTextFile   ("test_result.asm"))
     {
-        string mlCommand = "C:\\masm32\\bin\\ml.exe /c /coff test_result.asm";
+        string fileName = "test_result";
+        // ====== ML ======
+        string mlCommand = "C:\\masm32\\bin\\ml.exe /c /coff " + fileName + ".asm";
 
-        string base; ConvertNumberToHexString (base, baseData.OptionalHeader.ImageBase);
-        base.resize (base.size()-1);
-        base = "0x" + base;
+        // --- BASE ---
+        string imageBase; ConvertNumberToHexString (imageBase, baseData.OptionalHeader.ImageBase);
+        imageBase.resize (imageBase.size()-1);
+        imageBase = "0x" + imageBase;
 
-        cout << "base = " << base << endl;
+        // --- SECTION ALIGN ---
+        string sectionAlignment; ConvertNumberToHexString (sectionAlignment, baseData.OptionalHeader.SectionAlignment);
+        sectionAlignment.resize (sectionAlignment.size()-1);
+        sectionAlignment = "0x" + sectionAlignment;
 
-        string linkCommand = "C:\\masm32\\bin\\link.exe /subsystem:windows /map /pdb:test_result_PDB /base:" + base + ' ' + "test_result.obj";
+        // --- RAW DATA ALIGN ---
+        string fileAlignment; ConvertNumberToHexString (fileAlignment, baseData.OptionalHeader.FileAlignment);
+        fileAlignment.resize (fileAlignment.size()-1);
+        fileAlignment = "0x" + fileAlignment;
 
+        // ====== LINK ======
+        string linkCommand  = "C:\\masm32\\bin\\link.exe " + fileName + ".obj" + ' '
+                            + "/subsystem:windows /map /pdb:test_result_PDB"
+                            + " /base:"      + imageBase;
+                            + " /align:"     + sectionAlignment;
+                            + " /filealign:" + fileAlignment;
 
+        // ====== DEBUG INFO ======
+        cout << "imageBase        = " << imageBase          << endl;
+        cout << "sectionAlignment = " << sectionAlignment   << endl;
+        cout << "fileAlignment    = " << fileAlignment      << endl;
+
+        // ====== REALISE ======
         system (&mlCommand[0]);
         system (&linkCommand[0]);
 
@@ -565,13 +649,13 @@ void Assembler::ConvertNumberToHexString (string& destination, long long number)
 
     char* i = hexNumStr + 1;                                //+1 it's skip of the first zero
 
-    while (*i=='0')
+    while (*i=='0')                                         //skip zero
         i++;
 
-    if (IsAlphabetic(*i))
+    if (IsAlphabetic(*i))                                   //letter must be preceded by a number
         i--;
 
-    destination += i;
+    destination += i;                                       //write
 }
 
 //======================================================

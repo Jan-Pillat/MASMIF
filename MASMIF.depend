@@ -218,7 +218,7 @@
 1751130620 source:c:\users\janpi\documents\c++ projects\masmif\scripts\lexicon.cpp
 	"Parser.hpp"
 
-1751217166 c:\users\janpi\documents\c++ projects\masmif\scripts\parser.hpp
+1751363489 c:\users\janpi\documents\c++ projects\masmif\scripts\parser.hpp
 	<unordered_map>
 	<algorithm>
 	<windows.h>
@@ -228,20 +228,20 @@
 	"Lexer.hpp"
 	"Declarations.hpp"
 
-1751130620 source:c:\users\janpi\documents\c++ projects\masmif\scripts\parser.cpp
+1751370914 source:c:\users\janpi\documents\c++ projects\masmif\scripts\parser.cpp
 	"Parser.hpp"
 	<iostream>
 
-1751214473 c:\users\janpi\documents\c++ projects\masmif\scripts\declarations.hpp
+1751356213 c:\users\janpi\documents\c++ projects\masmif\scripts\declarations.hpp
 	<windows.h>
 	<string>
 	"../CppCore/include/BinaryData.hpp"
 
-1751222877 source:c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.cpp
+1751371251 source:c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.cpp
 	"Assembler.hpp"
 	<iostream>
 
-1751222849 c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.hpp
+1751368855 c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.hpp
 	<vector>
 	<windows.h>
 	"Declarations.hpp"

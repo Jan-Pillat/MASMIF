@@ -85,6 +85,171 @@ bool    Parser::ShowNextToken    ()
 //======================================================
 
 
+bool Parser::SetAddress (Declaration& destination)
+{
+    static DWORD newIndex = 1; // This is so that the declarations of new sections are in order
+
+    // --- CHECK IS BEGIN CORRECT ---
+    if ( (gotToken->type != TYPE_SPECIAL) || (gotToken->content != "[") )
+        return false;
+
+    // --- DON'T SET ADDRESS SECOND A TIME ---
+    if (destination.address != 0)
+    {
+        while (GetTokenOnlyToLineEnd())
+        {
+            if ( ((gotToken->type == TYPE_SPECIAL) && (gotToken->content == "]"))  ||  (gotToken->type == TYPE_LINEEND) )
+                return false;
+        }
+        return false;
+    }
+
+    // --- TRY TO SET ADDRESS ---
+    bool result = false;
+
+    if (gotToken->type == TYPE_SPECIAL)
+    {
+        if (gotToken->content == "[")
+        {
+            while (GetTokenOnlyToLineEnd())
+            {
+                if (gotToken->type == TYPE_NUMBER)
+                {
+                    destination.address         = StrGetNum<int>(&gotToken->content[0]);
+                    destination.intoNewSection  = false;
+                    result                      = true;
+                }
+                else if ((gotToken->type == TYPE_WORD) && (gotToken->content == "NEW"))
+                {
+                    destination.address         = newIndex++;
+                    destination.intoNewSection  = true;
+                    result                      = true;
+                }
+                else if ((gotToken->type == TYPE_SPECIAL) && (gotToken->content == "]") || (gotToken->type == TYPE_LINEEND))
+                {
+                    break;
+                }
+            }
+        }
+    }
+    else if (gotToken->type == TYPE_WORD)
+    {
+        if (gotToken->content == "ADDRESS")
+            if (ShowNextToken())
+                if (nextToken->type == TYPE_NUMBER)
+                {
+                    GetToken();
+                    destination.address         =   StrGetNum<DWORD>(&gotToken->content[0]);
+                    destination.intoNewSection  =   false;
+                    result                      =   true;
+                }
+                else if ( (nextToken->type == TYPE_WORD) && (nextToken->content == "NEW") )
+                {
+                    GetToken();
+                    destination.address         =   newIndex++;
+                    destination.intoNewSection  =   true;
+                    result                      =   true;
+                }
+    }
+
+    return result;
+}
+
+//------------------------------------------------------
+
+bool Parser::SetSize (Declaration& destination)
+{
+    // --- CHECK IS BEGIN CORRECT ---
+    if ( (gotToken->type != TYPE_SPECIAL) || (gotToken->content != "(") )
+        return false;
+
+    // -- DON'T SET SIZE A SECOND TIME --
+    if (destination.size != 0)
+    {
+        while (GetTokenOnlyToLineEnd())
+        {
+            if ( ((gotToken->type == TYPE_SPECIAL) && (gotToken->content == ")"))  ||  (gotToken->type == TYPE_LINEEND) )
+                return false;
+        }
+        return false;
+    }
+
+    // -- TRY TO SET SIZE --
+    bool result = false;
+
+    //  SIZE IN ( )
+    if ( (gotToken->type == TYPE_SPECIAL) && (gotToken->content == "(") )
+    {
+        while (GetTokenOnlyToLineEnd())
+        {
+            if (gotToken->type == TYPE_NUMBER)
+            {
+                destination.size = StrGetNum<int>(&gotToken->content[0]);
+            }
+            else if ( (gotToken->type == TYPE_WORD) && (gotToken->content == "UNTIL") )
+            {
+                if (GetTokenOnlyToLineEnd())
+                {
+                    if (gotToken->type == TYPE_NUMBER)
+                    {
+                        destination.until        = true;
+                        destination.untilBinNum  = (BYTE)StrGetNum<int>(&gotToken->content[0]);
+                    }
+                    else if (gotToken->type == TYPE_WORD)
+                    {
+                        auto position = assemblyKeyword.find(gotToken->content);
+                        if (position != assemblyKeyword.end())
+                        {
+                            destination.until        = true;
+                            destination.untilBinNum  = position->second;
+                        }
+                    }
+                }
+            }
+            else if ((gotToken->type == TYPE_SPECIAL) && (gotToken->content == ")") || (gotToken->type == TYPE_LINEEND))
+            {
+                break;
+            }
+        }
+    }
+
+    //  SIZE AFTER "SIZE"
+    else if ( (gotToken->type == TYPE_WORD) && (gotToken->content == "SIZE") )
+    {
+        if (ShowNextToken())
+            if (nextToken->type == TYPE_NUMBER)
+            {
+                GetToken();
+                destination.size = StrGetNum<DWORD>(&gotToken->content[0]);
+            }
+            else if ( (nextToken->type == TYPE_WORD) && (nextToken->content == "UNTIL") )
+            {
+                if (ShowNextToken())
+                    if (nextToken->type == TYPE_NUMBER)
+                    {
+                        destination.until        = true;
+                        destination.untilBinNum  = (BYTE)StrGetNum<int>(&nextToken->content[0]);
+                    }
+                    else if (nextToken->type == TYPE_WORD)
+                    {
+                        auto position = assemblyKeyword.find(nextToken->content);
+                        if (position != assemblyKeyword.end())
+                        {
+                            destination.until        = true;
+                            destination.untilBinNum  = position->second;
+                        }
+                    }
+            }
+    }
+
+    return result;
+}
+
+
+//======================================================
+//======================================================
+
+
 
 
 void    Parser::ParseSection    ()
@@ -184,61 +349,10 @@ void    Parser::ParseSegment    ()
     while (GetTokenOnlyToLineEnd())
     {
         cout << "      gotToken = " << gotToken->content << " ; type = " << tokenTypeDescription[gotToken->type] << endl;
-        // ---------- ATTRIBUTES ----------
-        if (gotToken->type == TYPE_SPECIAL)
-        {
-            if (gotToken->content == "[")
-            {
-                while (GetTokenOnlyToLineEnd())
-                {
-                    if (gotToken->type == TYPE_NUMBER)
-                    {
-                        newSegment.address = StrGetNum<int>(&gotToken->content[0]);
-                    }
-                    else if ((gotToken->type == TYPE_SPECIAL) && (gotToken->content == "]") || (gotToken->type == TYPE_LINEEND))
-                    {
-                        break;
-                    }
-                }
-            }
-            else if (gotToken->content == "(")
-            {
-                while (GetTokenOnlyToLineEnd())
-                {
-                    if (gotToken->type == TYPE_NUMBER)
-                    {
-                        newSegment.size = StrGetNum<int>(&gotToken->content[0]);
-                    }
-                    else if (gotToken->type == TYPE_WORD)
-                    {
-                        if (gotToken->content == "UNTIL")
-                        {
-                            if (GetTokenOnlyToLineEnd())
-                            {
-                                if (gotToken->type == TYPE_NUMBER)
-                                {
-                                    newSegment.until        = true;
-                                    newSegment.untilBinNum  = (BYTE)StrGetNum<int>(&gotToken->content[0]);
-                                }
-                                else if (gotToken->type == TYPE_WORD)
-                                {
-                                    auto position = assemblyKeyword.find(gotToken->content);
-                                    if (position != assemblyKeyword.end())
-                                    {
-                                        newSegment.until        = true;
-                                        newSegment.untilBinNum  = position->second;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else if ((gotToken->type == TYPE_SPECIAL) && (gotToken->content == ")") || (gotToken->type == TYPE_LINEEND))
-                    {
-                        break;
-                    }
-                }
-            }
-        }
+        // ---------- ADDRESS ----------
+        if (!SetAddress(newSegment))
+        // ---------- SIZE ----------
+        if (!SetSize(newSegment))
         // ---------- CONTENT ----------
         if (gotToken->type == TYPE_CONTENT)
         {
@@ -247,30 +361,8 @@ void    Parser::ParseSegment    ()
         // ---------- NAME ----------
         else if (gotToken->type == TYPE_WORD)
         {
-            if (newSegment.size == 0)
-                if (gotToken->content == "SIZE")
-                    if (ShowNextToken())
-                        if (nextToken->type == TYPE_NUMBER)
-                        {
-                            GetToken();
-                            newSegment.size = StrGetNum<DWORD>(&gotToken->content[0]);
-                            goto L_SEGMENT_WORD_DONE;
-                        }
-
-            if (newSegment.address == 0)
-                if (gotToken->content == "ADDRESS")
-                    if (ShowNextToken())
-                        if (nextToken->type == TYPE_NUMBER)
-                        {
-                            GetToken();
-                            newSegment.address = StrGetNum<DWORD>(&gotToken->content[0]);
-                            goto L_SEGMENT_WORD_DONE;
-                        }
-
             if (newSegment.name == "")
                 newSegment.name  =   gotToken->content;
-
-            L_SEGMENT_WORD_DONE:
         }
         // ---------- END ----------
         else if (gotToken->type == TYPE_LINEEND)
@@ -306,30 +398,16 @@ void    Parser::ParseVariable    ()
     auto position = generalKeywords.find(gotToken->content);
     newVariable.size = position->second.argument.attributes.bytes;
 
-    cout << "newVariable.size = " << newVariable.size << endl;
-
     newVariable.declaration = gotToken->content;
 
     while (GetTokenOnlyToLineEnd())
     {
-        // ---------- ATTRIBUTES ----------
+        // ---------- ADDRESS ----------
+        if (!SetAddress(newVariable))
+        // ---------- VALUE ----------
         if (gotToken->type == TYPE_SPECIAL)
         {
-            if (gotToken->content == "[")
-            {
-                while (GetTokenOnlyToLineEnd())
-                {
-                    if (gotToken->type == TYPE_NUMBER)
-                    {
-                        newVariable.address = StrGetNum<int>(&gotToken->content[0]);
-                    }
-                    else if ((gotToken->type == TYPE_SPECIAL) && (gotToken->content == "]") || (gotToken->type == TYPE_LINEEND))
-                    {
-                        break;
-                    }
-                }
-            }
-            else if ( (gotToken->content == "=") || (gotToken->content == ":") )
+            if ( (gotToken->content == "=") || (gotToken->content == ":") )
             {
                 if (GetTokenOnlyToLineEnd())
                 {
@@ -345,20 +423,8 @@ void    Parser::ParseVariable    ()
         // ---------- NAME ----------
         else if (gotToken->type == TYPE_WORD)
         {
-            if (newVariable.address == 0)
-                if (gotToken->content == "ADDRESS")
-                    if (ShowNextToken())
-                        if (nextToken->type == TYPE_NUMBER)
-                        {
-                            GetToken();
-                            newVariable.address = StrGetNum<DWORD>(&gotToken->content[0]);
-                            goto L_VARIABLE_WORD_DONE;
-                        }
-
             if (newVariable.name == "")
                 newVariable.name  =   gotToken->content;
-
-            L_VARIABLE_WORD_DONE:
         }
         // ---------- END ----------
         else if (gotToken->type == TYPE_LINEEND)
@@ -395,61 +461,10 @@ void    Parser::ParseProcedure    ()
 
     while (GetTokenOnlyToLineEnd())
     {
-        // ---------- ATTRIBUTES ----------
-        if (gotToken->type == TYPE_SPECIAL)
-        {
-            if (gotToken->content == "[")
-            {
-                while (GetTokenOnlyToLineEnd())
-                {
-                    if (gotToken->type == TYPE_NUMBER)
-                    {
-                        newProcedure.address = StrGetNum<int>(&gotToken->content[0]);
-                    }
-                    else if ((gotToken->type == TYPE_SPECIAL) && (gotToken->content == "]") || (gotToken->type == TYPE_LINEEND))
-                    {
-                        break;
-                    }
-                }
-            }
-            else if (gotToken->content == "(")
-            {
-                while (GetTokenOnlyToLineEnd())
-                {
-                    if (gotToken->type == TYPE_NUMBER)
-                    {
-                        newProcedure.size = StrGetNum<int>(&gotToken->content[0]);
-                    }
-                    else if (gotToken->type == TYPE_WORD)
-                    {
-                        if (gotToken->content == "UNTIL")
-                        {
-                            if (GetTokenOnlyToLineEnd())
-                            {
-                                if (gotToken->type == TYPE_NUMBER)
-                                {
-                                    newProcedure.until        = true;
-                                    newProcedure.untilBinNum  = (BYTE)StrGetNum<int>(&gotToken->content[0]);
-                                }
-                                else if (gotToken->type == TYPE_WORD)
-                                {
-                                    auto position = assemblyKeyword.find(gotToken->content);
-                                    if (position != assemblyKeyword.end())
-                                    {
-                                        newProcedure.until        = true;
-                                        newProcedure.untilBinNum  = position->second;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else if ((gotToken->type == TYPE_SPECIAL) && (gotToken->content == ")") || (gotToken->type == TYPE_LINEEND))
-                    {
-                        break;
-                    }
-                }
-            }
-        }
+        // ---------- ADDRESS ----------
+        if (!SetAddress(newProcedure))
+        // ---------- SIZE ----------
+        if (!SetSize(newProcedure))
         // ---------- CONTENT ----------
         if (gotToken->type == TYPE_CONTENT)
         {
@@ -458,30 +473,8 @@ void    Parser::ParseProcedure    ()
         // ---------- NAME ----------
         else if (gotToken->type == TYPE_WORD)
         {
-            if (newProcedure.size == 0)
-                if (gotToken->content == "SIZE")
-                    if (ShowNextToken())
-                        if (nextToken->type == TYPE_NUMBER)
-                        {
-                            GetToken();
-                            newProcedure.size = StrGetNum<DWORD>(&gotToken->content[0]);
-                            goto L_PROCEDURE_WORD_DONE;
-                        }
-
-            if (newProcedure.address == 0)
-                if (gotToken->content == "ADDRESS")
-                    if (ShowNextToken())
-                        if (nextToken->type == TYPE_NUMBER)
-                        {
-                            GetToken();
-                            newProcedure.address = StrGetNum<DWORD>(&gotToken->content[0]);
-                            goto L_PROCEDURE_WORD_DONE;
-                        }
-
             if (newProcedure.name == "")
                 newProcedure.name  =   gotToken->content;
-
-            L_PROCEDURE_WORD_DONE:
         }
         // ---------- END ----------
         else if (gotToken->type == TYPE_LINEEND)

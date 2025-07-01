@@ -25,6 +25,9 @@ private:
     bool GetTokenOnlyToLineEnd  ();
     bool ShowNextToken          ();
 
+    bool SetAddress             (Declaration& destination);
+    bool SetSize                (Declaration& destination);
+
     void ParseSection           ();
     void ParseSegment           ();
     void ParseVariable          ();

@@ -108,6 +108,7 @@ struct Declaration
 
     //for: Segment, Variable, Procedure
     DWORD   address     = 0;
+    bool    intoNewSection= false;
 
     //for: Section
     DWORD   attributes  = 0;

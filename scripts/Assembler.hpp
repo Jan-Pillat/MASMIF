@@ -20,7 +20,7 @@ public:
 
 private:
 
-    void LoadSectionBase      ();
+    void LoadBeginBase        ();
     void ScanAndDeclareDLLs   ();
     void ScanAndDeclareThunks ();
     void DeclareIncludes      ();
@@ -37,7 +37,7 @@ private:
 
     vector <string> dllNames;
 
-    DWORD   sectionBase = 0;
+    DWORD   beginBase   = 0;
     BYTE    pointerSize = 4;
     BYTE    thunkSize   = 6;
 
@@ -56,6 +56,9 @@ private:
     string  MASMcode_Declarations;
     string  MASMcode_DeclarationSegments;
     string  MASMcode_Includes;
+    string  MASMcode_NewCode;
+    string  MASMcode_NewData;
+    string  MASMcode_NewRest;
 
     bool    autoInclude = false;
 };
