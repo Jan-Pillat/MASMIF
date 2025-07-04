@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1751217207 source:c:\users\janpi\documents\c++ projects\masmif\main.cpp
+1751651149 source:c:\users\janpi\documents\c++ projects\masmif\main.cpp
 	<iostream>
 	<windows.h>
 	"scripts\PEData.hpp"
@@ -7,6 +7,8 @@
 	"scripts\Lexer.hpp"
 	"scripts\Parser.hpp"
 	"scripts\Assembler.hpp"
+	"scripts\MapParser.hpp"
+	"scripts\Injector.hpp"
 	"CppCore\include\ReadableWinAPI.hpp"
 
 1750333840 c:\users\janpi\documents\c++ projects\masmif\cppcore\include\readablewinapi.hpp
@@ -158,7 +160,9 @@
 
 1750344216 c:\users\janpi\documents\c++ projects\masmif\scripts\parser\functiondeclarations.hpp
 
-1750323524 source:c:\users\janpi\documents\c++ projects\masmif\scripts\injector.cpp
+1751651288 source:c:\users\janpi\documents\c++ projects\masmif\scripts\injector.cpp
+	"Injector.hpp"
+	<iostream>
 
 1751212614 source:c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.cpp
 	"Lexer.hpp"
@@ -232,16 +236,16 @@
 	"Parser.hpp"
 	<iostream>
 
-1751356213 c:\users\janpi\documents\c++ projects\masmif\scripts\declarations.hpp
+1751642650 c:\users\janpi\documents\c++ projects\masmif\scripts\declarations.hpp
 	<windows.h>
 	<string>
 	"../CppCore/include/BinaryData.hpp"
 
-1751371251 source:c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.cpp
+1751645258 source:c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.cpp
 	"Assembler.hpp"
 	<iostream>
 
-1751368855 c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.hpp
+1751643609 c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.hpp
 	<vector>
 	<windows.h>
 	"Declarations.hpp"
@@ -258,4 +262,27 @@
 
 1751223006 source:c:\users\janpi\documents\c++ projects\masmif\scripts\pedata.cpp
 	"PEData.hpp"
+
+1751640993 c:\users\janpi\documents\c++ projects\masmif\scripts\mapparser.hpp
+	<unordered_map>
+	<algorithm>
+	<windows.h>
+	<vector>
+	"Token.hpp"
+	"StrUniLoadNumber.hpp"
+	"Lexer.hpp"
+	"Declarations.hpp"
+
+1751651275 c:\users\janpi\documents\c++ projects\masmif\scripts\injector.hpp
+	<algorithm>
+	<windows.h>
+	<vector>
+	"PEData.hpp"
+	"StrUniLoadNumber.hpp"
+	"Lexer.hpp"
+	"Declarations.hpp"
+
+1751646682 source:c:\users\janpi\documents\c++ projects\masmif\scripts\mapparser.cpp
+	"MapParser.hpp"
+	<iostream>
 

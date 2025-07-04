@@ -44,6 +44,7 @@ private:
     string  MASMcode;
     vector  <Declaration>& declarations;
     bool    IsNextDeclarationGroupable(size_t i);
+    DWORD   GetEndBase();
 
     vector <Thunk>&  thunks;
 

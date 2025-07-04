@@ -146,77 +146,33 @@ struct PESection
         header = *gotHeader;
         rawData.SetData(gotRawData, header.SizeOfRawData);
     }
+
+    PESection ()
+    {
+
+    }
 };
+
+// ======================== MAP DECLARATIONS ========================
+
+struct SectionToCopy
+{
+    DWORD   size;
+    string  name;
+};
+
+struct RawDataToCopy
+{
+    DWORD   virtualAddress;
+    DWORD   size;
+};
+
+struct MapDeclaration
+{
+    DWORD   virtualAddress;
+    string  name;
+};
+
+
 
 #endif
-
-// ---------- OLD AND MORE COMPLICATED ----------
-/*
-#ifndef _HPP_Declarations_
-#define _HPP_Declarations_
-
-struct Section
-{
-    string  name;
-    string  content;
-    DWORD   attributes;
-    DWORD   size;
-    bool    fixSize;
-};
-
-struct Segment
-{
-    string  name;
-    string  content;
-
-    DWORD   address;
-    DWORD   size;
-
-    bool    until;
-    BYTE    untilBinNum;
-};
-
-struct Variable
-{
-    string  name;
-    string  content;
-
-    DWORD   address;
-    DWORD   size;
-};
-
-struct Procedure
-{
-    string  name;
-    string  content;
-
-    DWORD   address;
-    DWORD   size;
-};
-
-struct Merge
-{
-    string  first;
-    string  second;
-};
-
-union Declaration
-{
-    Section     section;
-    Segment     segment;
-    Variable    variable;
-    Procedure   procedure;
-    Merge       merges;
-};
-
-enum DeclarationType
-{
-    SECTION,
-    SEGMENT,
-    VARIABLE,
-    PROCEDURE,
-    MERGE
-}
-
-#endif
-*/

@@ -56,9 +56,13 @@
 		<Unit filename="scripts/Assembler.cpp" />
 		<Unit filename="scripts/Assembler.hpp" />
 		<Unit filename="scripts/Declarations.hpp" />
+		<Unit filename="scripts/Injector.cpp" />
+		<Unit filename="scripts/Injector.hpp" />
 		<Unit filename="scripts/Lexer.cpp" />
 		<Unit filename="scripts/Lexer.hpp" />
 		<Unit filename="scripts/Lexicon.cpp" />
+		<Unit filename="scripts/MapParser.cpp" />
+		<Unit filename="scripts/MapParser.hpp" />
 		<Unit filename="scripts/PEData.cpp" />
 		<Unit filename="scripts/PEData.hpp" />
 		<Unit filename="scripts/Parser.cpp" />

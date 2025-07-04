@@ -185,7 +185,7 @@ void Assembler::ScanAndDeclareThunks ()
 
 //======================================================
 //======================================================
-bool IsFileExist(const char* path)
+static bool IsFileExist(const char* path)
 {
     DWORD   attributes = GetFileAttributesA(path);
     return (attributes != INVALID_FILE_ATTRIBUTES) && !(attributes & FILE_ATTRIBUTE_DIRECTORY);
@@ -250,15 +250,30 @@ bool Assembler::IsNextDeclarationGroupable (size_t i)
 
 //------------------------------------------------------
 
+DWORD Assembler::GetEndBase ()
+{
+    DWORD foundBase = baseData.sections[0].header.VirtualAddress + baseData.sections[0].header.SizeOfRawData;
+
+
+    for (int i=1;  i<baseData.sections.size();  i++)
+    {
+        DWORD end =   baseData.sections[i].header.VirtualAddress  +  baseData.sections[i].header.SizeOfRawData;
+        if (end > foundBase)
+            foundBase = end;
+    }
+
+    return foundBase + baseData.OptionalHeader.ImageBase;
+}
+
+//------------------------------------------------------
+
 void Assembler::WriteMASMCode ()
 {
     // ---------- DEBUG INFO ----------
     cout << "WriteMASMCode" << endl;
 
     // ---------- VARIABLES ----------
-    int segmentCount    = 0;
-    int variableCount   = 0;
-    int procedureCount  = 0;
+    int labelCount      = 0;
     int dllCount        = 0;
     int thunkCount      = 0;
 
@@ -377,20 +392,12 @@ void Assembler::WriteMASMCode ()
 
 
             // -- LABEL BEGIN DECLARATION --
-            if (declarations[i].type == SEGMENT)
+            if ( (declarations[i].type == SEGMENT)
+            ||   (declarations[i].type == VARIABLE)
+            ||   (declarations[i].type == PROCEDURE) )
             {
-                *destination            +=  "____SEGM_"        + to_string(segmentCount) + ":\r\n";
-                MASMcode_Publications   += "PUBLIC\t____SEGM_" + to_string(segmentCount) + "\r\n";
-            }
-            else if (declarations[i].type == VARIABLE)
-            {
-                *destination            +=  "____DATA_"        + to_string(variableCount) + ":\r\n";
-                MASMcode_Publications   += "PUBLIC\t____DATA_" + to_string(variableCount) + "\r\n";
-            }
-            else if (declarations[i].type == PROCEDURE)
-            {
-                *destination            +=  "____PROC_"        + to_string(procedureCount) + ":\r\n";
-                MASMcode_Publications   += "PUBLIC\t____PROC_" + to_string(procedureCount) + "\r\n";
+                *destination            +=  "____BEG_"        + to_string(labelCount) + ":\r\n";
+                MASMcode_Publications   += "PUBLIC\t____BEG_" + to_string(labelCount) + "\r\n";
             }
         }
 
@@ -476,25 +483,13 @@ void Assembler::WriteMASMCode ()
         // -------- LABEL END DECLARATION --------
         if (!declarations[i].intoNewSection)
         {
-            if (declarations[i].type == SEGMENT)
+            if ( (declarations[i].type == SEGMENT)
+            ||   (declarations[i].type == VARIABLE)
+            ||   (declarations[i].type == PROCEDURE) )
             {
-                *destination            +=  "____ENDS_"        + to_string(segmentCount) + ":\r\n";
-                MASMcode_Publications   += "PUBLIC\t____ENDS_" + to_string(segmentCount) + "\r\n";
-                segmentCount++;
-                // -- MARGIN --
-                *destination            +=  "\r\n";
-            }
-            else if (declarations[i].type == VARIABLE)
-            {
-                *destination            +=  "____ENDD_"        + to_string(variableCount) + ":\r\n";
-                MASMcode_Publications   += "PUBLIC\t____ENDD_" + to_string(variableCount) + "\r\n";
-                variableCount++;
-            }
-            else if (declarations[i].type == PROCEDURE)
-            {
-                *destination            +=  "____ENDP_"        + to_string(procedureCount) + ":\r\n";
-                MASMcode_Publications   += "PUBLIC\t____ENDP_" + to_string(procedureCount) + "\r\n";
-                procedureCount++;
+                *destination            +=  "____END_"        + to_string(labelCount) + ":\r\n";
+                MASMcode_Publications   += "PUBLIC\t____END_" + to_string(labelCount) + "\r\n";
+                labelCount++;
             }
         }
     } // LOOP END (for)
@@ -521,6 +516,10 @@ void Assembler::WriteMASMCode ()
     MASMcode += "                       \r\n";
 
     MASMcode += MASMcode_Declarations;
+
+    MASMcode += "ORG ";
+    ConvertNumberToHexString (MASMcode, GetEndBase());
+    MASMcode += "\r\n";
     MASMcode += "____main ENDS\r\n";
 
     if (MASMcode_NewCode != "")

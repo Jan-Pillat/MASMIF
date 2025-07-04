@@ -2,24 +2,44 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Debug" />
-	<File name="main.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="CppCore\include\StringUtils.hpp" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="667" topLine="19" />
-		</Cursor>
-	</File>
-	<File name="scripts\Parser.hpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="605" topLine="18" />
-		</Cursor>
-	</File>
-	<File name="CppCore\include\FileData.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1733" topLine="69" />
+			<Cursor1 position="793" topLine="4" />
 		</Cursor>
 	</File>
 	<File name="CppCore\include\ReadableWinAPI.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="4033" topLine="52" />
+			<Cursor1 position="447" topLine="9" />
+		</Cursor>
+	</File>
+	<File name="scripts\Injector.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3547" topLine="65" />
+		</Cursor>
+	</File>
+	<File name="CppCore\include\BinaryData.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1038" topLine="17" />
+		</Cursor>
+	</File>
+	<File name="scripts\MapParser.hpp" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="929" topLine="12" />
+		</Cursor>
+	</File>
+	<File name="main.cpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1857" topLine="42" />
+		</Cursor>
+	</File>
+	<File name="scripts\Parser.cpp" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3288" topLine="104" />
+		</Cursor>
+	</File>
+	<File name="scripts\Assembler.cpp" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="-3" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="16004" topLine="464" />
 		</Cursor>
 	</File>
 	<File name="scripts\Lexicon.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="-1" zoom_2="0">
@@ -27,14 +47,9 @@
 			<Cursor1 position="1166" topLine="12" />
 		</Cursor>
 	</File>
-	<File name="CppCore\src\FileData.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="scripts\Assembler.hpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="0" topLine="245" />
-		</Cursor>
-	</File>
-	<File name="scripts\Parser.cpp" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="12594" topLine="432" />
+			<Cursor1 position="1092" topLine="30" />
 		</Cursor>
 	</File>
 	<File name="CppCore\src\BinaryData.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -42,9 +57,14 @@
 			<Cursor1 position="4007" topLine="149" />
 		</Cursor>
 	</File>
-	<File name="scripts\PEData.hpp" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="scripts\Injector.hpp" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="365" topLine="4" />
+			<Cursor1 position="766" topLine="5" />
+		</Cursor>
+	</File>
+	<File name="CppCore\include\FileData.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1733" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="scripts\Token.hpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -52,9 +72,29 @@
 			<Cursor1 position="91" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="scripts\Declarations.hpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="scripts\PEData.hpp" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1893" topLine="97" />
+			<Cursor1 position="601" topLine="4" />
+		</Cursor>
+	</File>
+	<File name="scripts\MapParser.cpp" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="6103" topLine="177" />
+		</Cursor>
+	</File>
+	<File name="scripts\PEData.cpp" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="75" topLine="5" />
+		</Cursor>
+	</File>
+	<File name="CppCore\src\FileData.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="245" />
+		</Cursor>
+	</File>
+	<File name="scripts\Declarations.hpp" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2790" topLine="144" />
 		</Cursor>
 	</File>
 	<File name="scripts\StrUniLoadNumber.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -62,39 +102,19 @@
 			<Cursor1 position="113" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="scripts\Lexer.cpp" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="scripts\Lexer.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="273" topLine="0" />
+			<Cursor1 position="637" topLine="4" />
 		</Cursor>
 	</File>
-	<File name="CppCore\include\BinaryData.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="scripts\Parser.hpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1148" topLine="48" />
+			<Cursor1 position="605" topLine="18" />
 		</Cursor>
 	</File>
-	<File name="scripts\Lexer.hpp" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="-1" zoom_2="0">
+	<File name="scripts\Lexer.hpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="-1" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="0" topLine="18" />
-		</Cursor>
-	</File>
-	<File name="CppCore\include\StringUtils.hpp" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="793" topLine="4" />
-		</Cursor>
-	</File>
-	<File name="scripts\PEData.cpp" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="916" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="scripts\Assembler.hpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="418" topLine="12" />
-		</Cursor>
-	</File>
-	<File name="scripts\Assembler.cpp" open="1" top="1" tabpos="2" split="0" active="1" splitpos="0" zoom_1="-3" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="21643" topLine="620" />
+			<Cursor1 position="327" topLine="1" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>
