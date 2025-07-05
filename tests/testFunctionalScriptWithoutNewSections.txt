@@ -1,0 +1,36 @@
+
+
+
+
+DWORD	[0x401070]	{ 0xAABBCCDD }	DWORD_TEST
+QWORD	[0x401074]	{ -1         }	QWORD_TEST
+BYTE	[0x403000]	{ 'Wiadomosc'}	INFO_TEXT
+
+THUNK	[0x40101A]
+
+PROC	[0x401050]	PROC_TEST
+{
+	mov eax, DWORD_TEST
+	ret
+}
+
+SEGMENT	[0x401000]	BEGIN	{	call REAL_BEGIN		}
+
+PROC	[0x401030]	REAL_BEGIN
+{
+	invoke PROC_TEST
+	;xchg dword ptr [QWORD_TEST], eax
+	call ExitProcess
+	call dword ptr [ExitProcess_pointer]
+	ret
+}
+
+DECLARATION NR 0
+{
+	include \masm32\include\windows.inc
+}
+
+DECLARATION NR 2 PROTOTYPES
+{
+	PROC_TEST	PROTO 
+}

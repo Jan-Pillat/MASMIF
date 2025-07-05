@@ -8,7 +8,8 @@ using namespace std;
 //======================================================
 //======================================================
 
-Parser::Parser   (vector<Token>& gotTokens) : tokens(gotTokens)
+Parser::Parser   (vector<Token>& gotTokens, vector<Merge>& gotMerges, vector<Thunk>& gotThunks, vector<Declaration>& gotDeclarations)
+                    :    tokens (gotTokens),       merges (gotMerges),       thunks (gotThunks),       declarations (gotDeclarations)
 {
     while (GetToken())
     {

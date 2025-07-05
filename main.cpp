@@ -40,14 +40,16 @@ int main()
     }
 
     // - - -
-    vector   <Token>    tokens;
+    vector  <Token>         tokens;
+    vector  <Merge>         merges;
+    vector  <Thunk>         thunks;
+    vector  <Declaration>   declarations;
 
     Lexer   lexer       (tokens, &userScript.path[0]);
-    PrintTokens         (lexer);
 
-    Parser  parser      (tokens);
+    Parser  parser      (tokens, merges, thunks, declarations);
 
-    Assembler assembler (parser, peData);
+    Assembler assembler (thunks, declarations, peData);
     system ("pause");
 
     // ---------- MAP ----------
@@ -68,7 +70,7 @@ int main()
     PEData resultData   ("test_result.exe");
 
     string     targetPath = "target.exe";
-    Injector   injector (targetPath, peData, resultData, sectionsToCopy, rawDataToCopy);
+    Injector   injector (targetPath, peData, resultData, sectionsToCopy, rawDataToCopy, merges);
 
 
     // ---------- PROGRAM END ----------

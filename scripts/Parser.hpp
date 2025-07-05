@@ -18,7 +18,7 @@ class Parser
     friend class Assembler;
 
 public:
-    Parser (vector<Token>& gotTokens);
+    Parser (vector<Token>& gotTokens, vector<Merge>& gotMerges, vector<Thunk>& gotThunks, vector<Declaration>& gotDeclarations);
 
 private:
     bool GetToken               ();
@@ -51,9 +51,9 @@ private:
     static unordered_map <string, DWORD>       sectionKeywords;
     static unordered_map <string, FuncParse>   generalKeywords;
 
-    vector <Declaration>    declarations;
-    vector <Merge>          merges;
-    vector <Thunk>          thunks;
+    vector <Declaration>&   declarations;
+    vector <Merge>&         merges;
+    vector <Thunk>&         thunks;
 };
 
 

@@ -16,7 +16,7 @@ class Assembler
 
 public:
 
-    Assembler (Parser& gotParser, PEData& gotPEData);
+    Assembler (vector<Thunk>& gotThunks, vector<Declaration>& gotDeclarations, PEData& gotPEData);
 
 private:
 

@@ -149,6 +149,7 @@ void    MapParser::PrepareSectionsToCopyAndMapDeclarations ()
         if (gotToken->type != TYPE_NUMBER)
             continue;
 
+        gotToken->content = "0x" + gotToken->content;
         newMapDeclaration.virtualAddress = StrGetNum<DWORD>(&gotToken->content[0]);
 
 

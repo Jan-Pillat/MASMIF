@@ -14,7 +14,7 @@ using std::vector;
 class Injector
 {
 public:
-    Injector (string& gotPath,  PEData& gotPEData,  PEData& gotResultData,  vector<SectionToCopy>& gotSectionsToCopy,  vector<RawDataToCopy>& gotRawDataToCopy);
+    Injector (string& gotPath,  PEData& gotPEData,  PEData& gotResultData,  vector<SectionToCopy>& gotSectionsToCopy,  vector<RawDataToCopy>& gotRawDataToCopy, vector<Merge>& gotMerges);
 
 private:
     PEData&  base;
@@ -22,14 +22,19 @@ private:
 
     vector   <SectionToCopy>&   sectionsToCopy;
     vector   <RawDataToCopy>&   rawDataToCopy;
+    vector   <Merge>&           merges;
 
     string&  targetPath;
 
     void    IncludeNewSections      ();
     void    MergeSections           ();
-    void    CorrectRawDataOffsets   ();
+    void    CorrectVirtualSize      ();
     void    RewriteRawData          ();
+    void    CorrectRawDataSize      ();
     void    Inject                  ();
+
+    //int   GetSectionIndex   (DWORD rva);
+    //DWORD RvaToOffset       (DWORD rva);
 };
 
 #endif

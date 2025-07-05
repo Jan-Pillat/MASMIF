@@ -5,7 +5,7 @@ using namespace std;
 
 //======================================================
 //======================================================
-Assembler::Assembler (Parser& gotParser, PEData& gotPEData) :  declarations(gotParser.declarations), thunks(gotParser.thunks), baseData(gotPEData)
+Assembler::Assembler (vector<Thunk>& gotThunks, vector<Declaration>& gotDeclarations, PEData& gotPEData) :  declarations(gotDeclarations), thunks(gotThunks), baseData(gotPEData)
 {
     cout << "Assembler Init" << endl;
 

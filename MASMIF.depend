@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1751651149 source:c:\users\janpi\documents\c++ projects\masmif\main.cpp
+1751725540 source:c:\users\janpi\documents\c++ projects\masmif\main.cpp
 	<iostream>
 	<windows.h>
 	"scripts\PEData.hpp"
@@ -37,10 +37,10 @@
 
 1750323524 c:\users\janpi\documents\c++ projects\masmif\scripts\parser\_parser.cpp
 
-1750341248 source:c:\users\janpi\documents\c++ projects\masmif\cppcore\src\binarydata.cpp
+1751735571 source:c:\users\janpi\documents\c++ projects\masmif\cppcore\src\binarydata.cpp
 	"../include/BinaryData.hpp"
 
-1750341248 c:\users\janpi\documents\c++ projects\masmif\cppcore\include\binarydata.hpp
+1751735533 c:\users\janpi\documents\c++ projects\masmif\cppcore\include\binarydata.hpp
 	<cstddef>
 	<cstring>
 
@@ -160,7 +160,7 @@
 
 1750344216 c:\users\janpi\documents\c++ projects\masmif\scripts\parser\functiondeclarations.hpp
 
-1751651288 source:c:\users\janpi\documents\c++ projects\masmif\scripts\injector.cpp
+1751739076 source:c:\users\janpi\documents\c++ projects\masmif\scripts\injector.cpp
 	"Injector.hpp"
 	<iostream>
 
@@ -222,7 +222,7 @@
 1751130620 source:c:\users\janpi\documents\c++ projects\masmif\scripts\lexicon.cpp
 	"Parser.hpp"
 
-1751363489 c:\users\janpi\documents\c++ projects\masmif\scripts\parser.hpp
+1751707617 c:\users\janpi\documents\c++ projects\masmif\scripts\parser.hpp
 	<unordered_map>
 	<algorithm>
 	<windows.h>
@@ -232,7 +232,7 @@
 	"Lexer.hpp"
 	"Declarations.hpp"
 
-1751370914 source:c:\users\janpi\documents\c++ projects\masmif\scripts\parser.cpp
+1751707668 source:c:\users\janpi\documents\c++ projects\masmif\scripts\parser.cpp
 	"Parser.hpp"
 	<iostream>
 
@@ -241,11 +241,11 @@
 	<string>
 	"../CppCore/include/BinaryData.hpp"
 
-1751645258 source:c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.cpp
+1751707719 source:c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.cpp
 	"Assembler.hpp"
 	<iostream>
 
-1751643609 c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.hpp
+1751707748 c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.hpp
 	<vector>
 	<windows.h>
 	"Declarations.hpp"
@@ -254,13 +254,14 @@
 	"../CppCore/include/FileData.hpp"
 	"../CppCore/include/ReadableWinAPI.hpp"
 
-1751222959 c:\users\janpi\documents\c++ projects\masmif\scripts\pedata.hpp
+1751721368 c:\users\janpi\documents\c++ projects\masmif\scripts\pedata.hpp
 	<windows.h>
 	<vector>
 	"Declarations.hpp"
+	"../CppCore/include/BinaryData.hpp"
 	"../CppCore/include/FileData.hpp"
 
-1751223006 source:c:\users\janpi\documents\c++ projects\masmif\scripts\pedata.cpp
+1751735597 source:c:\users\janpi\documents\c++ projects\masmif\scripts\pedata.cpp
 	"PEData.hpp"
 
 1751640993 c:\users\janpi\documents\c++ projects\masmif\scripts\mapparser.hpp
@@ -273,7 +274,7 @@
 	"Lexer.hpp"
 	"Declarations.hpp"
 
-1751651275 c:\users\janpi\documents\c++ projects\masmif\scripts\injector.hpp
+1751737740 c:\users\janpi\documents\c++ projects\masmif\scripts\injector.hpp
 	<algorithm>
 	<windows.h>
 	<vector>
@@ -282,7 +283,7 @@
 	"Lexer.hpp"
 	"Declarations.hpp"
 
-1751646682 source:c:\users\janpi\documents\c++ projects\masmif\scripts\mapparser.cpp
+1751736570 source:c:\users\janpi\documents\c++ projects\masmif\scripts\mapparser.cpp
 	"MapParser.hpp"
 	<iostream>
 
