@@ -1,15 +1,10 @@
 # depslib dependency file v1.0
-1751725540 source:c:\users\janpi\documents\c++ projects\masmif\main.cpp
+1751789082 source:c:\users\janpi\documents\c++ projects\masmif\main.cpp
 	<iostream>
 	<windows.h>
-	"scripts\PEData.hpp"
-	"scripts\Token.hpp"
-	"scripts\Lexer.hpp"
-	"scripts\Parser.hpp"
-	"scripts\Assembler.hpp"
-	"scripts\MapParser.hpp"
-	"scripts\Injector.hpp"
-	"CppCore\include\ReadableWinAPI.hpp"
+	"CppCore/include/ConsoleInterface.hpp"
+	"scripts/menu/InjectScript.hpp"
+	"scripts/menu/ExitProgram.hpp"
 
 1750333840 c:\users\janpi\documents\c++ projects\masmif\cppcore\include\readablewinapi.hpp
 	<windows.h>
@@ -160,7 +155,7 @@
 
 1750344216 c:\users\janpi\documents\c++ projects\masmif\scripts\parser\functiondeclarations.hpp
 
-1751739076 source:c:\users\janpi\documents\c++ projects\masmif\scripts\injector.cpp
+1751787076 source:c:\users\janpi\documents\c++ projects\masmif\scripts\injector.cpp
 	"Injector.hpp"
 	<iostream>
 
@@ -286,4 +281,26 @@
 1751736570 source:c:\users\janpi\documents\c++ projects\masmif\scripts\mapparser.cpp
 	"MapParser.hpp"
 	<iostream>
+
+1751789059 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\injectscript.hpp
+	<iostream>
+	<windows.h>
+	"..\PEData.hpp"
+	"..\Token.hpp"
+	"..\Lexer.hpp"
+	"..\Parser.hpp"
+	"..\Assembler.hpp"
+	"..\MapParser.hpp"
+	"..\Injector.hpp"
+	"..\..\CppCore\include\ReadableWinAPI.hpp"
+
+1751788962 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\exitprogram.hpp
+	<iostream>
+	<windows.h>
+
+1751788914 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\exitprogram.cpp
+	"ExitProgram.hpp"
+
+1751788403 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\injectscript.cpp
+	"InjectScript.hpp"
 

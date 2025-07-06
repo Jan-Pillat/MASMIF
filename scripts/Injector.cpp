@@ -140,9 +140,11 @@ void Injector::CorrectRawDataSize ()
 
 int GetSectionIndex (PEData& pe, DWORD rva) //rva - relative virtual address
 {
+    cout << "--GetSectionIndex--\n";
+
     for (int i = 0;  i<pe.sections.size();   i++)
     {
-        cout << "section ";
+        cout << "    section ";
         cout.write((char*)&pe.sections[i].header.Name[0], 8);
         cout << endl;
 
@@ -155,33 +157,53 @@ int GetSectionIndex (PEData& pe, DWORD rva) //rva - relative virtual address
             end += pe.OptionalHeader.SectionAlignment - aligned;
 
         cout << hex;
-        cout << "  ImageBase = 0x" << pe.OptionalHeader.ImageBase << endl;
-        cout << "  begin = 0x" << begin << endl;
-        cout << "  end   = 0x" << end   << endl;
-        cout << "  size  = 0x" << size  << endl;
-        cout << "  rva   = 0x" << rva   << endl;
+        cout << "    ImageBase = 0x" << pe.OptionalHeader.ImageBase << endl;
+        cout << "    begin = 0x" << begin << endl;
+        cout << "    end   = 0x" << end   << endl;
+        cout << "    size  = 0x" << size  << endl;
+        cout << "    rva   = 0x" << rva   << endl;
         cout << dec;
-        cout << "  rva   = " << rva   << endl;
 
         if (rva >= begin  &&  rva < end)
             return i;
 
-        cout << "  Is bad" << endl;
+        cout << "    Is bad" << endl;
     }
     return -1;
 }
 
-DWORD RvaToOffset (PEData& pe, DWORD rva) //rva - relative virtual address
+int RvaToOffset (PEData& pe, DWORD rva) //rva - relative virtual address
 {
+    cout << "--RvaToOffset--\n";
+
     for (int i = 0;  i<pe.sections.size();   i++)
     {
-        DWORD begin = pe.sections[i].header.VirtualAddress;
-        DWORD size  = pe.sections[i].header.Misc.VirtualSize;
+        cout << "    section ";
+        cout.write((char*)&pe.sections[i].header.Name[0], 8);
+        cout << endl;
 
-        if (rva >= begin  &&  rva < begin+size)
+        DWORD begin = pe.sections[i].header.VirtualAddress  +  pe.OptionalHeader.ImageBase;
+
+        DWORD size  = pe.sections[i].header.Misc.VirtualSize;
+        DWORD end   = begin + size;
+        DWORD aligned = size % pe.OptionalHeader.SectionAlignment;
+        if (aligned != 0)
+            end += pe.OptionalHeader.SectionAlignment - aligned;
+
+        cout << hex;
+        cout << "    ImageBase = 0x" << pe.OptionalHeader.ImageBase << endl;
+        cout << "    begin = 0x" << begin << endl;
+        //cout << "    end   = 0x" << end   << endl;
+        cout << "    size  = 0x" << size  << endl;
+        cout << "    rva   = 0x" << rva   << endl;
+        cout << dec;
+
+        if (rva >= begin  &&  rva < end)
             return rva - begin;
+
+        cout << "    Is bad" << endl;
     }
-    return 0;
+    return -1;
 }
 
 //------------------------------------------------------
@@ -204,28 +226,44 @@ void Injector::RewriteRawData ()
                 cout.write((char*)&base.sections[targetSectionIndex].header.Name[0], 8);
                 cout << ")" << endl;
 
-                char*   sourceRawDataPointer  =  result.sections[sourceSectionIndex].rawData.GetBeginPointer() + RvaToOffset(result, rawDataToCopy[i].virtualAddress);
-                char*   targetRawDataPointer  =  base.sections[targetSectionIndex].rawData.GetBeginPointer()   + RvaToOffset(base,   rawDataToCopy[i].virtualAddress);
+                // ---------- TARGET OFFSET ----------
+                int     targetRawDataOffset   =  RvaToOffset(base,   rawDataToCopy[i].virtualAddress);
 
-                /*
-                //!!!!!!!!! SEKCJE BÊD¥ WYRÓWNYWAÆ SWÓJ ROZMIAR Z T¥ JEDN¥ GIGANTYCZN¥ !!!!!!!!!!!!!!!!!
-                //!!!!!!!!! SEKCJE BÊD¥ WYRÓWNYWAÆ SWÓJ ROZMIAR Z T¥ JEDN¥ GIGANTYCZN¥ !!!!!!!!!!!!!!!!!
-                //!!!!!!!!! SEKCJE BÊD¥ WYRÓWNYWAÆ SWÓJ ROZMIAR Z T¥ JEDN¥ GIGANTYCZN¥ !!!!!!!!!!!!!!!!!
-                //!!!!!!!!! SEKCJE BÊD¥ WYRÓWNYWAÆ SWÓJ ROZMIAR Z T¥ JEDN¥ GIGANTYCZN¥ !!!!!!!!!!!!!!!!!
-                size_t  sourceSize            =  base.sections[sourceSectionIndex].rawData.Length();
-                size_t  targetSize            =  result.sections[targetSectionIndex].rawData.Length();
-
-                if (targetSize>sourceSize)
+                if (targetRawDataOffset == -1)
                 {
-                    base.sections[sourceSectionIndex].rawData.ResizeBy(targetSize-sourceSize);
-                    base.sections[sourceSectionIndex].header.SizeOfRawData = targetSize;
-                }*/
+                    cout << "  (STOP) targetRawDataOffset = -1" << endl;
+                    continue;
+                }
+                else
+                {
+                    cout << "  (CONTINUE) targetRawDataOffset != -1" << endl;
+                    int difference = targetRawDataOffset - base.sections[targetSectionIndex].rawData.Length();
+                    if (difference > 0)
+                    {
+                        base.sections[targetSectionIndex].rawData.ResizeBy (difference);
+                    }
+                }
 
+                // ---------- SOURCE OFFSET ----------
+                int     sourceRawDataOffset   =  RvaToOffset(result,   rawDataToCopy[i].virtualAddress);
+                if (sourceRawDataOffset == -1)
+                {
+                    cout << "  (STOP) sourceRawDataOffset = -1" << endl;
+                    continue;
+                }
+                else
+                    cout << "  (CONTINUE) sourceRawDataOffset != -1" << endl;
+
+                // ---------- POINTERS ----------
+                char*   sourceRawDataPointer  =  result.sections[sourceSectionIndex].rawData.GetBeginPointer() + sourceRawDataOffset;
+                char*   targetRawDataPointer  =  base.sections[targetSectionIndex].rawData.GetBeginPointer()   + targetRawDataOffset;
+
+                // ---------- WRITE ----------
                 memcpy (targetRawDataPointer, sourceRawDataPointer, rawDataToCopy[i].size);
             }
-            else cout << "Bad target index!" << endl;
+            else cout << "  (STOP) Bad target index!" << endl;
         }
-        else cout << "Bad source index!" << endl;
+        else cout << "  (STOP) Bad source index!" << endl;
     }
 }
 
