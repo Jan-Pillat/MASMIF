@@ -1,7 +1,8 @@
 # depslib dependency file v1.0
-1751789082 source:c:\users\janpi\documents\c++ projects\masmif\main.cpp
+1751789629 source:c:\users\janpi\documents\c++ projects\masmif\main.cpp
 	<iostream>
 	<windows.h>
+	"CppCore/include/ConsoleUtils.hpp"
 	"CppCore/include/ConsoleInterface.hpp"
 	"scripts/menu/InjectScript.hpp"
 	"scripts/menu/ExitProgram.hpp"
@@ -155,7 +156,7 @@
 
 1750344216 c:\users\janpi\documents\c++ projects\masmif\scripts\parser\functiondeclarations.hpp
 
-1751787076 source:c:\users\janpi\documents\c++ projects\masmif\scripts\injector.cpp
+1751791794 source:c:\users\janpi\documents\c++ projects\masmif\scripts\injector.cpp
 	"Injector.hpp"
 	<iostream>
 
@@ -294,8 +295,7 @@
 	"..\Injector.hpp"
 	"..\..\CppCore\include\ReadableWinAPI.hpp"
 
-1751788962 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\exitprogram.hpp
-	<iostream>
+1751790755 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\exitprogram.hpp
 	<windows.h>
 
 1751788914 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\exitprogram.cpp

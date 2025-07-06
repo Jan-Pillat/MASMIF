@@ -13,7 +13,7 @@ Injector::Injector   (string& gotPath,      PEData& gotPEData,  PEData& gotResul
 {
     IncludeNewSections      ();
     MergeSections           ();
-    //CorrectVirtualSize      ();
+    CorrectVirtualSize      ();
     RewriteRawData          ();
     CorrectRawDataSize      ();
     Inject                  ();
@@ -132,7 +132,16 @@ void Injector::CorrectRawDataSize ()
     cout << "CorrectRawDataOffsets\n";
 
     for (int i = 0;  i<base.sections.size();  i++)
+    {
+        DWORD aligned = base.sections[i].rawData.GetLength() % base.OptionalHeader.FileAlignment;
+        if (aligned != 0)
+        {
+            size_t increase = base.OptionalHeader.FileAlignment-aligned;
+            base.sections[i].rawData.ResizeBy(increase);
+        }
+
         base.sections[i].header.SizeOfRawData = base.sections[i].rawData.GetLength();
+    }
 }
 
 //======================================================
@@ -237,7 +246,7 @@ void Injector::RewriteRawData ()
                 else
                 {
                     cout << "  (CONTINUE) targetRawDataOffset != -1" << endl;
-                    int difference = targetRawDataOffset - base.sections[targetSectionIndex].rawData.Length();
+                    int difference = (targetRawDataOffset + rawDataToCopy[i].size) - base.sections[targetSectionIndex].rawData.Length();
                     if (difference > 0)
                     {
                         base.sections[targetSectionIndex].rawData.ResizeBy (difference);
@@ -283,25 +292,25 @@ void Injector::Inject ()
     finalData.Append    (base.FileHeader);
     finalData.Append    (base.OptionalHeader);
 
-    IMAGE_SECTION_HEADER* sectionHeaderBegin = reinterpret_cast<IMAGE_SECTION_HEADER*>(finalData.GetBeginPointer());
+    size_t offsetToSectionHeaders = finalData.GetLength();
 
-    cout << "Append section headers" << endl;
+    // ---- APPEND SECTION HEADERS ----
     for (int i=0;  i<base.sections.size();  i++)
         finalData.Append(base.sections[i].header);
 
+    // ---- FILE ALIGNMENT ----
+    DWORD aligned = finalData.GetLength() % base.OptionalHeader.FileAlignment;
+    if (aligned != 0)
+    {
+        size_t increase = base.OptionalHeader.FileAlignment-aligned;
+        finalData.ResizeBy(increase);
+    }
 
-    cout << "Append section raw data" << endl;
+    // ---- APPEND RAW DATA ----
     for (int i=0;  i<base.sections.size();  i++)
     {
-        DWORD aligned = finalData.GetLength() % base.OptionalHeader.FileAlignment;
-        if (aligned != 0)
-        {
-            size_t increase = base.OptionalHeader.FileAlignment-aligned;
-            finalData.ResizeBy(increase);
-        }
-
-        sectionHeaderBegin[i].PointerToRawData = finalData.GetLength();
-
+        IMAGE_SECTION_HEADER* sectionHeaderBegin =  reinterpret_cast<IMAGE_SECTION_HEADER*>(finalData.GetBeginPointer() + offsetToSectionHeaders);
+        sectionHeaderBegin[i].PointerToRawData   =  finalData.GetLength();
         finalData.AppendData(base.sections[i].rawData);
     }
 

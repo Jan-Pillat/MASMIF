@@ -8,7 +8,7 @@ BYTE	[0x403000]	{ 'Wiadomosc'}	INFO_TEXT
 
 THUNK	[0x40101A]
 
-PROC	[0x401050]	PROC_TEST
+PROC	[0x4011FF]	PROC_TEST	; Big address to raw data resize test
 {
 	mov eax, DWORD_TEST
 	ret
