@@ -1,9 +1,10 @@
-#ifndef _HPP_InjectScript_
-#define _HPP_InjectScript_
+#ifndef _HPP_Menu_InjectScript_
+#define _HPP_Menu_InjectScript_
 
 
 #include <iostream>
 #include <windows.h>
+#include <shlobj.h>
 #include "..\PEData.hpp"
 #include "..\Token.hpp"
 #include "..\Lexer.hpp"
@@ -13,7 +14,9 @@
 #include "..\Injector.hpp"
 #include "..\..\CppCore\include\ReadableWinAPI.hpp"
 
-void InjectScript ();
+extern string currentProjectName;
+
+void Menu_InjectScript ();
 
 
 #endif

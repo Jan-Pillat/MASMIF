@@ -70,10 +70,18 @@
 		<Unit filename="scripts/StrUniLoadNumber.cpp" />
 		<Unit filename="scripts/StrUniLoadNumber.hpp" />
 		<Unit filename="scripts/Token.hpp" />
+		<Unit filename="scripts/menu/ExistingProject.cpp" />
+		<Unit filename="scripts/menu/ExistingProject.hpp" />
 		<Unit filename="scripts/menu/ExitProgram.cpp" />
 		<Unit filename="scripts/menu/ExitProgram.hpp" />
 		<Unit filename="scripts/menu/InjectScript.cpp" />
 		<Unit filename="scripts/menu/InjectScript.hpp" />
+		<Unit filename="scripts/menu/NewProject.cpp" />
+		<Unit filename="scripts/menu/NewProject.hpp" />
+		<Unit filename="scripts/menu/Settings.cpp" />
+		<Unit filename="scripts/menu/Settings.hpp" />
+		<Unit filename="scripts/menu/Work.cpp" />
+		<Unit filename="scripts/menu/Work.hpp" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

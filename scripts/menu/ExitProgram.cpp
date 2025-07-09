@@ -1,6 +1,6 @@
 #include "ExitProgram.hpp"
 
-void ExitProgram ()
+void Menu_ExitProgram ()
 {
     ExitProcess(0);
 }

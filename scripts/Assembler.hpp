@@ -16,7 +16,7 @@ class Assembler
 
 public:
 
-    Assembler (vector<Thunk>& gotThunks, vector<Declaration>& gotDeclarations, PEData& gotPEData);
+    Assembler (string& gotPath, vector<Thunk>& gotThunks, vector<Declaration>& gotDeclarations, PEData& gotPEData);
 
 private:
 
@@ -51,6 +51,7 @@ private:
     void   ConvertNumberToHexString (string& destination, long long number);
     string ConvertContentNumbers    (string& content);
 
+    string projectPath;
     string masmPath = "C:\\masm32";
 
     string  MASMcode_Publications;

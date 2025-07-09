@@ -3,36 +3,40 @@
 #include <windows.h>
 #include "CppCore/include/ConsoleUtils.hpp"
 #include "CppCore/include/ConsoleInterface.hpp"
-#include "scripts/menu/InjectScript.hpp"
+#include "scripts/menu/NewProject.hpp"
+#include "scripts/menu/ExistingProject.hpp"
 #include "scripts/menu/ExitProgram.hpp"
+#include "scripts/menu/Settings.hpp"
 
 using namespace std;
 
+void MenuTitle ()
+{
+    WriteLN ("---------- MASMIF ----------");
+}
 
 
 // ========== MAIN ========== \\
-
-// TO DO...
-    //mainMenu.AddOption(InjectScript, "New Project",       "", "Create new project.");
-    //mainMenu.AddOption(ExitProgram,  "Existing Project",  "", "Use existing project.");
 
 int main()
 {
     ConsoleInterface mainMenu;
 
     // ---------- VISUAL ----------
-    mainMenu.buttonLeft[1]  = mainMenu.buttonLeft[0];
-    mainMenu.buttonRight[1] = mainMenu.buttonRight[0];
+    mainMenu.buttonLeft[1]      = mainMenu.buttonLeft[0];
+    mainMenu.buttonRight[1]     = mainMenu.buttonRight[0];
+    mainMenu.additionalDrawing  = MenuTitle;
 
     // ---------- OPTIONS ----------
-    mainMenu.AddOption(InjectScript, "Inject script",   "", "Select script and inject it to target exe.");
-    mainMenu.AddOption(ExitProgram,  "Exit",            "", "Exit to Windows.");
+    mainMenu.AddOption(Menu_NewProject,     "New Project",       "", "Create new project.");
+    mainMenu.AddOption(Menu_ExistingProject,"Existing Project",  "", "Use existing project.");
+    mainMenu.AddOption(Menu_Settings,       "Settings",          "", "MASM32 path, etc.");
+    mainMenu.AddOption(Menu_ExitProgram,    "Exit",              "", "Exit to Windows.");
 
+    // ---------- ACTION ----------
     while (true)
-    {
-        ConsoleUtils::Clear();
         mainMenu.Start();
-    }
 
     return 0;
 }
+

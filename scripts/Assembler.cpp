@@ -5,7 +5,7 @@ using namespace std;
 
 //======================================================
 //======================================================
-Assembler::Assembler (vector<Thunk>& gotThunks, vector<Declaration>& gotDeclarations, PEData& gotPEData) :  declarations(gotDeclarations), thunks(gotThunks), baseData(gotPEData)
+Assembler::Assembler (string& gotPath, vector<Thunk>& gotThunks, vector<Declaration>& gotDeclarations, PEData& gotPEData) :  projectPath(gotPath), declarations(gotDeclarations), thunks(gotThunks), baseData(gotPEData)
 {
     cout << "Assembler Init" << endl;
 
@@ -569,12 +569,14 @@ void Assembler::InvokeMASM ()
 {
     cout << "InvokeMASM" << endl;
 
+    SetCurrentDirectoryA    (&projectPath[0]);
+    string asmResultPath    = projectPath + "\\result.asm";
+
     FileData fileData       (MASMcode);
-    if (fileData.SaveTextFile   ("test_result.asm"))
+    if (fileData.SaveTextFile   (asmResultPath))
     {
-        string fileName = "test_result";
         // ====== ML ======
-        string mlCommand = "C:\\masm32\\bin\\ml.exe /c /coff " + fileName + ".asm";
+        string mlCommand = masmPath + "\\bin\\ml.exe /c /coff \"" + asmResultPath + "\"";
 
         // --- BASE ---
         string imageBase; ConvertNumberToHexString (imageBase, baseData.OptionalHeader.ImageBase);
@@ -592,7 +594,7 @@ void Assembler::InvokeMASM ()
         fileAlignment = "0x" + fileAlignment;
 
         // ====== LINK ======
-        string linkCommand  = "C:\\masm32\\bin\\link.exe " + fileName + ".obj" + ' '
+        string linkCommand  = masmPath + "\\bin\\link.exe \"" + projectPath + "\\result.obj\"" + ' '
                             + "/subsystem:windows /map /pdb:test_result_PDB"
                             + " /base:"      + imageBase;
                             + " /align:"     + sectionAlignment;

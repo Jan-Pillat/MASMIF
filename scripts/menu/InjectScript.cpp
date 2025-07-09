@@ -1,5 +1,7 @@
 #include "InjectScript.hpp"
 
+string currentProjectName;
+
 using namespace std;
 
 
@@ -13,7 +15,7 @@ void PrintTokens (Lexer& lexer)
 
 // ========== OPTION - INJECT ========== \\
 
-void InjectScript ()
+void Menu_InjectScript ()
 {
     // ---------- USER SCRIPT ----------
     FileSelector userScript;
@@ -22,15 +24,35 @@ void InjectScript ()
     if (userScript.path[0] == '\0')
     {
         cout << "NO selected script!" << endl;
+        system ("pause");
         return;
     }
 
-    // - BASE -
-    PEData peData       ("base.exe");
+    // ---------- Find project ----------
+    // Get path to "documents"
+    string projectPath;
+    projectPath.resize (MAX_PATH);
+    HRESULT hr = SHGetFolderPathA(NULL, CSIDL_PERSONAL, NULL, 0, &projectPath[0]);
+
+    //Check is it correct
+    if (!SUCCEEDED(hr))
+    {
+        cout << "Can't find folder \"documents\"!" << endl;
+        system ("pause");
+        return;
+    }
+    projectPath.resize (strlen(&projectPath[0]));
+
+    projectPath += "\\MASMIF-projects\\" + currentProjectName + "\\";
+
+    // ---------- Load base.exe ----------
+    string basePath     = projectPath+"base.exe";
+    PEData peData       (&basePath[0]);
 
     if (peData.data.IsEmpty())
     {
-        cout << "NO base.exe!" << endl;
+        cout << "NO base.exe!" << endl << "path = " << &basePath[0] << endl;
+        system ("pause");
         return;
     }
 
@@ -44,13 +66,14 @@ void InjectScript ()
 
     Parser  parser      (tokens, merges, thunks, declarations);
 
-    Assembler assembler (thunks, declarations, peData);
+    Assembler assembler (projectPath, thunks, declarations, peData);
     system ("pause");
 
     // ---------- MAP ----------
     vector   <Token>    mapTokens;
 
-    Lexer   mapLexer    (mapTokens, "test_result.map");
+    string mapPath      = projectPath+"result.map";
+    Lexer   mapLexer    (mapTokens, &mapPath[0]);
     PrintTokens         (mapLexer);
 
     vector   <SectionToCopy>    sectionsToCopy;
@@ -62,10 +85,21 @@ void InjectScript ()
     cout << "rawDataToCopy.size()  = " << rawDataToCopy.size()  << endl;
 
     // ---------- INJECT ----------
-    PEData resultData   ("test_result.exe");
+    string      resultPath  = projectPath+"result.exe";
+    PEData      resultData  (&resultPath[0]);
 
-    string     targetPath = "target.exe";
-    Injector   injector (targetPath, peData, resultData, sectionsToCopy, rawDataToCopy, merges);
+    FileData    fileWithPath;
+    fileWithPath.LoadTextFile(projectPath+"target.path");
+
+    if (fileWithPath.IsEmpty())
+        cout << "Incorrect target.path!" << endl;
+    else
+    {
+        string      targetPath  (fileWithPath.GetBeginPointer());
+        cout << "targetPath = " << targetPath << endl;
+        system ("pause");
+        Injector    injector    (targetPath, peData, resultData, sectionsToCopy, rawDataToCopy, merges);
+    }
 
 
     // ---------- PROGRAM END ----------

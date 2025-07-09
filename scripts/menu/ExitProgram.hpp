@@ -1,10 +1,10 @@
-#ifndef _HPP_ExitProgram_
-#define _HPP_ExitProgram_
+#ifndef _HPP_Menu_ExitProgram_
+#define _HPP_Menu_ExitProgram_
 
 
 #include <windows.h>
 
-void ExitProgram ();
+void Menu_ExitProgram ();
 
 
 #endif
