@@ -32,23 +32,24 @@ private:
     void LexSpecial ();
     void SkipComment();
     void LexLineEnd ();
+    void Include    ();
 
-    bool IsTextBegin();
-    bool IsCharBegin();
-    bool IsWordBegin();
-    bool IsNumberBegin();
-    bool IsContentBegin();
-    bool IsSpecialBegin();
-    bool IsSpecialNumBegin();
-    bool IsCommentBegin();
-    bool IsLineEnd();
+    bool IsWordBegin        ();
+    bool IsNumberBegin      ();
+    bool IsIncludingBegin   ();
+    bool IsTextBegin        ();
+    bool IsCharBegin        ();
+    bool IsContentBegin     ();
+    bool IsSpecialBegin     ();
+    bool IsSpecialNumBegin  ();
+    bool IsCommentBegin     ();
+    bool IsLineEnd          ();
 
     void SkipBlanks ();
 
 // ---------- VARIABLES ----------
-    FileData data;
-//  vector   <Token>    tokens;
     char*    pointer    = nullptr;
+    string   currentDirectory;
 };
 
 #endif // _HPP_Lexer_

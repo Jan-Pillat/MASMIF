@@ -83,10 +83,8 @@ void Assembler::ScanAndDeclareDLLs ()
     // -- MORE READABLE POINTER --
     char* pointer   = baseData.data.GetBeginPointer();
 
-    cout << "Get VirtualAddress" << endl;
     DWORD importTableRva = baseData.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress;
 
-    cout << "Check VirtualAddress" << endl;
     if (importTableRva == 0)
     {
         cout << "  No import table!" << endl;
@@ -197,7 +195,7 @@ void Assembler::DeclareIncludes ()
 
     if (!autoInclude)
     {
-        cout << "    autoInclude = false";
+        cout << "    autoInclude = false" << endl;
         return;
     }
 
@@ -285,13 +283,9 @@ void Assembler::WriteMASMCode ()
     // ---------- WRITE ----------
     for (int i = 0;  i<declarations.size();  i++)
     {
-        cout << "i = " << i << endl;
-
         // ---- DECLARATION SEGMENTS ARE FIRST ----
         if (declarations[i].type == DECLARATION)
         {
-            cout << "  It IS declaration" << endl;
-
             if ( declarations[i].name != "" )
                 MASMcode_DeclarationSegments += "\r\n\r\n;---------- " + declarations[i].name + " ----------\r\n";
             else

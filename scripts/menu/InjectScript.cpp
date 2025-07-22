@@ -48,6 +48,8 @@ void Menu_InjectOtherScript ()
 
 void Menu_InjectScript (const string& scriptPath)
 {
+    system ("cls");
+
     // ---------- Find project ----------
     string projectPath = GetProjectsPath() + "\\" + currentProjectName + "\\";
 
@@ -96,8 +98,14 @@ void Menu_InjectScript (const string& scriptPath)
 
     cout << "Lexing map..." << endl;
     string mapPath      = projectPath+"result.map";
-    Lexer   mapLexer    (mapTokens, &mapPath[0]);
-    PrintTokens         (mapLexer);
+    Lexer  mapLexer     (mapTokens, &mapPath[0]);
+
+    if (mapTokens.size() == 0)
+    {
+        cout << "STOP - No map tokens" << endl;
+        system ("pause");
+        return;
+    }
 
     vector   <SectionToCopy>    sectionsToCopy;
     vector   <RawDataToCopy>    rawDataToCopy;

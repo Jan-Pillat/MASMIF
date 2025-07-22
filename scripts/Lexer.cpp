@@ -19,30 +19,109 @@ Lexer::Lexer (vector<Token>& gotTokens, const string& filePath) : tokens(gotToke
 
 void Lexer::Tokenize (const string& filePath)
 {
-    data.LoadTextFile(filePath);
+    const char* pathPointer = &filePath[0];
+    const char* begin       = pathPointer;
+    const char* lastSlash   = pathPointer;
+    bool        isFullPath  = false;
+    bool        asBinary    = false;
+    bool        foundSlash  = false;
+
+    //! ----- SAVE PREVIOUS DIR AND SET NEW -----
+
+    // -- SKIP BLANKS --
+    while (IsBlank(*pathPointer))
+        pathPointer++;
+
+    // -- COMMAND --
+    if (*pathPointer == '(')
+    {
+        begin         = ++pathPointer;
+
+        while (*pathPointer != '\0' && *pathPointer != ')')
+            pathPointer++;
+
+        //Check is not closed
+        if (*pathPointer == '\0')
+            return;
+
+        string command (begin, pathPointer-begin);
+
+        if (stricmp (&command[0], "binary"))
+            asBinary = true;
+
+        pathPointer++;
+    }
+
+
+    // -- CHECK PATH --
+    begin         = pathPointer;
+    lastSlash     = begin;
+
+    while (*pathPointer != '\0')
+    {
+        if (*pathPointer == '\\' || *pathPointer == '/')
+        {
+            foundSlash = true;
+            lastSlash  = pathPointer;
+        }
+
+        if (*pathPointer == ':')
+            isFullPath = true;
+
+        pathPointer++;
+    }
+
+
+    // -- SET NEW DIRECTORY --
+    string previousDirectory = currentDirectory;
+    string newDirectory   (begin, lastSlash-begin);
+    string fullPath;
+
+    if (isFullPath)
+    {
+        fullPath            = begin;
+        currentDirectory    = newDirectory;
+    }
+    else
+    {
+        fullPath            = currentDirectory + "\\" + begin;
+        currentDirectory    = currentDirectory + "\\" + newDirectory;
+    }
+
+    cout << "fullPath          = " << fullPath << endl;
+    cout << "currentDirectory  = " << currentDirectory << endl;
+    cout << "previousDirectory = " << previousDirectory << endl;
+
+    //! ----- LOAD FILE -----
+    FileData data;
+    data.LoadTextFile(fullPath);
 
     if (data.IsEmpty())
     {
-        cout << "LEXER: No data!   Used path: " << filePath << endl;
+        cout << "  LEXER: No data!   ERROR = " << data.GetErrorDescribePointer() << endl;
+        currentDirectory = previousDirectory;
         return;
     }
 
     pointer = data.GetBeginPointer();
 
+    //! ----- LEX -----
     while (*pointer != '\0')
     {
         SkipBlanks();
 
-        if (IsTextBegin     ()) LexText     (); else
-        if (IsCharBegin     ()) LexChars    (); else
         if (IsWordBegin     ()) LexWord     (); else
         if (IsNumberBegin   ()) LexNumber   (); else
+        if (IsIncludingBegin()) Include     (); else
+        if (IsTextBegin     ()) LexText     (); else
+        if (IsCharBegin     ()) LexChars    (); else
         if (IsContentBegin  ()) LexContent  (); else
         if (IsCommentBegin  ()) SkipComment (); else
         if (IsSpecialBegin  ()) LexSpecial  (); else
         if (IsLineEnd       ()) LexLineEnd  (); else pointer++;
     }
 
+    currentDirectory = previousDirectory;
 }
 
 //======================================================
@@ -56,14 +135,6 @@ void Lexer::SkipBlanks ()
 //======================================================
 //======================================================
 
-bool Lexer::IsTextBegin    ()
-{
-    return (*pointer=='"');
-}
-bool Lexer::IsCharBegin    ()
-{
-    return (*pointer=='\'');
-}
 bool Lexer::IsWordBegin    ()
 {
     return (IsAlpha(*pointer) || *pointer=='_');
@@ -71,6 +142,18 @@ bool Lexer::IsWordBegin    ()
 bool Lexer::IsNumberBegin  ()
 {
     return (IsDigit(*pointer) || IsSpecialNumBegin());
+}
+bool Lexer::IsIncludingBegin    ()
+{
+    return (*pointer=='#');
+}
+bool Lexer::IsTextBegin    ()
+{
+    return (*pointer=='"');
+}
+bool Lexer::IsCharBegin    ()
+{
+    return (*pointer=='\'');
 }
 bool Lexer::IsContentBegin ()
 {
@@ -82,7 +165,7 @@ bool Lexer::IsSpecialBegin ()
 }
 bool Lexer::IsCommentBegin ()
 {
-    return (*pointer==';' || *pointer=='#');
+    return (*pointer==';');
 }
 bool Lexer::IsSpecialNumBegin ()
 {
@@ -93,8 +176,8 @@ bool Lexer::IsLineEnd ()
     return (*pointer=='\r' || *pointer=='\n');
 }
 
-//======================================================
-//======================================================
+//!======================================================
+//!======================================================
 
 void Lexer::LexText    ()
 {
@@ -139,7 +222,7 @@ void Lexer::LexText    ()
     newToken.type = TYPE_TEXT;
     tokens.push_back (newToken);
 }
-//------------------------------------------------------
+//!------------------------------------------------------
 void Lexer::LexChars    ()
 {
     Token newToken;
@@ -183,7 +266,7 @@ void Lexer::LexChars    ()
     newToken.type = TYPE_CHARS;
     tokens.push_back (newToken);
 }
-//------------------------------------------------------
+//!------------------------------------------------------
 void Lexer::LexWord    ()
 {
     Token newToken;
@@ -201,7 +284,7 @@ void Lexer::LexWord    ()
     newToken.type = TYPE_WORD;
     tokens.push_back (newToken);
 }
-//------------------------------------------------------
+//!------------------------------------------------------
 void Lexer::LexNumber  ()
 {
     Token newToken;
@@ -232,7 +315,7 @@ void Lexer::LexNumber  ()
     tokens.push_back (newToken);
 
 }
-//------------------------------------------------------
+//!------------------------------------------------------
 void Lexer::LexContent ()
 {
     Token newToken;
@@ -266,13 +349,13 @@ void Lexer::LexContent ()
     newToken.type = TYPE_CONTENT;
     tokens.push_back (newToken);
 }
-//------------------------------------------------------
+//!------------------------------------------------------
 void Lexer::SkipComment ()
 {
     while (!IsLineEnd())
         pointer++;
 }
-//------------------------------------------------------
+//!------------------------------------------------------
 void Lexer::LexSpecial ()
 {
     Token newToken;
@@ -280,7 +363,7 @@ void Lexer::LexSpecial ()
     newToken.type = TYPE_SPECIAL;
     tokens.push_back (newToken);
 }
-//------------------------------------------------------
+//!------------------------------------------------------
 void Lexer::LexLineEnd ()
 {
     while (true)
@@ -293,5 +376,24 @@ void Lexer::LexLineEnd ()
             break;
     }
     tokens.emplace_back ("", TYPE_LINEEND);
+}
+//!------------------------------------------------------
+void Lexer::Include ()
+{
+    char* begin = ++pointer;
+
+    while (*pointer != '\0' && *pointer != '#')
+        pointer++;
+
+    if (*pointer == '\0')
+        return;
+
+    char* end   = pointer++;
+    char* previousPointer = pointer; //Tokenize will change pointer value
+
+    string path (begin, end-begin);
+    Tokenize (path);
+
+    pointer = previousPointer; //Tokenize has changed pointer value
 }
 

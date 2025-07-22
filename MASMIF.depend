@@ -120,8 +120,9 @@
 1750333803 c:\users\janpi\documents\c++ projects\masmif\cppcore\src\consoleutils\event.cpp
 	"../../include/ConsoleUtils/Event.hpp"
 
-1752072755 source:c:\users\janpi\documents\c++ projects\masmif\cppcore\src\filedata.cpp
+1753215367 source:c:\users\janpi\documents\c++ projects\masmif\cppcore\src\filedata.cpp
 	"../include/FileData.hpp"
+	<iostream>
 
 1752072755 c:\users\janpi\documents\c++ projects\masmif\cppcore\include\filedata.hpp
 	<cstddef>
@@ -136,7 +137,7 @@
 
 1750323524 c:\users\janpi\documents\c++ projects\masmif\scripts\struniloadnumber.cpp
 
-1752223452 c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.hpp
+1753216669 c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.hpp
 	<string>
 	<vector>
 	<iostream>
@@ -158,11 +159,11 @@
 
 1750344216 c:\users\janpi\documents\c++ projects\masmif\scripts\parser\functiondeclarations.hpp
 
-1753189669 source:c:\users\janpi\documents\c++ projects\masmif\scripts\injector.cpp
+1753190673 source:c:\users\janpi\documents\c++ projects\masmif\scripts\injector.cpp
 	"Injector.hpp"
 	<iostream>
 
-1752218638 source:c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.cpp
+1753216775 source:c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.cpp
 	"Lexer.hpp"
 
 1750349204 c:\users\janpi\documents\c++ projects\masmif\scripts\struniloadnumber.hpp
@@ -240,7 +241,7 @@
 	<string>
 	"../CppCore/include/BinaryData.hpp"
 
-1752223353 source:c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.cpp
+1753210309 source:c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.cpp
 	"Assembler.hpp"
 	<iostream>
 
@@ -305,7 +306,7 @@
 1752063165 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\exitprogram.cpp
 	"ExitProgram.hpp"
 
-1752220127 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\injectscript.cpp
+1753210024 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\injectscript.cpp
 	"InjectScript.hpp"
 
 1752161449 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\newproject.hpp
