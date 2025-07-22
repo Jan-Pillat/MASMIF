@@ -5,7 +5,7 @@
 static void WorkTitle ()
 {
     Write   ("---------- ");
-    Write   (&currentProjectName[0]);
+    Write   (currentProjectName);
     WriteLN (" ----------");
 }
 
@@ -19,8 +19,10 @@ void Menu_Work ()
     workMenu.additionalDrawing  = WorkTitle;
 
     // ---------- OPTIONS ----------
-    workMenu.AddOption  (Menu_InjectScript,   "Inject script",    "", "Select script and inject it into target exe.");
-    workMenu.AddOption  (Menu_ExitProgram,    "Exit",             "", "Exit to Windows.");
+    workMenu.AddOption  (Menu_InjectProjectScript,  "Inject project script",  "", "Inject script form project folder into target exe.");
+    workMenu.AddOption  (Menu_InjectOtherScript,    "Inject other script",    "", "Select script and inject it into target exe.");
+    workMenu.AddOption  (Menu_OpenProjectFolder,    "Open project folder",    "", "Open folder that contains all project data.");
+    workMenu.AddOption  (Menu_ExitProgram,          "Exit",                   "", "Exit to Windows.");
 
     // ---------- ACTION ----------
     while (true)

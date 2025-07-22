@@ -6,9 +6,10 @@
 #include <windows.h>
 #include <vector>
 #include "Token.hpp"
-#include "StrUniLoadNumber.hpp"
 #include "Lexer.hpp"
 #include "Declarations.hpp"
+#include "utils/StrUniLoadNumber.hpp"
+#include "utils/GetString.hpp"
 
 using std::vector;
 using std::unordered_map;

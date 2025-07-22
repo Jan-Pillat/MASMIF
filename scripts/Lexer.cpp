@@ -8,7 +8,7 @@ Lexer::Lexer (vector<Token>& gotTokens) : tokens(gotTokens)
 {
 
 }
-Lexer::Lexer (vector<Token>& gotTokens, char* filePath) : tokens(gotTokens)
+Lexer::Lexer (vector<Token>& gotTokens, const string& filePath) : tokens(gotTokens)
 {
     Tokenize (filePath);
 }
@@ -17,13 +17,13 @@ Lexer::Lexer (vector<Token>& gotTokens, char* filePath) : tokens(gotTokens)
 //======================================================
 //======================================================
 
-void Lexer::Tokenize (char* filePath)
+void Lexer::Tokenize (const string& filePath)
 {
     data.LoadTextFile(filePath);
 
     if (data.IsEmpty())
     {
-        cout << "No data!" << endl;
+        cout << "LEXER: No data!   Used path: " << filePath << endl;
         return;
     }
 

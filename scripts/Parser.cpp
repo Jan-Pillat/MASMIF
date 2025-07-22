@@ -13,8 +13,6 @@ Parser::Parser   (vector<Token>& gotTokens, vector<Merge>& gotMerges, vector<Thu
 {
     while (GetToken())
     {
-        cout << "Parser: found token: " << gotToken->content << endl;
-
         if (gotToken->type != TYPE_WORD)
             continue;
 
@@ -509,22 +507,21 @@ void    Parser::ParseProcedure    ()
 void    Parser::ParseMerge    ()
 {
     Merge newMerge;
+    bool  gotFirst = false;
 
     while (GetTokenOnlyToLineEnd())
     {
         // ---------- SECTION NAMES ----------
         if ( (gotToken->type == TYPE_TEXT) || (gotToken->type == TYPE_CHARS) )
         {
-            static bool gotFirst = false;
-
             if (!gotFirst)
             {
-                newMerge.first  =  gotToken->content;
+                newMerge.first  =  GetString (gotToken->content);
                 gotFirst = true;
             }
             else
             {
-                newMerge.second  =  gotToken->content;
+                newMerge.second =  GetString (gotToken->content);
                 break;
             }
         }

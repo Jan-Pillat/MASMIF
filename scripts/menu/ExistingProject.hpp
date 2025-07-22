@@ -5,9 +5,9 @@
 #include <windows.h>
 #include <string>
 #include <iostream>
-#include <shlobj.h>
 #include "Work.hpp"
 #include "InjectScript.hpp"
+#include "../GetPath.hpp"
 #include "../../CppCore/include/ConsoleUtils.hpp"
 
 void Menu_ExistingProject ();

@@ -6,9 +6,9 @@
 #include <windows.h>
 #include <vector>
 #include "Token.hpp"
-#include "StrUniLoadNumber.hpp"
 #include "Lexer.hpp"
 #include "Declarations.hpp"
+#include "utils/StrUniLoadNumber.hpp"
 
 using std::vector;
 

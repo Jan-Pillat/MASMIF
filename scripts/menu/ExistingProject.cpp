@@ -22,21 +22,7 @@ void Menu_ExistingProject ()
     projectsMenu.buttonRight[1]     = projectsMenu.buttonRight[0];
 
     // ---------- Find projects ----------
-    // Get path to "documents"
-    string path;
-    path.resize (MAX_PATH);
-    HRESULT hr = SHGetFolderPathA(NULL, CSIDL_PERSONAL, NULL, 0, &path[0]);
-
-    //Check is it correct
-    if (!SUCCEEDED(hr))
-    {
-        cout << "Can't find folder \"documents\"!" << endl;
-        system ("pause");
-        return;
-    }
-    path.resize (strlen(&path[0]));
-
-    path += "\\MASMIF-projects\\*";
+    string path = GetProjectsPath() + "\\*";
 
     WIN32_FIND_DATAA foundData;
 

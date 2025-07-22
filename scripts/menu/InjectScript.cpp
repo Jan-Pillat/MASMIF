@@ -15,9 +15,19 @@ void PrintTokens (Lexer& lexer)
 
 // ========== OPTION - INJECT ========== \\
 
-void Menu_InjectScript ()
+void Menu_InjectProjectScript ()
 {
-    // ---------- USER SCRIPT ----------
+    Menu_InjectScript (GetProjectsPath() + "\\" + currentProjectName + "\\main.masmif");
+}
+
+//===============================================================================
+//===============================================================================
+
+
+void Menu_InjectOtherScript ()
+{
+    cout << "Enter script path: ";
+
     FileSelector userScript;
     userScript.GetPath_OpenFile();
 
@@ -28,22 +38,18 @@ void Menu_InjectScript ()
         return;
     }
 
+    cout << &userScript.path[0] << endl;
+    Menu_InjectScript (userScript.path);
+}
+
+//===============================================================================
+//===============================================================================
+
+
+void Menu_InjectScript (const string& scriptPath)
+{
     // ---------- Find project ----------
-    // Get path to "documents"
-    string projectPath;
-    projectPath.resize (MAX_PATH);
-    HRESULT hr = SHGetFolderPathA(NULL, CSIDL_PERSONAL, NULL, 0, &projectPath[0]);
-
-    //Check is it correct
-    if (!SUCCEEDED(hr))
-    {
-        cout << "Can't find folder \"documents\"!" << endl;
-        system ("pause");
-        return;
-    }
-    projectPath.resize (strlen(&projectPath[0]));
-
-    projectPath += "\\MASMIF-projects\\" + currentProjectName + "\\";
+    string projectPath = GetProjectsPath() + "\\" + currentProjectName + "\\";
 
     // ---------- Load base.exe ----------
     string basePath     = projectPath+"base.exe";
@@ -62,16 +68,33 @@ void Menu_InjectScript ()
     vector  <Thunk>         thunks;
     vector  <Declaration>   declarations;
 
-    Lexer   lexer       (tokens, &userScript.path[0]);
+    cout << "Lexing..." << endl;
+    Lexer   lexer       (tokens, scriptPath);
 
+    if (tokens.size() == 0)
+    {
+        cout << "STOP - No tokens" << endl;
+        system ("pause");
+        return;
+    }
+
+    cout << "Parsing..." << endl;
     Parser  parser      (tokens, merges, thunks, declarations);
 
+    if (declarations.size() == 0  /*&&  merges.size == 0*/)
+    {
+        cout << "STOP - NO important data" << endl;
+    }
+
+    cout << "Assembling..." << endl;
     Assembler assembler (projectPath, thunks, declarations, peData);
     system ("pause");
+
 
     // ---------- MAP ----------
     vector   <Token>    mapTokens;
 
+    cout << "Lexing map..." << endl;
     string mapPath      = projectPath+"result.map";
     Lexer   mapLexer    (mapTokens, &mapPath[0]);
     PrintTokens         (mapLexer);
@@ -79,10 +102,9 @@ void Menu_InjectScript ()
     vector   <SectionToCopy>    sectionsToCopy;
     vector   <RawDataToCopy>    rawDataToCopy;
 
+    cout << "Parsing map..." << endl;
     MapParser mapParser (mapTokens, sectionsToCopy, rawDataToCopy);
 
-    cout << "sectionsToCopy.size() = " << sectionsToCopy.size() << endl;
-    cout << "rawDataToCopy.size()  = " << rawDataToCopy.size()  << endl;
 
     // ---------- INJECT ----------
     string      resultPath  = projectPath+"result.exe";
@@ -95,6 +117,7 @@ void Menu_InjectScript ()
         cout << "Incorrect target.path!" << endl;
     else
     {
+        cout << "Injecting..." << endl;
         string      targetPath  (fileWithPath.GetBeginPointer());
         cout << "targetPath = " << targetPath << endl;
         system ("pause");

@@ -12,7 +12,7 @@ Menu_NewProject:
 
 void Menu_NewProject ()
 {
-    string newName, txtPath, projectPath, basePath;
+    string newName, txtPath, projectPath, basePath, scriptPath;
     FileSelector selectedTarget;
 
     while (true)
@@ -44,20 +44,7 @@ void Menu_NewProject ()
     cout << selectedTarget.path << endl;
 
     // ---------- Create project folder ----------
-    // Get path to "documents"
-    projectPath.resize (MAX_PATH);
-    HRESULT hr = SHGetFolderPathA(NULL, CSIDL_PERSONAL, NULL, 0, &projectPath[0]);
-
-    //Check is it correct
-    if (!SUCCEEDED(hr))
-    {
-        cout << "Can't find folder \"documents\"!" << endl;
-        system ("pause");
-        return;
-    }
-    projectPath.resize (strlen(&projectPath[0]));
-
-    projectPath += "\\MASMIF-projects";
+    projectPath = GetProjectsPath();
     CreateDirectoryA (&projectPath[0], NULL);
 
     projectPath += "\\" + newName;
@@ -76,6 +63,12 @@ void Menu_NewProject ()
     CopyFileA   (&selectedTarget.path[0],
                  &basePath[0],
                  FALSE);
+
+    // ---------- main.masmif ----------
+    scriptPath = projectPath + "\\main.masmif";
+
+    FileData scriptData;
+    scriptData.SaveTextFile (scriptPath);
 
     // ---------- start work ----------
     system      ("pause & cls");

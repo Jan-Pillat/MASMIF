@@ -56,6 +56,8 @@
 		<Unit filename="scripts/Assembler.cpp" />
 		<Unit filename="scripts/Assembler.hpp" />
 		<Unit filename="scripts/Declarations.hpp" />
+		<Unit filename="scripts/GetPath.cpp" />
+		<Unit filename="scripts/GetPath.hpp" />
 		<Unit filename="scripts/Injector.cpp" />
 		<Unit filename="scripts/Injector.hpp" />
 		<Unit filename="scripts/Lexer.cpp" />
@@ -67,8 +69,6 @@
 		<Unit filename="scripts/PEData.hpp" />
 		<Unit filename="scripts/Parser.cpp" />
 		<Unit filename="scripts/Parser.hpp" />
-		<Unit filename="scripts/StrUniLoadNumber.cpp" />
-		<Unit filename="scripts/StrUniLoadNumber.hpp" />
 		<Unit filename="scripts/Token.hpp" />
 		<Unit filename="scripts/menu/ExistingProject.cpp" />
 		<Unit filename="scripts/menu/ExistingProject.hpp" />
@@ -78,10 +78,18 @@
 		<Unit filename="scripts/menu/InjectScript.hpp" />
 		<Unit filename="scripts/menu/NewProject.cpp" />
 		<Unit filename="scripts/menu/NewProject.hpp" />
+		<Unit filename="scripts/menu/OpenProjectFolder.cpp" />
+		<Unit filename="scripts/menu/OpenProjectFolder.hpp" />
 		<Unit filename="scripts/menu/Settings.cpp" />
 		<Unit filename="scripts/menu/Settings.hpp" />
 		<Unit filename="scripts/menu/Work.cpp" />
 		<Unit filename="scripts/menu/Work.hpp" />
+		<Unit filename="scripts/utils/ConvertNumberToHexString.cpp" />
+		<Unit filename="scripts/utils/ConvertNumberToHexString.hpp" />
+		<Unit filename="scripts/utils/GetString.cpp" />
+		<Unit filename="scripts/utils/GetString.hpp" />
+		<Unit filename="scripts/utils/StrUniLoadNumber.cpp" />
+		<Unit filename="scripts/utils/StrUniLoadNumber.hpp" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

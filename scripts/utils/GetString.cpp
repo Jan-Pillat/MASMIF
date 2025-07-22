@@ -1,5 +1,8 @@
+#include "GetString.hpp"
 
-void Lexer::Unescape    (string& txt)
+using namespace std;
+
+string  GetString   (string& txt)
 {/*
     static const char unescapeTable[] {
         '\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0',
@@ -13,9 +16,18 @@ void Lexer::Unescape    (string& txt)
          'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '{', '|', '}', '~', ' ',
     }*/
 
-    char* pointer       = &txt[0];
-    char* begin         = ++pointer;
-	char* destination   = begin
+    string newString    = txt;
+
+    if (newString[0] == '"')
+        newString.resize(newString.size()-3);   // delete  ",0
+    else if (newString[0] == '\'')
+        newString.resize(newString.size()-1);   // delete  '
+
+    newString = &newString[1];  // delete begin - " or '
+
+    char* begin         = &newString[0];
+    char* pointer       = begin;
+	char* destination   = begin;
 
     //Find text termination
     while (true)
@@ -36,20 +48,18 @@ void Lexer::Unescape    (string& txt)
             if (*pointer == 'r')    *destination++ = '\r'; else
             if (*pointer == 't')    *destination++ = '\t'; else
             if (*pointer == 'v')    *destination++ = '\v'; else
-            if (*pointer == '0')    *destination++ = '\0'; else
+            if (*pointer == '0')    *destination++ = '\0'; //else
             else {   *destination++ = *pointer;  }
 
             pointer++;
         }
         else
         {
-            *destination++ = '\0';
+            *destination = '\0';
             break;
         }
     }
 
-    if (&txt[0]=='"')
-        destination -= 3;   // delete: ",0
-
-    txt.resize(destination-begin);
+    newString.resize(destination-begin);
+    return newString;
 }

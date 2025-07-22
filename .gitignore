@@ -1,4 +1,5 @@
-tests/**/*.map
-tests/**/*.exe
-tests/**/*.obj
-tests/**/*.asm
+**/*.map
+**/*.exe
+**/*.obj
+**/*.asm
+**/*.o

@@ -4,7 +4,6 @@
 
 #include <iostream>
 #include <windows.h>
-#include <shlobj.h>
 #include "..\PEData.hpp"
 #include "..\Token.hpp"
 #include "..\Lexer.hpp"
@@ -12,11 +11,14 @@
 #include "..\Assembler.hpp"
 #include "..\MapParser.hpp"
 #include "..\Injector.hpp"
+#include "..\GetPath.hpp"
 #include "..\..\CppCore\include\ReadableWinAPI.hpp"
 
 extern string currentProjectName;
 
-void Menu_InjectScript ();
+void Menu_InjectProjectScript ();
+void Menu_InjectOtherScript   ();
+void Menu_InjectScript        (const string& scriptPath);
 
 
 #endif

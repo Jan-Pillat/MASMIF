@@ -35,10 +35,10 @@
 
 1750323524 c:\users\janpi\documents\c++ projects\masmif\scripts\parser\_parser.cpp
 
-1752065935 source:c:\users\janpi\documents\c++ projects\masmif\cppcore\src\binarydata.cpp
+1753184213 source:c:\users\janpi\documents\c++ projects\masmif\cppcore\src\binarydata.cpp
 	"../include/BinaryData.hpp"
 
-1752065935 c:\users\janpi\documents\c++ projects\masmif\cppcore\include\binarydata.hpp
+1753184213 c:\users\janpi\documents\c++ projects\masmif\cppcore\include\binarydata.hpp
 	<cstddef>
 	<cstring>
 
@@ -136,13 +136,13 @@
 
 1750323524 c:\users\janpi\documents\c++ projects\masmif\scripts\struniloadnumber.cpp
 
-1751214444 c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.hpp
+1752223452 c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.hpp
 	<string>
 	<vector>
 	<iostream>
 	"../CppCore/include/StringUtils.hpp"
 	"../CppCore/include/FileData.hpp"
-	"StrUniLoadNumber.hpp"
+	"utils/StrUniLoadNumber.hpp"
 	"Token.hpp"
 
 1750654545 c:\users\janpi\documents\c++ projects\masmif\scripts\token.hpp
@@ -158,11 +158,11 @@
 
 1750344216 c:\users\janpi\documents\c++ projects\masmif\scripts\parser\functiondeclarations.hpp
 
-1751792201 source:c:\users\janpi\documents\c++ projects\masmif\scripts\injector.cpp
+1753189669 source:c:\users\janpi\documents\c++ projects\masmif\scripts\injector.cpp
 	"Injector.hpp"
 	<iostream>
 
-1751212614 source:c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.cpp
+1752218638 source:c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.cpp
 	"Lexer.hpp"
 
 1750349204 c:\users\janpi\documents\c++ projects\masmif\scripts\struniloadnumber.hpp
@@ -220,17 +220,18 @@
 1751130620 source:c:\users\janpi\documents\c++ projects\masmif\scripts\lexicon.cpp
 	"Parser.hpp"
 
-1751707617 c:\users\janpi\documents\c++ projects\masmif\scripts\parser.hpp
+1753187505 c:\users\janpi\documents\c++ projects\masmif\scripts\parser.hpp
 	<unordered_map>
 	<algorithm>
 	<windows.h>
 	<vector>
 	"Token.hpp"
-	"StrUniLoadNumber.hpp"
 	"Lexer.hpp"
 	"Declarations.hpp"
+	"utils/StrUniLoadNumber.hpp"
+	"utils/GetString.hpp"
 
-1751707668 source:c:\users\janpi\documents\c++ projects\masmif\scripts\parser.cpp
+1753189510 source:c:\users\janpi\documents\c++ projects\masmif\scripts\parser.cpp
 	"Parser.hpp"
 	<iostream>
 
@@ -239,7 +240,7 @@
 	<string>
 	"../CppCore/include/BinaryData.hpp"
 
-1752080597 source:c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.cpp
+1752223353 source:c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.cpp
 	"Assembler.hpp"
 	<iostream>
 
@@ -262,33 +263,32 @@
 1751735597 source:c:\users\janpi\documents\c++ projects\masmif\scripts\pedata.cpp
 	"PEData.hpp"
 
-1751640993 c:\users\janpi\documents\c++ projects\masmif\scripts\mapparser.hpp
+1752223472 c:\users\janpi\documents\c++ projects\masmif\scripts\mapparser.hpp
 	<unordered_map>
 	<algorithm>
 	<windows.h>
 	<vector>
 	"Token.hpp"
-	"StrUniLoadNumber.hpp"
 	"Lexer.hpp"
 	"Declarations.hpp"
+	"utils/StrUniLoadNumber.hpp"
 
-1751737740 c:\users\janpi\documents\c++ projects\masmif\scripts\injector.hpp
+1753188887 c:\users\janpi\documents\c++ projects\masmif\scripts\injector.hpp
 	<algorithm>
 	<windows.h>
 	<vector>
 	"PEData.hpp"
-	"StrUniLoadNumber.hpp"
 	"Lexer.hpp"
 	"Declarations.hpp"
+	"utils/StrUniLoadNumber.hpp"
 
 1751736570 source:c:\users\janpi\documents\c++ projects\masmif\scripts\mapparser.cpp
 	"MapParser.hpp"
 	<iostream>
 
-1752077528 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\injectscript.hpp
+1752161438 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\injectscript.hpp
 	<iostream>
 	<windows.h>
-	<shlobj.h>
 	"..\PEData.hpp"
 	"..\Token.hpp"
 	"..\Lexer.hpp"
@@ -296,6 +296,7 @@
 	"..\Assembler.hpp"
 	"..\MapParser.hpp"
 	"..\Injector.hpp"
+	"..\GetPath.hpp"
 	"..\..\CppCore\include\ReadableWinAPI.hpp"
 
 1752054080 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\exitprogram.hpp
@@ -304,43 +305,44 @@
 1752063165 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\exitprogram.cpp
 	"ExitProgram.hpp"
 
-1752080027 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\injectscript.cpp
+1752220127 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\injectscript.cpp
 	"InjectScript.hpp"
 
-1752073694 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\newproject.hpp
+1752161449 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\newproject.hpp
 	<iostream>
 	<string>
 	<windows.h>
-	<shlobj.h>
 	"../../CppCore/include/ReadableWinAPI.hpp"
 	"../../CppCore/include/FileData.hpp"
 	"../../CppCore/include/ConsoleUtils.hpp"
+	"../GetPath.hpp"
 	"InjectScript.hpp"
 	"Work.hpp"
 
-1752073726 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\work.hpp
+1752160588 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\work.hpp
 	<windows.h>
 	"../../CppCore/include/ConsoleUtils.hpp"
 	"../../CppCore/include/ConsoleInterface.hpp"
+	"OpenProjectFolder.hpp"
 	"InjectScript.hpp"
 	"ExitProgram.hpp"
 
-1752073408 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\newproject.cpp
+1752161324 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\newproject.cpp
 	"NewProject.hpp"
 
-1752073670 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\work.cpp
+1752159103 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\work.cpp
 	"Work.hpp"
 
-1752077170 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\existingproject.hpp
+1752161426 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\existingproject.hpp
 	<windows.h>
 	<string>
 	<iostream>
-	<shlobj.h>
 	"Work.hpp"
 	"InjectScript.hpp"
+	"../GetPath.hpp"
 	"../../CppCore/include/ConsoleUtils.hpp"
 
-1752077206 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\existingproject.cpp
+1752161342 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\existingproject.cpp
 	"ExistingProject.hpp"
 
 1752078482 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\settings.cpp
@@ -349,4 +351,46 @@
 1752078387 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\settings.hpp
 	<iostream>
 	<windows.h>
+
+1752160396 c:\users\janpi\documents\c++ projects\masmif\scripts\getmasmifprojectsfolder.hpp
+	<windows.h>
+	<shlobj.h>
+	<string>
+
+1752160359 source:c:\users\janpi\documents\c++ projects\masmif\scripts\getmasmifprojectsfolder.cpp
+	"GetMasmifProjectsFolder.hpp"
+
+1752161762 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\openprojectfolder.hpp
+	<iostream>
+	<windows.h>
+	"../GetPath.hpp"
+	"InjectScript.hpp"
+
+1752161804 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\openprojectfolder.cpp
+	"OpenProjectFolder.hpp"
+
+1752161581 c:\users\janpi\documents\c++ projects\masmif\scripts\getpath.hpp
+	<windows.h>
+	<shlobj.h>
+	<string>
+
+1752161519 source:c:\users\janpi\documents\c++ projects\masmif\scripts\getpath.cpp
+	"GetPath.hpp"
+
+1750349204 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\struniloadnumber.hpp
+
+1750432462 source:c:\users\janpi\documents\c++ projects\masmif\scripts\utils\struniloadnumber.cpp
+
+1752223748 source:c:\users\janpi\documents\c++ projects\masmif\scripts\utils\convertnumbertohexstring.cpp
+	"ConvertNumberToHexString.hpp"
+
+1752223764 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\convertnumbertohexstring.hpp
+	<string>
+	"../../CppCore/include/StringUtils.hpp"
+
+1753187576 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\getstring.hpp
+	<string>
+
+1753187630 source:c:\users\janpi\documents\c++ projects\masmif\scripts\utils\getstring.cpp
+	"GetString.hpp"
 

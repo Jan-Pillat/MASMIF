@@ -5,9 +5,9 @@
 #include <windows.h>
 #include <vector>
 #include "PEData.hpp"
-#include "StrUniLoadNumber.hpp"
 #include "Lexer.hpp"
 #include "Declarations.hpp"
+#include "utils/StrUniLoadNumber.hpp"
 
 using std::vector;
 
@@ -27,10 +27,10 @@ private:
     string&  targetPath;
 
     void    IncludeNewSections      ();
+    void    RoundVirtualSize        ();
     void    MergeSections           ();
-    void    CorrectVirtualSize      ();
     void    RewriteRawData          ();
-    void    CorrectRawDataSize      ();
+    void    RoundRawDataSize        ();
     void    Inject                  ();
 
     //int   GetSectionIndex   (DWORD rva);

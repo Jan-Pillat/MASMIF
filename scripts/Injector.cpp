@@ -5,22 +5,22 @@
 
 using namespace std;
 
-//======================================================
-//======================================================
+//!======================================================
+//!======================================================
 
 Injector::Injector   (string& gotPath,      PEData& gotPEData,  PEData& gotResultData,  vector<SectionToCopy>& gotSectionsToCopy,  vector<RawDataToCopy>& gotRawDataToCopy, vector<Merge>& gotMerges)
                    :  targetPath (gotPath), base   (gotPEData), result (gotResultData),        sectionsToCopy (gotSectionsToCopy),        rawDataToCopy  (gotRawDataToCopy),       merges (gotMerges)
 {
     IncludeNewSections      ();
+    RoundVirtualSize        ();
     MergeSections           ();
-    CorrectVirtualSize      ();
     RewriteRawData          ();
-    CorrectRawDataSize      ();
+    RoundRawDataSize        ();
     Inject                  ();
 }
 
-//======================================================
-//======================================================
+//!======================================================
+//!======================================================
 
 void Injector::IncludeNewSections ()
 {
@@ -78,41 +78,108 @@ void Injector::IncludeNewSections ()
     }
 }
 
-//======================================================
-//======================================================
+//!======================================================
+//!======================================================
 
 void Injector::MergeSections ()
-{/*
+{
     cout << "MergeSections\n";
 
-    for (i = 0;  i < merges.size();  i++)
+    for (int currentMerge = 0;  currentMerge < merges.size();  currentMerge++)
     {
-        if (merges[i].first ==
+        cout << "    merge nr. " << currentMerge<< endl;
+        cout << "    first  name      = " << merges[currentMerge].first << endl;
+        cout << "    first  name size = " << merges[currentMerge].first.size() << endl;
+        cout << "    second name      = " << merges[currentMerge].second << endl;
+        cout << "    second name size = " << merges[currentMerge].second.size() << endl;
 
-        for (int iOfBase = 0;  iOfBase<base.sections.size();  iOfBase++)
+        size_t  firstSectionIndex  = -1;
+        size_t  secondSectionIndex = -1;
+
+        //! ---------- FIND SECTION INDXES ----------
+        for (int i = 0;  i < base.sections.size();  i++)
         {
+            cout << "        memcmp (first)  = " << memcmp(&base.sections[i].header.Name, &merges[currentMerge].first[0], IMAGE_SIZEOF_SHORT_NAME) << endl;
+
+            if ( merges[currentMerge].first.size() <= IMAGE_SIZEOF_SHORT_NAME
+            &&   memcmp(&base.sections[i].header.Name, &merges[currentMerge].first[0], merges[currentMerge].first.size()) == 0)
+            {
+                firstSectionIndex = i;
+            }
+
+            if ( merges[currentMerge].second.size() <= IMAGE_SIZEOF_SHORT_NAME
+            &&   memcmp(&base.sections[i].header.Name, &merges[currentMerge].second[0], merges[currentMerge].second.size()) == 0)
+            {
+                secondSectionIndex = i;
+            }
+
+            if (firstSectionIndex != -1  &&  secondSectionIndex != -1)
+                break;
         }
 
-        DWORD baseSectionBegin = base.sections[].header.VirtualAddress;
-        DWORD baseSectionEnd   = baseSectionEnd + base.sections[].header.VirtualSize;
-
-        for (int iOfBase = 0;  iOfBase<base.sections.size();  iOfBase++)
+        //! ---------- SKIP IF SECTION NOT FOUND ----------
+        if (firstSectionIndex == -1  ||  secondSectionIndex == -1)
         {
-            if (base.sections[iOfBase].header.VritualAddress)
+            if (firstSectionIndex == -1)
+                cout << "    first section NOT FOUND!" << endl;
+            if (secondSectionIndex == -1)
+                cout << "    second section NOT FOUND!" << endl;
+            continue;
+        }
+        else
+        {
+            cout << "    firstSectionIndex  = " << firstSectionIndex  << endl;
+            cout << "    secondSectionIndex = " << secondSectionIndex << endl;
         }
 
-        DWORD otherSectionBegin=
+        //! ---------- SET FAR AND NEAR SECTION ----------
+        size_t  furtherSectionIndex;
+        size_t  closerSectionIndex;
 
+        if (base.sections[firstSectionIndex].header.VirtualAddress > base.sections[secondSectionIndex].header.VirtualAddress)
+        {
+            furtherSectionIndex = firstSectionIndex;
+            closerSectionIndex  = secondSectionIndex;
+        }
+        else
+        {
+            furtherSectionIndex = secondSectionIndex;
+            closerSectionIndex  = firstSectionIndex;
+        }
+
+        //! ---------- CALCULATE SIZE ----------
+        size_t virtualSize  = base.sections[furtherSectionIndex].header.VirtualAddress
+                            - base.sections[closerSectionIndex ].header.VirtualAddress
+                            + base.sections[furtherSectionIndex].header.Misc.VirtualSize;
+
+        size_t rawDataSize  = base.sections[furtherSectionIndex].header.VirtualAddress
+                            - base.sections[closerSectionIndex ].header.VirtualAddress;
+                            //+ base.sections[furtherSectionIndex].header.SizeOfRawData;  <--- 'Append rawData' add this
+
+        //! ---------- RESIZE AND APPEND RAW DATA ----------
+        base.sections[closerSectionIndex].rawData.Resize(rawDataSize);
+        base.sections[closerSectionIndex].rawData.AppendData(base.sections[furtherSectionIndex].rawData);
+        base.sections[firstSectionIndex ].rawData = base.sections[closerSectionIndex].rawData;
+
+        base.sections[firstSectionIndex].header.SizeOfRawData    = base.sections[firstSectionIndex].rawData.GetLength();
+        base.sections[firstSectionIndex].header.VirtualAddress   = base.sections[closerSectionIndex].header.VirtualAddress;
+        base.sections[firstSectionIndex].header.Misc.VirtualSize = virtualSize;
+
+        //! ---------- REMOVE SECTION ----------
+        base.sections.erase (base.sections.begin() + secondSectionIndex);
+        base.FileHeader.NumberOfSections -= 1;
     }
-*/}
 
-//======================================================
-//======================================================
+    cout << "    END" << endl;
+}
+
+//!======================================================
+//!======================================================
 
 
-void Injector::CorrectVirtualSize ()
+void Injector::RoundVirtualSize ()
 {
-    cout << "CorrectVirtualSize\n";
+    cout << "RoundVirtualSize\n";
 
     for (int i = 0;  i<base.sections.size();  i++)
     {
@@ -123,11 +190,11 @@ void Injector::CorrectVirtualSize ()
     }
 }
 
-//======================================================
-//======================================================
+//!======================================================
+//!======================================================
 
 
-void Injector::CorrectRawDataSize ()
+void Injector::RoundRawDataSize ()
 {
     cout << "CorrectRawDataOffsets\n";
 

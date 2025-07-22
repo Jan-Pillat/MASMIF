@@ -7,7 +7,7 @@
 
     #include "../CppCore/include/StringUtils.hpp"
     #include "../CppCore/include/FileData.hpp"
-    #include "StrUniLoadNumber.hpp"
+    #include "utils/StrUniLoadNumber.hpp"
     #include "Token.hpp"
 
     using std::string;
@@ -17,9 +17,9 @@ class Lexer
 {
 public:
     Lexer           (vector<Token>& gotTokens);
-    Lexer           (vector<Token>& gotTokens, char* filePath);
+    Lexer           (vector<Token>& gotTokens, const string& filePath);
 
-    void Tokenize   (char* filePath);
+    void Tokenize   (const string& filePath);
 
     vector   <Token>&   tokens;
 
