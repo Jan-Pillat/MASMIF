@@ -88,10 +88,6 @@ void Lexer::Tokenize (const string& filePath)
         currentDirectory    = currentDirectory + "\\" + newDirectory;
     }
 
-    cout << "fullPath          = " << fullPath << endl;
-    cout << "currentDirectory  = " << currentDirectory << endl;
-    cout << "previousDirectory = " << previousDirectory << endl;
-
     //! ----- LOAD FILE -----
     FileData data;
     data.LoadTextFile(fullPath);

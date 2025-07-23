@@ -120,9 +120,8 @@
 1750333803 c:\users\janpi\documents\c++ projects\masmif\cppcore\src\consoleutils\event.cpp
 	"../../include/ConsoleUtils/Event.hpp"
 
-1753215367 source:c:\users\janpi\documents\c++ projects\masmif\cppcore\src\filedata.cpp
+1753217817 source:c:\users\janpi\documents\c++ projects\masmif\cppcore\src\filedata.cpp
 	"../include/FileData.hpp"
-	<iostream>
 
 1752072755 c:\users\janpi\documents\c++ projects\masmif\cppcore\include\filedata.hpp
 	<cstddef>
@@ -159,11 +158,11 @@
 
 1750344216 c:\users\janpi\documents\c++ projects\masmif\scripts\parser\functiondeclarations.hpp
 
-1753190673 source:c:\users\janpi\documents\c++ projects\masmif\scripts\injector.cpp
+1753267577 source:c:\users\janpi\documents\c++ projects\masmif\scripts\injector.cpp
 	"Injector.hpp"
 	<iostream>
 
-1753216775 source:c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.cpp
+1753262488 source:c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.cpp
 	"Lexer.hpp"
 
 1750349204 c:\users\janpi\documents\c++ projects\masmif\scripts\struniloadnumber.hpp
@@ -232,7 +231,7 @@
 	"utils/StrUniLoadNumber.hpp"
 	"utils/GetString.hpp"
 
-1753189510 source:c:\users\janpi\documents\c++ projects\masmif\scripts\parser.cpp
+1753262565 source:c:\users\janpi\documents\c++ projects\masmif\scripts\parser.cpp
 	"Parser.hpp"
 	<iostream>
 
@@ -241,11 +240,12 @@
 	<string>
 	"../CppCore/include/BinaryData.hpp"
 
-1753210309 source:c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.cpp
+1753274317 source:c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.cpp
 	"Assembler.hpp"
 	<iostream>
 
-1752079018 c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.hpp
+1753272982 c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.hpp
+	<string>
 	<vector>
 	<windows.h>
 	"Declarations.hpp"
@@ -253,6 +253,7 @@
 	"PEData.hpp"
 	"../CppCore/include/FileData.hpp"
 	"../CppCore/include/ReadableWinAPI.hpp"
+	"utils/ConvertNumberToHexString.hpp"
 
 1751721368 c:\users\janpi\documents\c++ projects\masmif\scripts\pedata.hpp
 	<windows.h>
@@ -274,7 +275,7 @@
 	"Declarations.hpp"
 	"utils/StrUniLoadNumber.hpp"
 
-1753188887 c:\users\janpi\documents\c++ projects\masmif\scripts\injector.hpp
+1753263849 c:\users\janpi\documents\c++ projects\masmif\scripts\injector.hpp
 	<algorithm>
 	<windows.h>
 	<vector>
@@ -283,7 +284,7 @@
 	"Declarations.hpp"
 	"utils/StrUniLoadNumber.hpp"
 
-1751736570 source:c:\users\janpi\documents\c++ projects\masmif\scripts\mapparser.cpp
+1753266269 source:c:\users\janpi\documents\c++ projects\masmif\scripts\mapparser.cpp
 	"MapParser.hpp"
 	<iostream>
 

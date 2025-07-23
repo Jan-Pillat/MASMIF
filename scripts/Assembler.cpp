@@ -74,7 +74,7 @@ void Assembler::LoadBeginBase ()
 
 void Assembler::ScanAndDeclareDLLs ()
 {
-    cout << "ScanAndDeclareDLLs" << endl;
+    cout << "Scan And Declare DLLs" << endl;
 
     // -- SAFEGUARD --
     if (baseData.data.IsEmpty())
@@ -129,20 +129,17 @@ void Assembler::ScanAndDeclareDLLs ()
 
 void Assembler::ScanAndDeclareThunks ()
 {
-    cout << "ScanAndDeclareThunks" << endl;
+    cout << "Scan and declare thunks" << endl;
     for (int i = 0;  i<thunks.size();  i++)
     {
         char* thunkPointer      =   baseData.data.GetBeginPointer() + VaToOffset(thunks[i].address);
         DWORD currentAddress    =   thunks[i].address - thunkSize; //-thunkSize because loop uses +=thunkSize
         DWORD count             =   0;
 
-        cout << "Start thunk jumps finding\n";
         while ((unsigned char)*(thunkPointer) == 0xFF  &&  *(thunkPointer+1) == 0x25) //jmp dword ptr []
         {
             if (thunks[i].count > 0   &&   count++ >= thunks[i].count)
                 break;
-
-            cout << "Jump nr." << count << endl;
 
             Declaration thunkDeclaration;
 
@@ -153,23 +150,14 @@ void Assembler::ScanAndDeclareThunks ()
             thunkPointer += 2;
 
             DWORD pointerValue = *reinterpret_cast<DWORD*>(thunkPointer);
-            cout << "pointerValue = " << pointerValue << endl;
 
             thunkPointer += 4;
 
             for (int decl_i=0;  decl_i<declarations.size();  decl_i++)
             {
-                if (declarations[decl_i].type == DLL)
-                {
-                    cout << hex;
-                    cout << "    declarations[decl_i].address = "   << declarations[decl_i].address << endl;
-                    cout << "    pointerValue = "                   << pointerValue                 << endl;
-                    cout << dec;
-                }
 
                 if ( (declarations[decl_i].type == DLL)  &&  (declarations[decl_i].address == pointerValue) )
                 {
-                    cout << "Found matching dll! (" << declarations[decl_i].name << ")" << endl;
                     thunkDeclaration.name = declarations[decl_i].name;
                     break;
                 }
@@ -177,7 +165,6 @@ void Assembler::ScanAndDeclareThunks ()
 
             declarations.push_back (thunkDeclaration);
         }
-        cout << "Finish thunk jumps finding\n";
     }
 }
 
@@ -248,19 +235,35 @@ bool Assembler::IsNextDeclarationGroupable (size_t i)
 
 //------------------------------------------------------
 
-DWORD Assembler::GetEndBase ()
+DWORD Assembler::GetOriginalSectionsSize ()
 {
-    DWORD foundBase = baseData.sections[0].header.VirtualAddress + baseData.sections[0].header.SizeOfRawData;
+    cout << "  Get Original Sections Size\n";
 
+    // ----- FIND FARTHEST SECTION END -----
+    DWORD   end  =  baseData.sections[0].header.VirtualAddress  +  baseData.sections[0].header.Misc.VirtualSize;
 
     for (int i=1;  i<baseData.sections.size();  i++)
     {
-        DWORD end =   baseData.sections[i].header.VirtualAddress  +  baseData.sections[i].header.SizeOfRawData;
-        if (end > foundBase)
-            foundBase = end;
+        DWORD   foundEnd = baseData.sections[i].header.VirtualAddress  +  baseData.sections[i].header.Misc.VirtualSize;
+        DWORD   align    = foundEnd % baseData.OptionalHeader.SectionAlignment;
+
+        if (align != 0)
+            foundEnd +=  baseData.OptionalHeader.SectionAlignment - align;
+
+        if (end < foundEnd)
+            end = foundEnd;
     }
 
-    return foundBase + baseData.OptionalHeader.ImageBase;
+    // ----- FIND SMALLEST SECTION BEGIN -----
+    DWORD   begin =  baseData.sections[0].header.VirtualAddress;
+
+    for (int i=1;  i<baseData.sections.size();  i++)
+    {
+        if (begin > baseData.sections[i].header.VirtualAddress)
+            begin = baseData.sections[i].header.VirtualAddress;
+    }
+
+    return end-begin;
 }
 
 //------------------------------------------------------
@@ -268,7 +271,7 @@ DWORD Assembler::GetEndBase ()
 void Assembler::WriteMASMCode ()
 {
     // ---------- DEBUG INFO ----------
-    cout << "WriteMASMCode" << endl;
+    cout << "Write MASM Code" << endl;
 
     // ---------- VARIABLES ----------
     int labelCount      = 0;
@@ -276,9 +279,6 @@ void Assembler::WriteMASMCode ()
     int thunkCount      = 0;
 
     DWORD origin        = 0;
-
-    // ---------- DEBUG INFO ----------
-    cout << "declarations count = " << declarations.size() << endl;
 
     // ---------- WRITE ----------
     for (int i = 0;  i<declarations.size();  i++)
@@ -378,11 +378,7 @@ void Assembler::WriteMASMCode ()
             origin      = declarations[i].address-beginBase;
 
             if (origin > 0)
-            {
-                *destination   += "ORG ";
-                ConvertNumberToHexString (*destination, origin);
-                *destination   += "\r\n";
-            }
+                *destination   += "ORG " + ConvertNumberToHexString (origin) + "\r\n";
 
 
             // -- LABEL BEGIN DECLARATION --
@@ -511,9 +507,11 @@ void Assembler::WriteMASMCode ()
 
     MASMcode += MASMcode_Declarations;
 
-    MASMcode += "ORG ";
-    ConvertNumberToHexString (MASMcode, GetEndBase());
+    MASMcode += "\r\n\r\n";
+    MASMcode += "ORG " + ConvertNumberToHexString (GetOriginalSectionsSize()-1);
     MASMcode += "\r\n";
+    MASMcode += "____MAIN_FINISH:\r\n";
+    MASMcode += "db 0CCh \r\n";
     MASMcode += "____main ENDS\r\n";
 
     if (MASMcode_NewCode != "")
@@ -573,31 +571,27 @@ void Assembler::InvokeMASM ()
         string mlCommand = masmPath + "\\bin\\ml.exe /c /coff \"" + asmResultPath + "\"";
 
         // --- BASE ---
-        string imageBase; ConvertNumberToHexString (imageBase, baseData.OptionalHeader.ImageBase);
+        string imageBase = ConvertNumberToHexString (baseData.OptionalHeader.ImageBase);
         imageBase.resize (imageBase.size()-1);
         imageBase = "0x" + imageBase;
 
         // --- SECTION ALIGN ---
-        string sectionAlignment; ConvertNumberToHexString (sectionAlignment, baseData.OptionalHeader.SectionAlignment);
+        string sectionAlignment = ConvertNumberToHexString (baseData.OptionalHeader.SectionAlignment);
         sectionAlignment.resize (sectionAlignment.size()-1);
         sectionAlignment = "0x" + sectionAlignment;
 
         // --- RAW DATA ALIGN ---
-        string fileAlignment; ConvertNumberToHexString (fileAlignment, baseData.OptionalHeader.FileAlignment);
+        string fileAlignment = ConvertNumberToHexString (baseData.OptionalHeader.FileAlignment);
         fileAlignment.resize (fileAlignment.size()-1);
         fileAlignment = "0x" + fileAlignment;
 
         // ====== LINK ======
         string linkCommand  = masmPath + "\\bin\\link.exe \"" + projectPath + "\\result.obj\"" + ' '
                             + "/subsystem:windows /map /pdb:test_result_PDB"
-                            + " /base:"      + imageBase;
-                            + " /align:"     + sectionAlignment;
-                            + " /filealign:" + fileAlignment;
-
-        // ====== DEBUG INFO ======
-        cout << "imageBase        = " << imageBase          << endl;
-        cout << "sectionAlignment = " << sectionAlignment   << endl;
-        cout << "fileAlignment    = " << fileAlignment      << endl;
+                            + " /base:"         + imageBase
+                            + " /align:"        + sectionAlignment
+                            + " /filealign:"    + fileAlignment;
+        cout << linkCommand << endl;
 
         // ====== REALISE ======
         system (&mlCommand[0]);
@@ -608,49 +602,6 @@ void Assembler::InvokeMASM ()
     {
         cout << "Can't create ASM file!" << endl;
     }
-}
-
-//======================================================
-//======================================================
-
-static const char BinNumToChar[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
-
-void Assembler::ConvertNumberToHexString (string& destination, long long number)
-{
-
-    char hexNumStr []
-    {
-        '0',
-        BinNumToChar[(number&0xF000000000000000)>>60],
-        BinNumToChar[(number&0x0F00000000000000)>>56],
-        BinNumToChar[(number&0x00F0000000000000)>>52],
-        BinNumToChar[(number&0x000F000000000000)>>48],
-        BinNumToChar[(number&0x0000F00000000000)>>44],
-        BinNumToChar[(number&0x00000F0000000000)>>40],
-        BinNumToChar[(number&0x000000F000000000)>>36],
-        BinNumToChar[(number&0x0000000F00000000)>>32],
-        BinNumToChar[(number&0x00000000F0000000)>>28],
-        BinNumToChar[(number&0x000000000F000000)>>24],
-        BinNumToChar[(number&0x0000000000F00000)>>20],
-        BinNumToChar[(number&0x00000000000F0000)>>16],
-        BinNumToChar[(number&0x000000000000F000)>>12],
-        BinNumToChar[(number&0x0000000000000F00)>> 8],
-        BinNumToChar[(number&0x00000000000000F0)>> 4],
-        BinNumToChar[(number&0x000000000000000F)>> 0],
-        'h',
-        '\0'
-    };
-
-
-    char* i = hexNumStr + 1;                                //+1 it's skip of the first zero
-
-    while (*i=='0')                                         //skip zero
-        i++;
-
-    if (IsAlphabetic(*i))                                   //letter must be preceded by a number
-        i--;
-
-    destination += i;                                       //write
 }
 
 //======================================================

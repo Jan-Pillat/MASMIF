@@ -14,6 +14,7 @@ Injector::Injector   (string& gotPath,      PEData& gotPEData,  PEData& gotResul
     IncludeNewSections      ();
     RoundVirtualSize        ();
     MergeSections           ();
+    CorrectImageSize        ();
     RewriteRawData          ();
     RoundRawDataSize        ();
     Inject                  ();
@@ -24,7 +25,7 @@ Injector::Injector   (string& gotPath,      PEData& gotPEData,  PEData& gotResul
 
 void Injector::IncludeNewSections ()
 {
-    cout << "IncludeNewSections\n";
+    cout << "Include New Sections\n";
 
     if (sectionsToCopy.size() <= 1)
         return;
@@ -81,26 +82,35 @@ void Injector::IncludeNewSections ()
 //!======================================================
 //!======================================================
 
+
+void Injector::RoundVirtualSize ()
+{
+    cout << "Round Virtual Size\n";
+
+    for (int i = 0;  i<base.sections.size();  i++)
+    {
+        DWORD size  = base.sections[i].header.Misc.VirtualSize;
+        DWORD aligned = size % base.OptionalHeader.SectionAlignment;
+        if (aligned != 0)
+            base.sections[i].header.Misc.VirtualSize  +=  base.OptionalHeader.SectionAlignment - aligned;
+    }
+}
+
+//!======================================================
+//!======================================================
+
 void Injector::MergeSections ()
 {
-    cout << "MergeSections\n";
+    cout << "Merge Sections\n";
 
     for (int currentMerge = 0;  currentMerge < merges.size();  currentMerge++)
     {
-        cout << "    merge nr. " << currentMerge<< endl;
-        cout << "    first  name      = " << merges[currentMerge].first << endl;
-        cout << "    first  name size = " << merges[currentMerge].first.size() << endl;
-        cout << "    second name      = " << merges[currentMerge].second << endl;
-        cout << "    second name size = " << merges[currentMerge].second.size() << endl;
-
         size_t  firstSectionIndex  = -1;
         size_t  secondSectionIndex = -1;
 
         //! ---------- FIND SECTION INDXES ----------
         for (int i = 0;  i < base.sections.size();  i++)
         {
-            cout << "        memcmp (first)  = " << memcmp(&base.sections[i].header.Name, &merges[currentMerge].first[0], IMAGE_SIZEOF_SHORT_NAME) << endl;
-
             if ( merges[currentMerge].first.size() <= IMAGE_SIZEOF_SHORT_NAME
             &&   memcmp(&base.sections[i].header.Name, &merges[currentMerge].first[0], merges[currentMerge].first.size()) == 0)
             {
@@ -125,11 +135,6 @@ void Injector::MergeSections ()
             if (secondSectionIndex == -1)
                 cout << "    second section NOT FOUND!" << endl;
             continue;
-        }
-        else
-        {
-            cout << "    firstSectionIndex  = " << firstSectionIndex  << endl;
-            cout << "    secondSectionIndex = " << secondSectionIndex << endl;
         }
 
         //! ---------- SET FAR AND NEAR SECTION ----------
@@ -177,17 +182,22 @@ void Injector::MergeSections ()
 //!======================================================
 
 
-void Injector::RoundVirtualSize ()
+void Injector::CorrectImageSize ()
 {
-    cout << "RoundVirtualSize\n";
+    cout << "Correct Image Size\n";
 
-    for (int i = 0;  i<base.sections.size();  i++)
+    if (base.sections.size() == 0)
+        return;
+
+    int farthest = 0;
+
+    for (int i = 1;  i<base.sections.size();  i++)
     {
-        DWORD size  = base.sections[i].header.Misc.VirtualSize;
-        DWORD aligned = size % base.OptionalHeader.SectionAlignment;
-        if (aligned != 0)
-            base.sections[i].header.Misc.VirtualSize  +=  base.OptionalHeader.SectionAlignment - aligned;
+        if (base.sections[farthest].header.VirtualAddress < base.sections[i].header.VirtualAddress)
+            farthest = i;
     }
+
+    base.OptionalHeader.SizeOfImage = base.sections[farthest].header.VirtualAddress + base.sections[farthest].header.Misc.VirtualSize;
 }
 
 //!======================================================
@@ -196,7 +206,7 @@ void Injector::RoundVirtualSize ()
 
 void Injector::RoundRawDataSize ()
 {
-    cout << "CorrectRawDataOffsets\n";
+    cout << "Round Raw Data Offsets\n";
 
     for (int i = 0;  i<base.sections.size();  i++)
     {
@@ -216,13 +226,8 @@ void Injector::RoundRawDataSize ()
 
 int GetSectionIndex (PEData& pe, DWORD rva) //rva - relative virtual address
 {
-    cout << "--GetSectionIndex--\n";
-
     for (int i = 0;  i<pe.sections.size();   i++)
     {
-        cout << "    section ";
-        cout.write((char*)&pe.sections[i].header.Name[0], 8);
-        cout << endl;
 
         DWORD begin = pe.sections[i].header.VirtualAddress  +  pe.OptionalHeader.ImageBase;
 
@@ -232,32 +237,16 @@ int GetSectionIndex (PEData& pe, DWORD rva) //rva - relative virtual address
         if (aligned != 0)
             end += pe.OptionalHeader.SectionAlignment - aligned;
 
-        cout << hex;
-        cout << "    ImageBase = 0x" << pe.OptionalHeader.ImageBase << endl;
-        cout << "    begin = 0x" << begin << endl;
-        cout << "    end   = 0x" << end   << endl;
-        cout << "    size  = 0x" << size  << endl;
-        cout << "    rva   = 0x" << rva   << endl;
-        cout << dec;
-
         if (rva >= begin  &&  rva < end)
             return i;
-
-        cout << "    Is bad" << endl;
     }
     return -1;
 }
 
 int RvaToOffset (PEData& pe, DWORD rva) //rva - relative virtual address
 {
-    cout << "--RvaToOffset--\n";
-
     for (int i = 0;  i<pe.sections.size();   i++)
     {
-        cout << "    section ";
-        cout.write((char*)&pe.sections[i].header.Name[0], 8);
-        cout << endl;
-
         DWORD begin = pe.sections[i].header.VirtualAddress  +  pe.OptionalHeader.ImageBase;
 
         DWORD size  = pe.sections[i].header.Misc.VirtualSize;
@@ -266,18 +255,8 @@ int RvaToOffset (PEData& pe, DWORD rva) //rva - relative virtual address
         if (aligned != 0)
             end += pe.OptionalHeader.SectionAlignment - aligned;
 
-        cout << hex;
-        cout << "    ImageBase = 0x" << pe.OptionalHeader.ImageBase << endl;
-        cout << "    begin = 0x" << begin << endl;
-        //cout << "    end   = 0x" << end   << endl;
-        cout << "    size  = 0x" << size  << endl;
-        cout << "    rva   = 0x" << rva   << endl;
-        cout << dec;
-
         if (rva >= begin  &&  rva < end)
             return rva - begin;
-
-        cout << "    Is bad" << endl;
     }
     return -1;
 }
@@ -286,7 +265,7 @@ int RvaToOffset (PEData& pe, DWORD rva) //rva - relative virtual address
 
 void Injector::RewriteRawData ()
 {
-    cout << "RewriteRawData\n";
+    cout << "Rewrite Raw Data\n";
 
     for (int i = 0;  i<rawDataToCopy.size();  i++)
     {
@@ -296,23 +275,16 @@ void Injector::RewriteRawData ()
             int targetSectionIndex = GetSectionIndex(base, rawDataToCopy[i].virtualAddress);
             if (targetSectionIndex > -1)
             {
-                cout << "Start rewrite (";
-                cout.write((char*)&result.sections[sourceSectionIndex].header.Name[0], 8);
-                cout << " -> ";
-                cout.write((char*)&base.sections[targetSectionIndex].header.Name[0], 8);
-                cout << ")" << endl;
-
                 // ---------- TARGET OFFSET ----------
                 int     targetRawDataOffset   =  RvaToOffset(base,   rawDataToCopy[i].virtualAddress);
 
                 if (targetRawDataOffset == -1)
                 {
-                    cout << "  (STOP) targetRawDataOffset = -1" << endl;
+                    cout << "  (SKIP) - there is no correct raw data offset in target file (rawDataToCopy["<<i<<"].virtualAddress = " << rawDataToCopy[i].virtualAddress << ")" << endl;
                     continue;
                 }
                 else
                 {
-                    cout << "  (CONTINUE) targetRawDataOffset != -1" << endl;
                     int difference = (targetRawDataOffset + rawDataToCopy[i].size) - base.sections[targetSectionIndex].rawData.Length();
                     if (difference > 0)
                     {
@@ -324,11 +296,9 @@ void Injector::RewriteRawData ()
                 int     sourceRawDataOffset   =  RvaToOffset(result,   rawDataToCopy[i].virtualAddress);
                 if (sourceRawDataOffset == -1)
                 {
-                    cout << "  (STOP) sourceRawDataOffset = -1" << endl;
+                    cout << "  (SKIP) - there is no correct raw data offset in source file (rawDataToCopy["<<i<<"].virtualAddress = " << rawDataToCopy[i].virtualAddress << ")" << endl;
                     continue;
                 }
-                else
-                    cout << "  (CONTINUE) sourceRawDataOffset != -1" << endl;
 
                 // ---------- POINTERS ----------
                 char*   sourceRawDataPointer  =  result.sections[sourceSectionIndex].rawData.GetBeginPointer() + sourceRawDataOffset;
@@ -337,9 +307,9 @@ void Injector::RewriteRawData ()
                 // ---------- WRITE ----------
                 memcpy (targetRawDataPointer, sourceRawDataPointer, rawDataToCopy[i].size);
             }
-            else cout << "  (STOP) Bad target index!" << endl;
+            else cout << "  (SKIP) - No section for this address in target file! (rawDataToCopy["<<i<<"].virtualAddress = " << rawDataToCopy[i].virtualAddress << ")" << endl;
         }
-        else cout << "  (STOP) Bad source index!" << endl;
+        else cout << "  (SKIP) - No section for this address in source file! (rawDataToCopy["<<i<<"].virtualAddress = " << rawDataToCopy[i].virtualAddress << ")" << endl;
     }
 }
 

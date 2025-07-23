@@ -24,7 +24,7 @@ Parser::Parser   (vector<Token>& gotTokens, vector<Merge>& gotMerges, vector<Thu
             (this->*position->second.func)();
         }
     }
-
+/*
     cout << "declarations count:   " << declarations.size()     << endl;
 
     for (size_t i = 0;  i<declarations.size();  i++)
@@ -35,6 +35,7 @@ Parser::Parser   (vector<Token>& gotTokens, vector<Merge>& gotMerges, vector<Thu
             << endl << "\taddress = "   << declarations[i].address << hex << "(0x" << declarations[i].address << ')' << dec
             << endl;
     }
+*/
 }
 
 //======================================================
@@ -253,12 +254,10 @@ bool Parser::SetSize (Declaration& destination)
 
 void    Parser::ParseSection    ()
 {
-    cout << "    Parse Section:" << endl;
     Declaration newSection;
 
     while (GetTokenOnlyToLineEnd())
     {
-        cout << "      gotToken = " << gotToken->content << " ; type = " << tokenTypeDescription[gotToken->type] << endl;
         // ---------- ATTRIBUTES ----------
         if (gotToken->type == TYPE_SPECIAL)
         {
@@ -342,12 +341,10 @@ void    Parser::ParseSection    ()
 
 void    Parser::ParseSegment    ()
 {
-    cout << "    Parse Segment:" << endl;
     Declaration newSegment;
 
     while (GetTokenOnlyToLineEnd())
     {
-        cout << "      gotToken = " << gotToken->content << " ; type = " << tokenTypeDescription[gotToken->type] << endl;
         // ---------- ADDRESS ----------
         if (!SetAddress(newSegment))
         // ---------- SIZE ----------

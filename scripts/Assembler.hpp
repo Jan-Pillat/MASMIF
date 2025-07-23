@@ -1,6 +1,7 @@
 #ifndef _HPP_Assembler_
 #define _HPP_Assembler_
 
+#include <string>
 #include <vector>
 #include <windows.h>
 #include "Declarations.hpp"
@@ -8,7 +9,9 @@
 #include "PEData.hpp"
 #include "../CppCore/include/FileData.hpp"
 #include "../CppCore/include/ReadableWinAPI.hpp"
+#include "utils/ConvertNumberToHexString.hpp"
 
+using std::string;
 using std::vector;
 
 class Assembler
@@ -44,11 +47,10 @@ private:
     string  MASMcode;
     vector  <Declaration>& declarations;
     bool    IsNextDeclarationGroupable(size_t i);
-    DWORD   GetEndBase();
+    DWORD   GetOriginalSectionsSize();
 
     vector <Thunk>&  thunks;
 
-    void   ConvertNumberToHexString (string& destination, long long number);
     string ConvertContentNumbers    (string& content);
 
     string projectPath;

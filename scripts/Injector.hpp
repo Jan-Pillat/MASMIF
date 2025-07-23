@@ -29,6 +29,7 @@ private:
     void    IncludeNewSections      ();
     void    RoundVirtualSize        ();
     void    MergeSections           ();
+    void    CorrectImageSize        ();
     void    RewriteRawData          ();
     void    RoundRawDataSize        ();
     void    Inject                  ();

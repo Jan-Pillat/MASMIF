@@ -168,8 +168,7 @@ void    MapParser::PrepareSectionsToCopyAndMapDeclarations ()
 
 void    MapParser::CalculateAndDeclareRawDataToCopy ()
 {
-    cout << "CalculateAndDeclareRawDataToCopy" << endl;
-    cout << "  mapDeclarations.size() = " << mapDeclarations.size() << endl;
+    cout << "Calculate And Declare Raw Data To Copy" << endl;
 
     for (int i = 0;  i<mapDeclarations.size();  i++)
     {
@@ -177,14 +176,11 @@ void    MapParser::CalculateAndDeclareRawDataToCopy ()
         {
             if (*reinterpret_cast<unsigned long long*>(&mapDeclarations[i].name[1]) == RAW_DATA_BEGIN)
             {
-                cout << "  mapDeclaration begin! (" << mapDeclarations[i].name << ")" << endl;
-
                 string number = &mapDeclarations[i].name[9];
 
                 for (int nextI = i+1;  nextI<mapDeclarations.size();  nextI++)
                     if (*reinterpret_cast<unsigned long long*>(&mapDeclarations[nextI].name[1]) == RAW_DATA_END)
                     {
-                        cout << "    mapDeclaration end! (" << mapDeclarations[nextI].name << ")" << endl;
                         if (&mapDeclarations[nextI].name[9] == number)
                         {
                             RawDataToCopy  newRawDataToCopy;
@@ -200,19 +196,7 @@ void    MapParser::CalculateAndDeclareRawDataToCopy ()
                             break;
                         }
                     }
-                    else
-                    {
-                        cout << "  " << &mapDeclarations[nextI].name[1] << " != ____END_  " << hex << "0x" << *reinterpret_cast<unsigned long long*>(&mapDeclarations[nextI].name[1]) << " != 0x" << RAW_DATA_END << dec << endl;
-                    }
             }
-            else
-            {
-                cout << "  " << &mapDeclarations[i].name[1] << " != ____BEG_  " <<hex << "0x" << *reinterpret_cast<unsigned long long*>(&mapDeclarations[i].name[1]) << " != 0x" << RAW_DATA_BEGIN << dec << endl;
-            }
-        }
-        else
-        {
-            cout << "  mapDeclarations[i].name.length() [name=" << mapDeclarations[i].name << ";length=" << mapDeclarations[i].name.length() << "] !>= 10" << endl;
         }
     }
 }
