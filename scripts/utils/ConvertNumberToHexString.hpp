@@ -4,6 +4,7 @@
 #include <string>
 #include "../../CppCore/include/StringUtils.hpp"
 
-std::string ConvertNumberToHexString (long long number);
+std::string ConvertNumberToHexString   (long long number);
+std::string ConvertNumberToHexString0x (long long number);
 
 #endif

@@ -35,7 +35,7 @@
 
 1750323524 c:\users\janpi\documents\c++ projects\masmif\scripts\parser\_parser.cpp
 
-1753184213 source:c:\users\janpi\documents\c++ projects\masmif\cppcore\src\binarydata.cpp
+1753287751 source:c:\users\janpi\documents\c++ projects\masmif\cppcore\src\binarydata.cpp
 	"../include/BinaryData.hpp"
 
 1753184213 c:\users\janpi\documents\c++ projects\masmif\cppcore\include\binarydata.hpp
@@ -120,7 +120,7 @@
 1750333803 c:\users\janpi\documents\c++ projects\masmif\cppcore\src\consoleutils\event.cpp
 	"../../include/ConsoleUtils/Event.hpp"
 
-1753217817 source:c:\users\janpi\documents\c++ projects\masmif\cppcore\src\filedata.cpp
+1753287769 source:c:\users\janpi\documents\c++ projects\masmif\cppcore\src\filedata.cpp
 	"../include/FileData.hpp"
 
 1752072755 c:\users\janpi\documents\c++ projects\masmif\cppcore\include\filedata.hpp
@@ -158,7 +158,7 @@
 
 1750344216 c:\users\janpi\documents\c++ projects\masmif\scripts\parser\functiondeclarations.hpp
 
-1753267577 source:c:\users\janpi\documents\c++ projects\masmif\scripts\injector.cpp
+1753276002 source:c:\users\janpi\documents\c++ projects\masmif\scripts\injector.cpp
 	"Injector.hpp"
 	<iostream>
 
@@ -284,11 +284,11 @@
 	"Declarations.hpp"
 	"utils/StrUniLoadNumber.hpp"
 
-1753266269 source:c:\users\janpi\documents\c++ projects\masmif\scripts\mapparser.cpp
+1753287036 source:c:\users\janpi\documents\c++ projects\masmif\scripts\mapparser.cpp
 	"MapParser.hpp"
 	<iostream>
 
-1752161438 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\injectscript.hpp
+1753284444 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\injectscript.hpp
 	<iostream>
 	<windows.h>
 	"..\PEData.hpp"
@@ -299,6 +299,7 @@
 	"..\MapParser.hpp"
 	"..\Injector.hpp"
 	"..\GetPath.hpp"
+	"..\dbgLabeler.hpp"
 	"..\..\CppCore\include\ReadableWinAPI.hpp"
 
 1752054080 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\exitprogram.hpp
@@ -307,7 +308,7 @@
 1752063165 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\exitprogram.cpp
 	"ExitProgram.hpp"
 
-1753210024 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\injectscript.cpp
+1753287804 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\injectscript.cpp
 	"InjectScript.hpp"
 
 1752161449 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\newproject.hpp
@@ -383,10 +384,10 @@
 
 1750432462 source:c:\users\janpi\documents\c++ projects\masmif\scripts\utils\struniloadnumber.cpp
 
-1752223748 source:c:\users\janpi\documents\c++ projects\masmif\scripts\utils\convertnumbertohexstring.cpp
+1753288393 source:c:\users\janpi\documents\c++ projects\masmif\scripts\utils\convertnumbertohexstring.cpp
 	"ConvertNumberToHexString.hpp"
 
-1752223764 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\convertnumbertohexstring.hpp
+1753284404 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\convertnumbertohexstring.hpp
 	<string>
 	"../../CppCore/include/StringUtils.hpp"
 
@@ -395,4 +396,15 @@
 
 1753187630 source:c:\users\janpi\documents\c++ projects\masmif\scripts\utils\getstring.cpp
 	"GetString.hpp"
+
+1753288337 source:c:\users\janpi\documents\c++ projects\masmif\scripts\dbglabeler.cpp
+	"dbgLabeler.hpp"
+
+1753289042 c:\users\janpi\documents\c++ projects\masmif\scripts\dbglabeler.hpp
+	<string>
+	<vector>
+	"Declarations.hpp"
+	"utils/ConvertNumberToHexString.hpp"
+	"PEData.hpp"
+	"../CppCore/include/FileData.hpp"
 

@@ -122,15 +122,20 @@ void Menu_InjectScript (const string& scriptPath)
     fileWithPath.LoadTextFile(projectPath+"target.path");
 
     if (fileWithPath.IsEmpty())
-        cout << "Incorrect target.path!" << endl;
-    else
     {
-        cout << "Injecting..." << endl;
-        string      targetPath  (fileWithPath.GetBeginPointer());
-        cout << "targetPath = " << targetPath << endl;
+        cout << "Incorrect target.path!" << endl;
         system ("pause");
-        Injector    injector    (targetPath, peData, resultData, sectionsToCopy, rawDataToCopy, merges);
+        return;
     }
+
+    string      targetPath  (fileWithPath.GetBeginPointer());
+
+    cout << "Injecting..." << endl;
+    Injector    injector    (targetPath, peData, resultData, sectionsToCopy, rawDataToCopy, merges);
+
+
+    cout << "Creating dbg labels..." << endl;
+    DbgLabeler dbgLabeler (targetPath, declarations, peData);
 
 
     // ---------- PROGRAM END ----------

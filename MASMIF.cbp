@@ -70,6 +70,8 @@
 		<Unit filename="scripts/Parser.cpp" />
 		<Unit filename="scripts/Parser.hpp" />
 		<Unit filename="scripts/Token.hpp" />
+		<Unit filename="scripts/dbgLabeler.cpp" />
+		<Unit filename="scripts/dbgLabeler.hpp" />
 		<Unit filename="scripts/menu/ExistingProject.cpp" />
 		<Unit filename="scripts/menu/ExistingProject.hpp" />
 		<Unit filename="scripts/menu/ExitProgram.cpp" />

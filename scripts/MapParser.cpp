@@ -199,6 +199,7 @@ void    MapParser::CalculateAndDeclareRawDataToCopy ()
             }
         }
     }
+    cout << "  END" << endl;
 }
 
 //======================================================

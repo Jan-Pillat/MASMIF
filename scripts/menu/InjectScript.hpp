@@ -12,6 +12,7 @@
 #include "..\MapParser.hpp"
 #include "..\Injector.hpp"
 #include "..\GetPath.hpp"
+#include "..\dbgLabeler.hpp"
 #include "..\..\CppCore\include\ReadableWinAPI.hpp"
 
 extern string currentProjectName;
