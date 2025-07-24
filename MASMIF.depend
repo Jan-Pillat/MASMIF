@@ -136,7 +136,7 @@
 
 1750323524 c:\users\janpi\documents\c++ projects\masmif\scripts\struniloadnumber.cpp
 
-1753216669 c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.hpp
+1753354686 c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.hpp
 	<string>
 	<vector>
 	<iostream>
@@ -162,7 +162,7 @@
 	"Injector.hpp"
 	<iostream>
 
-1753262488 source:c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.cpp
+1753355199 source:c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.cpp
 	"Lexer.hpp"
 
 1750349204 c:\users\janpi\documents\c++ projects\masmif\scripts\struniloadnumber.hpp
@@ -240,20 +240,21 @@
 	<string>
 	"../CppCore/include/BinaryData.hpp"
 
-1753274317 source:c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.cpp
+1753356881 source:c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.cpp
 	"Assembler.hpp"
 	<iostream>
 
-1753272982 c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.hpp
+1753357047 c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.hpp
 	<string>
 	<vector>
 	<windows.h>
 	"Declarations.hpp"
 	"Parser.hpp"
 	"PEData.hpp"
+	"utils/ContentConverter.hpp"
+	"utils/ConvertNumberToHexString.hpp"
 	"../CppCore/include/FileData.hpp"
 	"../CppCore/include/ReadableWinAPI.hpp"
-	"utils/ConvertNumberToHexString.hpp"
 
 1751721368 c:\users\janpi\documents\c++ projects\masmif\scripts\pedata.hpp
 	<windows.h>
@@ -288,13 +289,14 @@
 	"MapParser.hpp"
 	<iostream>
 
-1753284444 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\injectscript.hpp
+1753357434 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\injectscript.hpp
 	<iostream>
 	<windows.h>
 	"..\PEData.hpp"
 	"..\Token.hpp"
 	"..\Lexer.hpp"
 	"..\Parser.hpp"
+	"..\Compiler.hpp"
 	"..\Assembler.hpp"
 	"..\MapParser.hpp"
 	"..\Injector.hpp"
@@ -308,7 +310,7 @@
 1752063165 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\exitprogram.cpp
 	"ExitProgram.hpp"
 
-1753287804 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\injectscript.cpp
+1753357092 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\injectscript.cpp
 	"InjectScript.hpp"
 
 1752161449 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\newproject.hpp
@@ -397,7 +399,7 @@
 1753187630 source:c:\users\janpi\documents\c++ projects\masmif\scripts\utils\getstring.cpp
 	"GetString.hpp"
 
-1753288337 source:c:\users\janpi\documents\c++ projects\masmif\scripts\dbglabeler.cpp
+1753289074 source:c:\users\janpi\documents\c++ projects\masmif\scripts\dbglabeler.cpp
 	"dbgLabeler.hpp"
 
 1753289042 c:\users\janpi\documents\c++ projects\masmif\scripts\dbglabeler.hpp
@@ -407,4 +409,27 @@
 	"utils/ConvertNumberToHexString.hpp"
 	"PEData.hpp"
 	"../CppCore/include/FileData.hpp"
+
+1753351454 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\contentconverter.hpp
+	<string>
+	"../../CppCore/include/StringUtils.hpp"
+
+1753351433 source:c:\users\janpi\documents\c++ projects\masmif\scripts\utils\contentconverter.cpp
+	"ContentConverter.hpp"
+
+1753357563 c:\users\janpi\documents\c++ projects\masmif\scripts\compiler.hpp
+	<string>
+	<vector>
+	<windows.h>
+	"Declarations.hpp"
+	"Parser.hpp"
+	"PEData.hpp"
+	"utils/ContentConverter.hpp"
+	"utils/ConvertNumberToHexString.hpp"
+	"../CppCore/include/FileData.hpp"
+	"../CppCore/include/ReadableWinAPI.hpp"
+
+1753357408 source:c:\users\janpi\documents\c++ projects\masmif\scripts\compiler.cpp
+	"Compiler.hpp"
+	<iostream>
 

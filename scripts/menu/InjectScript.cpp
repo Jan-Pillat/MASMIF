@@ -7,10 +7,10 @@ using namespace std;
 
 // ========== PRINT DEBUG ========== \\
 
-void PrintTokens (Lexer& lexer)
+void PrintTokens (vector <Token>& tokens)
 {
-    for (size_t i = 0;  i<lexer.tokens.size();  i++)
-        cout << "TOKEN " << i << ':' << endl << "  type: " << tokenTypeDescription[lexer.tokens[i].type] << endl << "  content: " << lexer.tokens[i].content << endl << endl;
+    for (size_t i = 0;  i<tokens.size();  i++)
+        cout << "TOKEN " << i << ':' << endl << "  type: " << tokenTypeDescription[tokens[i].type] << endl << "  content: " << tokens[i].content << endl << endl;
 }
 
 // ========== OPTION - INJECT ========== \\
@@ -72,6 +72,7 @@ void Menu_InjectScript (const string& scriptPath)
 
     cout << "Lexing..." << endl;
     Lexer   lexer       (tokens, scriptPath);
+    PrintTokens         (tokens);
 
     if (tokens.size() == 0)
     {
@@ -88,9 +89,17 @@ void Menu_InjectScript (const string& scriptPath)
         cout << "STOP - NO important data" << endl;
     }
 
-    cout << "Assembling..." << endl;
-    Assembler assembler (projectPath, thunks, declarations, peData);
+    cout << "Compiling..." << endl;
+    Compiler compiler (projectPath, thunks, declarations, peData);
+
+    cout << "Time to assemble. ";
     system ("pause");
+    system ("cls");
+
+    cout << "Assembling..." << endl;
+    Assembler assembler (projectPath, peData);
+    system ("pause");
+    system ("cls");
 
 
     // ---------- MAP ----------

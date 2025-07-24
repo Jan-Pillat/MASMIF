@@ -19,6 +19,8 @@ Lexer::Lexer (vector<Token>& gotTokens, const string& filePath) : tokens(gotToke
 
 void Lexer::Tokenize (const string& filePath)
 {
+    cout << " LEXER: tokenize file from: " << filePath << endl;
+
     const char* pathPointer = &filePath[0];
     const char* begin       = pathPointer;
     const char* lastSlash   = pathPointer;
@@ -112,7 +114,7 @@ void Lexer::Tokenize (const string& filePath)
         if (IsTextBegin     ()) LexText     (); else
         if (IsCharBegin     ()) LexChars    (); else
         if (IsContentBegin  ()) LexContent  (); else
-        if (IsCommentBegin  ()) SkipComment (); else
+        if (IsCommentBegin  ()) LexComment  (); else
         if (IsSpecialBegin  ()) LexSpecial  (); else
         if (IsLineEnd       ()) LexLineEnd  (); else pointer++;
     }
@@ -192,7 +194,7 @@ void Lexer::LexText    ()
         {
             pointer++;
 
-            if (*pointer=='"')
+            if ( (*pointer=='"') || (*pointer=='\\') )
                 pointer++;
         }
         else
@@ -346,12 +348,6 @@ void Lexer::LexContent ()
     tokens.push_back (newToken);
 }
 //!------------------------------------------------------
-void Lexer::SkipComment ()
-{
-    while (!IsLineEnd())
-        pointer++;
-}
-//!------------------------------------------------------
 void Lexer::LexSpecial ()
 {
     Token newToken;
@@ -360,7 +356,27 @@ void Lexer::LexSpecial ()
     tokens.push_back (newToken);
 }
 //!------------------------------------------------------
-void Lexer::LexLineEnd ()
+void Lexer::SkipComment ()
+{
+    while (!IsLineEnd())
+        pointer++;
+}
+//!------------------------------------------------------
+void Lexer::LexComment ()
+{
+    char* begin = ++pointer;
+
+    while (!IsLineEnd())
+        pointer++;
+
+    char* end = pointer;
+
+    string gotComment (begin, end-begin);
+
+    LexLineEnd (&gotComment[0]);
+}
+//!------------------------------------------------------
+void Lexer::LexLineEnd (char* content)
 {
     while (true)
     {
@@ -371,7 +387,12 @@ void Lexer::LexLineEnd ()
         else
             break;
     }
-    tokens.emplace_back ("", TYPE_LINEEND);
+    tokens.emplace_back (content, TYPE_LINEEND);
+}
+//!------------------------------------------------------
+void Lexer::LexLineEnd ()
+{
+    LexLineEnd("");
 }
 //!------------------------------------------------------
 void Lexer::Include ()
@@ -384,12 +405,27 @@ void Lexer::Include ()
     if (*pointer == '\0')
         return;
 
-    char* end   = pointer++;
-    char* previousPointer = pointer; //Tokenize will change pointer value
+    //Tokenize will change pointer value, so it must be save
+    char* previousPointer = ++pointer;
 
+    //Remove blanks at the end of the path
+    char* end = pointer-2;  //pointer = after hashtag,  pointer-1 = hashtag,  pointer-2 = before hashtag
+    while (IsBlank(*end))
+        end--;
+    if (*end == '#')
+        end = begin;
+    else
+        end++;
+
+    //If path is empty, skip it.
+    if (end == begin)
+        return;
+
+    //Tokenize file using the path.
     string path (begin, end-begin);
     Tokenize (path);
 
-    pointer = previousPointer; //Tokenize has changed pointer value
+    //Tokenize has changed pointer value, so return previous pointer.
+    pointer = previousPointer;
 }
 

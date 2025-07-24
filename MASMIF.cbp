@@ -55,6 +55,8 @@
 		<Unit filename="main.cpp" />
 		<Unit filename="scripts/Assembler.cpp" />
 		<Unit filename="scripts/Assembler.hpp" />
+		<Unit filename="scripts/Compiler.cpp" />
+		<Unit filename="scripts/Compiler.hpp" />
 		<Unit filename="scripts/Declarations.hpp" />
 		<Unit filename="scripts/GetPath.cpp" />
 		<Unit filename="scripts/GetPath.hpp" />
@@ -86,6 +88,8 @@
 		<Unit filename="scripts/menu/Settings.hpp" />
 		<Unit filename="scripts/menu/Work.cpp" />
 		<Unit filename="scripts/menu/Work.hpp" />
+		<Unit filename="scripts/utils/ContentConverter.cpp" />
+		<Unit filename="scripts/utils/ContentConverter.hpp" />
 		<Unit filename="scripts/utils/ConvertNumberToHexString.cpp" />
 		<Unit filename="scripts/utils/ConvertNumberToHexString.hpp" />
 		<Unit filename="scripts/utils/GetString.cpp" />

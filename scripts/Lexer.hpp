@@ -30,8 +30,11 @@ private:
     void LexNumber  ();
     void LexContent ();
     void LexSpecial ();
-    void SkipComment();
+    void LexComment ();
     void LexLineEnd ();
+    void LexLineEnd (char* content);
+
+    void SkipComment();
     void Include    ();
 
     bool IsWordBegin        ();
