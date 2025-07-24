@@ -4,10 +4,12 @@
 #include <windows.h>
 #include <shlobj.h>
 #include <string>
+#include "..\Globals.hpp"
 
 using std::string;
 
-string GetDocumentsPath ();
-string GetProjectsPath  ();
+string GetDocumentsPath     ();
+string GetAllProjectsPath   ();
+string GetProjectPath       ();
 
 #endif

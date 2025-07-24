@@ -22,7 +22,7 @@ void Menu_ExistingProject ()
     projectsMenu.buttonRight[1]     = projectsMenu.buttonRight[0];
 
     // ---------- Find projects ----------
-    string path = GetProjectsPath() + "\\*";
+    string path = GetAllProjectsPath() + "\\*";
 
     WIN32_FIND_DATAA foundData;
 

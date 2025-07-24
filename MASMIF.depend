@@ -136,7 +136,7 @@
 
 1750323524 c:\users\janpi\documents\c++ projects\masmif\scripts\struniloadnumber.cpp
 
-1753354686 c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.hpp
+1753381341 c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.hpp
 	<string>
 	<vector>
 	<iostream>
@@ -162,7 +162,7 @@
 	"Injector.hpp"
 	<iostream>
 
-1753355199 source:c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.cpp
+1753381369 source:c:\users\janpi\documents\c++ projects\masmif\scripts\lexer.cpp
 	"Lexer.hpp"
 
 1750349204 c:\users\janpi\documents\c++ projects\masmif\scripts\struniloadnumber.hpp
@@ -240,11 +240,11 @@
 	<string>
 	"../CppCore/include/BinaryData.hpp"
 
-1753356881 source:c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.cpp
+1753382452 source:c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.cpp
 	"Assembler.hpp"
 	<iostream>
 
-1753357047 c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.hpp
+1753382450 c:\users\janpi\documents\c++ projects\masmif\scripts\assembler.hpp
 	<string>
 	<vector>
 	<windows.h>
@@ -289,9 +289,10 @@
 	"MapParser.hpp"
 	<iostream>
 
-1753357434 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\injectscript.hpp
+1753382272 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\injectscript.hpp
 	<iostream>
 	<windows.h>
+	"..\Globals.hpp"
 	"..\PEData.hpp"
 	"..\Token.hpp"
 	"..\Lexer.hpp"
@@ -300,8 +301,9 @@
 	"..\Assembler.hpp"
 	"..\MapParser.hpp"
 	"..\Injector.hpp"
-	"..\GetPath.hpp"
 	"..\dbgLabeler.hpp"
+	"..\Preprocessor.hpp"
+	"..\utils\GetPath.hpp"
 	"..\..\CppCore\include\ReadableWinAPI.hpp"
 
 1752054080 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\exitprogram.hpp
@@ -310,17 +312,18 @@
 1752063165 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\exitprogram.cpp
 	"ExitProgram.hpp"
 
-1753357092 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\injectscript.cpp
+1753384090 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\injectscript.cpp
 	"InjectScript.hpp"
 
-1752161449 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\newproject.hpp
+1753379914 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\newproject.hpp
 	<iostream>
 	<string>
 	<windows.h>
 	"../../CppCore/include/ReadableWinAPI.hpp"
 	"../../CppCore/include/FileData.hpp"
 	"../../CppCore/include/ConsoleUtils.hpp"
-	"../GetPath.hpp"
+	"../utils/GetPath.hpp"
+	"../Globals.hpp"
 	"InjectScript.hpp"
 	"Work.hpp"
 
@@ -332,22 +335,22 @@
 	"InjectScript.hpp"
 	"ExitProgram.hpp"
 
-1752161324 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\newproject.cpp
+1753382560 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\newproject.cpp
 	"NewProject.hpp"
 
 1752159103 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\work.cpp
 	"Work.hpp"
 
-1752161426 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\existingproject.hpp
+1753379406 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\existingproject.hpp
 	<windows.h>
 	<string>
 	<iostream>
 	"Work.hpp"
-	"InjectScript.hpp"
-	"../GetPath.hpp"
+	"../Globals.hpp"
+	"../utils/GetPath.hpp"
 	"../../CppCore/include/ConsoleUtils.hpp"
 
-1752161342 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\existingproject.cpp
+1753382234 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\existingproject.cpp
 	"ExistingProject.hpp"
 
 1752078482 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\settings.cpp
@@ -365,13 +368,13 @@
 1752160359 source:c:\users\janpi\documents\c++ projects\masmif\scripts\getmasmifprojectsfolder.cpp
 	"GetMasmifProjectsFolder.hpp"
 
-1752161762 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\openprojectfolder.hpp
+1753362483 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\openprojectfolder.hpp
 	<iostream>
 	<windows.h>
-	"../GetPath.hpp"
 	"InjectScript.hpp"
+	"../utils/GetPath.hpp"
 
-1752161804 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\openprojectfolder.cpp
+1753379970 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\openprojectfolder.cpp
 	"OpenProjectFolder.hpp"
 
 1752161581 c:\users\janpi\documents\c++ projects\masmif\scripts\getpath.hpp
@@ -396,7 +399,7 @@
 1753187576 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\getstring.hpp
 	<string>
 
-1753187630 source:c:\users\janpi\documents\c++ projects\masmif\scripts\utils\getstring.cpp
+1753367266 source:c:\users\janpi\documents\c++ projects\masmif\scripts\utils\getstring.cpp
 	"GetString.hpp"
 
 1753289074 source:c:\users\janpi\documents\c++ projects\masmif\scripts\dbglabeler.cpp
@@ -410,26 +413,54 @@
 	"PEData.hpp"
 	"../CppCore/include/FileData.hpp"
 
-1753351454 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\contentconverter.hpp
+1753367564 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\contentconverter.hpp
 	<string>
 	"../../CppCore/include/StringUtils.hpp"
 
-1753351433 source:c:\users\janpi\documents\c++ projects\masmif\scripts\utils\contentconverter.cpp
+1753367737 source:c:\users\janpi\documents\c++ projects\masmif\scripts\utils\contentconverter.cpp
 	"ContentConverter.hpp"
 
-1753357563 c:\users\janpi\documents\c++ projects\masmif\scripts\compiler.hpp
+1753384496 c:\users\janpi\documents\c++ projects\masmif\scripts\compiler.hpp
 	<string>
 	<vector>
 	<windows.h>
 	"Declarations.hpp"
 	"Parser.hpp"
 	"PEData.hpp"
+	"Globals.hpp"
+	"utils/GetPath.hpp"
 	"utils/ContentConverter.hpp"
 	"utils/ConvertNumberToHexString.hpp"
 	"../CppCore/include/FileData.hpp"
 	"../CppCore/include/ReadableWinAPI.hpp"
 
-1753357408 source:c:\users\janpi\documents\c++ projects\masmif\scripts\compiler.cpp
+1753384434 source:c:\users\janpi\documents\c++ projects\masmif\scripts\compiler.cpp
 	"Compiler.hpp"
+	<iostream>
+
+1753382181 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\getpath.hpp
+	<windows.h>
+	<shlobj.h>
+	<string>
+	"..\Globals.hpp"
+
+1753383147 source:c:\users\janpi\documents\c++ projects\masmif\scripts\utils\getpath.cpp
+	"GetPath.hpp"
+
+1753382102 c:\users\janpi\documents\c++ projects\masmif\scripts\globals.hpp
+	<string>
+
+1753378128 source:c:\users\janpi\documents\c++ projects\masmif\scripts\globals.cpp
+	"Globals.hpp"
+
+1753383112 c:\users\janpi\documents\c++ projects\masmif\scripts\preprocessor.hpp
+	<string>
+	<windows.h>
+	"utils/GetPath.hpp"
+	"../CppCore/include/FileData.hpp"
+	"../CppCore/include/StringUtils.hpp"
+
+1753383598 source:c:\users\janpi\documents\c++ projects\masmif\scripts\preprocessor.cpp
+	"Preprocessor.hpp"
 	<iostream>
 

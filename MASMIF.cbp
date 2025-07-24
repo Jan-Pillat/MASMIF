@@ -58,8 +58,8 @@
 		<Unit filename="scripts/Compiler.cpp" />
 		<Unit filename="scripts/Compiler.hpp" />
 		<Unit filename="scripts/Declarations.hpp" />
-		<Unit filename="scripts/GetPath.cpp" />
-		<Unit filename="scripts/GetPath.hpp" />
+		<Unit filename="scripts/Globals.cpp" />
+		<Unit filename="scripts/Globals.hpp" />
 		<Unit filename="scripts/Injector.cpp" />
 		<Unit filename="scripts/Injector.hpp" />
 		<Unit filename="scripts/Lexer.cpp" />
@@ -71,6 +71,8 @@
 		<Unit filename="scripts/PEData.hpp" />
 		<Unit filename="scripts/Parser.cpp" />
 		<Unit filename="scripts/Parser.hpp" />
+		<Unit filename="scripts/Preprocessor.cpp" />
+		<Unit filename="scripts/Preprocessor.hpp" />
 		<Unit filename="scripts/Token.hpp" />
 		<Unit filename="scripts/dbgLabeler.cpp" />
 		<Unit filename="scripts/dbgLabeler.hpp" />
@@ -92,6 +94,8 @@
 		<Unit filename="scripts/utils/ContentConverter.hpp" />
 		<Unit filename="scripts/utils/ConvertNumberToHexString.cpp" />
 		<Unit filename="scripts/utils/ConvertNumberToHexString.hpp" />
+		<Unit filename="scripts/utils/GetPath.cpp" />
+		<Unit filename="scripts/utils/GetPath.hpp" />
 		<Unit filename="scripts/utils/GetString.cpp" />
 		<Unit filename="scripts/utils/GetString.hpp" />
 		<Unit filename="scripts/utils/StrUniLoadNumber.cpp" />

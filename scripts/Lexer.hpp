@@ -17,9 +17,9 @@ class Lexer
 {
 public:
     Lexer           (vector<Token>& gotTokens);
-    Lexer           (vector<Token>& gotTokens, const string& filePath);
+    Lexer           (vector<Token>& gotTokens, string& script);
 
-    void Tokenize   (const string& filePath);
+    void Tokenize   (string& script);
 
     vector   <Token>&   tokens;
 
@@ -52,7 +52,6 @@ private:
 
 // ---------- VARIABLES ----------
     char*    pointer    = nullptr;
-    string   currentDirectory;
 };
 
 #endif // _HPP_Lexer_

@@ -1,7 +1,5 @@
 #include "InjectScript.hpp"
 
-string currentProjectName;
-
 using namespace std;
 
 
@@ -17,7 +15,7 @@ void PrintTokens (vector <Token>& tokens)
 
 void Menu_InjectProjectScript ()
 {
-    Menu_InjectScript (GetProjectsPath() + "\\" + currentProjectName + "\\main.masmif");
+    Menu_InjectScript (GetProjectPath() + "\\main.masmif");
 }
 
 //===============================================================================
@@ -50,11 +48,8 @@ void Menu_InjectScript (const string& scriptPath)
 {
     system ("cls");
 
-    // ---------- Find project ----------
-    string projectPath = GetProjectsPath() + "\\" + currentProjectName + "\\";
-
     // ---------- Load base.exe ----------
-    string basePath     = projectPath+"base.exe";
+    string basePath     = GetProjectPath()+"\\base.exe";
     PEData peData       (&basePath[0]);
 
     if (peData.data.IsEmpty())
@@ -70,9 +65,31 @@ void Menu_InjectScript (const string& scriptPath)
     vector  <Thunk>         thunks;
     vector  <Declaration>   declarations;
 
+    //! ----- LOAD FILE -----
+    FileData data;
+    data.LoadTextFile(scriptPath);
+
+    if (data.IsEmpty())
+    {
+        cout << "Load file data failed!   ERROR = " << data.GetErrorDescribePointer() << endl;
+        cout << "Used path: " << scriptPath << endl;
+        system ("pause");
+        return;
+    }
+
+    string MASMcode = data.GetBeginPointer();
+    data.Remove();
+
+    cout << "Preprocessing..." << endl;
+    MASMcode = Preprocessor().ApplyIncludes(&MASMcode[0]);
+
+    string target = GetProjectPath() + "\\Preprocessed.masmif";
+    data = MASMcode;
+    data.SaveTextFile(target);
+
     cout << "Lexing..." << endl;
-    Lexer   lexer       (tokens, scriptPath);
-    PrintTokens         (tokens);
+    Lexer   lexer       (tokens, MASMcode);
+    //PrintTokens         (tokens);
 
     if (tokens.size() == 0)
     {
@@ -90,14 +107,14 @@ void Menu_InjectScript (const string& scriptPath)
     }
 
     cout << "Compiling..." << endl;
-    Compiler compiler (projectPath, thunks, declarations, peData);
+    Compiler compiler (MASMcode, GetProjectPath(), thunks, declarations, peData);
 
     cout << "Time to assemble. ";
     system ("pause");
     system ("cls");
 
     cout << "Assembling..." << endl;
-    Assembler assembler (projectPath, peData);
+    Assembler assembler (GetProjectPath(), peData);
     system ("pause");
     system ("cls");
 
@@ -106,8 +123,8 @@ void Menu_InjectScript (const string& scriptPath)
     vector   <Token>    mapTokens;
 
     cout << "Lexing map..." << endl;
-    string mapPath      = projectPath+"result.map";
-    Lexer  mapLexer     (mapTokens, &mapPath[0]);
+    string mapPath      = GetProjectPath()+"\\result.map";
+    Lexer  mapLexer     (mapTokens, mapPath);
 
     if (mapTokens.size() == 0)
     {
@@ -124,11 +141,11 @@ void Menu_InjectScript (const string& scriptPath)
 
 
     // ---------- INJECT ----------
-    string      resultPath  = projectPath+"result.exe";
+    string      resultPath  = GetProjectPath()+"\\result.exe";
     PEData      resultData  (&resultPath[0]);
 
     FileData    fileWithPath;
-    fileWithPath.LoadTextFile(projectPath+"target.path");
+    fileWithPath.LoadTextFile(GetProjectPath()+"\\target.path");
 
     if (fileWithPath.IsEmpty())
     {

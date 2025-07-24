@@ -8,100 +8,19 @@ Lexer::Lexer (vector<Token>& gotTokens) : tokens(gotTokens)
 {
 
 }
-Lexer::Lexer (vector<Token>& gotTokens, const string& filePath) : tokens(gotTokens)
+Lexer::Lexer (vector<Token>& gotTokens, string& script) : tokens(gotTokens)
 {
-    Tokenize (filePath);
+    Tokenize (script);
 }
 
-
 //======================================================
 //======================================================
 
-void Lexer::Tokenize (const string& filePath)
+void Lexer::Tokenize (string& script)
 {
-    cout << " LEXER: tokenize file from: " << filePath << endl;
+    cout << "  Tokenize" << endl;
 
-    const char* pathPointer = &filePath[0];
-    const char* begin       = pathPointer;
-    const char* lastSlash   = pathPointer;
-    bool        isFullPath  = false;
-    bool        asBinary    = false;
-    bool        foundSlash  = false;
-
-    //! ----- SAVE PREVIOUS DIR AND SET NEW -----
-
-    // -- SKIP BLANKS --
-    while (IsBlank(*pathPointer))
-        pathPointer++;
-
-    // -- COMMAND --
-    if (*pathPointer == '(')
-    {
-        begin         = ++pathPointer;
-
-        while (*pathPointer != '\0' && *pathPointer != ')')
-            pathPointer++;
-
-        //Check is not closed
-        if (*pathPointer == '\0')
-            return;
-
-        string command (begin, pathPointer-begin);
-
-        if (stricmp (&command[0], "binary"))
-            asBinary = true;
-
-        pathPointer++;
-    }
-
-
-    // -- CHECK PATH --
-    begin         = pathPointer;
-    lastSlash     = begin;
-
-    while (*pathPointer != '\0')
-    {
-        if (*pathPointer == '\\' || *pathPointer == '/')
-        {
-            foundSlash = true;
-            lastSlash  = pathPointer;
-        }
-
-        if (*pathPointer == ':')
-            isFullPath = true;
-
-        pathPointer++;
-    }
-
-
-    // -- SET NEW DIRECTORY --
-    string previousDirectory = currentDirectory;
-    string newDirectory   (begin, lastSlash-begin);
-    string fullPath;
-
-    if (isFullPath)
-    {
-        fullPath            = begin;
-        currentDirectory    = newDirectory;
-    }
-    else
-    {
-        fullPath            = currentDirectory + "\\" + begin;
-        currentDirectory    = currentDirectory + "\\" + newDirectory;
-    }
-
-    //! ----- LOAD FILE -----
-    FileData data;
-    data.LoadTextFile(fullPath);
-
-    if (data.IsEmpty())
-    {
-        cout << "  LEXER: No data!   ERROR = " << data.GetErrorDescribePointer() << endl;
-        currentDirectory = previousDirectory;
-        return;
-    }
-
-    pointer = data.GetBeginPointer();
+    pointer = &script[0];
 
     //! ----- LEX -----
     while (*pointer != '\0')
@@ -118,8 +37,6 @@ void Lexer::Tokenize (const string& filePath)
         if (IsSpecialBegin  ()) LexSpecial  (); else
         if (IsLineEnd       ()) LexLineEnd  (); else pointer++;
     }
-
-    currentDirectory = previousDirectory;
 }
 
 //======================================================
@@ -216,7 +133,6 @@ void Lexer::LexText    ()
     if (!hasFinishChar)
         newToken.content += '"';
 
-    newToken.content += ",0";
     newToken.type = TYPE_TEXT;
     tokens.push_back (newToken);
 }

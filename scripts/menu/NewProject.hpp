@@ -7,7 +7,8 @@
 #include "../../CppCore/include/ReadableWinAPI.hpp"
 #include "../../CppCore/include/FileData.hpp"
 #include "../../CppCore/include/ConsoleUtils.hpp"
-#include "../GetPath.hpp"
+#include "../utils/GetPath.hpp"
+#include "../Globals.hpp"
 #include "InjectScript.hpp"
 #include "Work.hpp"
 

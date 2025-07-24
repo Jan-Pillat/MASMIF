@@ -5,7 +5,7 @@ using namespace std;
 
 //======================================================
 //======================================================
-Assembler::Assembler (string& gotPath, PEData& gotPEData) :  projectPath(gotPath), baseData(gotPEData)
+Assembler::Assembler (string gotPath, PEData& gotPEData) :  projectPath(gotPath), baseData(gotPEData)
 {
     cout << "Assembler Init" << endl;
 

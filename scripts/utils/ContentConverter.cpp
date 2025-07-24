@@ -3,55 +3,19 @@
 //===============================================================
 //===============================================================
 
-string ContentConverter::ConvertNumbers()
+string ContentConverter::ConvertScript ()
 {
     while (IsContentNotFullyVerified())
     {
         SkipNotImportantChars ();
 
-        if   (IsItNumberBegin())
-            ConvertNumber();
+        if (IsItCharsBegin())
+            SkipChars ();
 
-        else if (IsContentNotFullyVerified())
-            SkipChar();
-    }
+        else if (IsItTextBegin())
+            SkipTextButAddNullChar();
 
-    FinishConvertedText();
-
-    return  converted;
-}
-
-//===============================================================
-//===============================================================
-
-string ContentConverter::ConvertCommentaries()
-{
-    while (IsContentNotFullyVerified())
-    {
-        SkipNonPunctatorChars ();
-
-        if (IsItCommentaryBegin())
-            ConvertCommentary();
-
-        else if (IsContentNotFullyVerified())
-            SkipChar();
-    }
-
-    FinishConvertedText();
-
-    return  converted;
-}
-
-//===============================================================
-//===============================================================
-
-string ContentConverter::ConvertNumbersAndCommentaries ()
-{
-    while (IsContentNotFullyVerified())
-    {
-        SkipNotImportantChars ();
-
-        if (IsItCommentaryBegin())
+        else if (IsItCommentaryBegin())
             ConvertCommentary();
 
         else if (IsItNumberBegin())
@@ -79,15 +43,70 @@ inline bool ContentConverter::IsContentNotFullyVerified ()
 inline void ContentConverter::SkipNotImportantChars ()
 {
     while ( !IsPunctator(*pointer) && !IsDigit(*pointer) && *pointer!='\0' )
-            pointer++;
+        pointer++;
 }
 
 //---------------------------------------------------------------
 
-inline void ContentConverter::SkipNonPunctatorChars ()
+inline bool ContentConverter::IsItCharsBegin ()
 {
-    while ( !IsPunctator(*pointer) && *pointer!='\0' )
+    return (*pointer=='\'');
+}
+
+//---------------------------------------------------------------
+
+inline void ContentConverter::SkipContainedChars (const char borderChar)
+{
+    while (true)
+    {
+        while (*pointer != '\r' && *pointer != '\n' && *pointer != '\0' && *pointer != '\\' && *pointer != borderChar)
             pointer++;
+
+        if (*pointer == '\\')
+        {
+            pointer++;
+            if (*pointer != '\0')
+                pointer++;
+            else
+                break;
+        }
+        else
+            break;
+    }
+}
+
+//---------------------------------------------------------------
+
+inline void ContentConverter::SkipChars ()
+{
+    pointer++;
+    SkipContainedChars ('\'');
+}
+
+//---------------------------------------------------------------
+
+inline bool ContentConverter::IsItTextBegin ()
+{
+    return (*pointer=='"');
+}
+
+//---------------------------------------------------------------
+
+inline void ContentConverter::SkipTextButAddNullChar ()
+{
+    pointer++;
+    SkipContainedChars ('"');
+
+    end = pointer;
+    converted.append(begin, end-begin);
+
+    if (*pointer == '"')
+        converted.append("\",0");
+    else
+        converted.append("\"\",0");
+
+    pointer++;
+    begin = pointer;
 }
 
 //---------------------------------------------------------------

@@ -25,7 +25,10 @@ private:
 //! ---------- PRIVATE METHODS ----------
     bool IsContentNotFullyVerified  ();
     void SkipNotImportantChars      ();
-    void SkipNonPunctatorChars      ();
+    bool IsItCharsBegin             ();
+    void SkipChars                  ();
+    bool IsItTextBegin              ();
+    void SkipTextButAddNullChar     ();
     bool IsItCommentaryBegin        ();
     void ConvertCommentary          ();
     bool IsItNumberBegin            ();
@@ -33,12 +36,11 @@ private:
     void SkipChar                   ();
     void FinishConvertedText        ();
 
+    void SkipContainedChars         (const char borderChar);
 
 public:
 //! ---------- PUBLIC METHODS ----------
-    string ConvertNumbers               ();
-    string ConvertCommentaries          ();
-    string ConvertNumbersAndCommentaries();
+    string ConvertScript();
 
 //! ---------- CONSTRUCTORS ----------
     ContentConverter (const string& content) : content(content) {}

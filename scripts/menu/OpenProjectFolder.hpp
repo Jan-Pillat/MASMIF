@@ -3,8 +3,8 @@
 
 #include <iostream>
 #include <windows.h>
-#include "../GetPath.hpp"
 #include "InjectScript.hpp"
+#include "../utils/GetPath.hpp"
 
 void Menu_OpenProjectFolder ();
 

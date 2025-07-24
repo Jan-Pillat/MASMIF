@@ -18,10 +18,7 @@ string  GetString   (string& txt)
 
     string newString    = txt;
 
-    if (newString[0] == '"')
-        newString.resize(newString.size()-3);   // delete  ",0
-    else if (newString[0] == '\'')
-        newString.resize(newString.size()-1);   // delete  '
+    newString.resize(newString.size()-1);   // delete final " or '
 
     newString = &newString[1];  // delete begin - " or '
 

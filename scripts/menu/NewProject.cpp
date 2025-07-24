@@ -44,7 +44,7 @@ void Menu_NewProject ()
     cout << selectedTarget.path << endl;
 
     // ---------- Create project folder ----------
-    projectPath = GetProjectsPath();
+    projectPath = GetAllProjectsPath();
     CreateDirectoryA (&projectPath[0], NULL);
 
     projectPath += "\\" + newName;

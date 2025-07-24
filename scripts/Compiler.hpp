@@ -7,8 +7,13 @@
 #include "Declarations.hpp"
 #include "Parser.hpp"
 #include "PEData.hpp"
+
+#include "Globals.hpp"
+
+#include "utils/GetPath.hpp"
 #include "utils/ContentConverter.hpp"
 #include "utils/ConvertNumberToHexString.hpp"
+
 #include "../CppCore/include/FileData.hpp"
 #include "../CppCore/include/ReadableWinAPI.hpp"
 
@@ -20,9 +25,11 @@ class Compiler
 
 public:
 
-    Compiler (string& gotPath, vector<Thunk>& gotThunks, vector<Declaration>& gotDeclarations, PEData& gotPEData);
+    Compiler (string& gotCode, string gotPath, vector<Thunk>& gotThunks, vector<Declaration>& gotDeclarations, PEData& gotPEData);
 
 private:
+
+//! ---------- METHODS ----------
 
     void LoadBeginBase        ();
     void ScanAndDeclareDLLs   ();
@@ -38,6 +45,8 @@ private:
     DWORD VaToOffset        (DWORD va);
     char* VaToPointer       (DWORD va);
 
+//! ---------- VARIABLES ----------
+
     PEData&  baseData;
 
     vector <string> dllNames;
@@ -46,16 +55,17 @@ private:
     BYTE    pointerSize = 4;    //32-bit pointer
     BYTE    thunkSize   = 6;
 
-    string  MASMcode;
     vector  <Declaration>& declarations;
     bool    IsNextDeclarationGroupable(size_t i);
     DWORD   GetOriginalSectionsSize();
 
     vector <Thunk>&  thunks;
 
-    string projectPath;
-    string masmPath = "C:\\masm32";
+    string  currentDirectory;
+    string  projectPath;
+    string  masmPath = "C:\\masm32";
 
+    string& MASMcode;
     string  MASMcode_Publications;
     string  MASMcode_Declarations;
     string  MASMcode_DeclarationSegments;

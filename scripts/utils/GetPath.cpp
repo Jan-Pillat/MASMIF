@@ -1,7 +1,7 @@
 #include "GetPath.hpp"
 
 static string gotDocumentsPath;
-static string gotProjectsPath;
+static string gotAllProjectsPath;
 static bool   hasPath = false;
 
 inline void SetPaths ()
@@ -15,13 +15,13 @@ inline void SetPaths ()
         if (!SUCCEEDED(hr))
         {
             gotDocumentsPath.clear();
-            gotProjectsPath.clear();
+            gotAllProjectsPath.clear();
         }
         else
         {
             gotDocumentsPath.resize (strlen(&gotDocumentsPath[0]));
 
-            gotProjectsPath = gotDocumentsPath + "\\MASMIF-projects";
+            gotAllProjectsPath  = gotDocumentsPath + "\\MASMIF-projects";
 
             hasPath = true;
         }
@@ -34,8 +34,14 @@ string GetDocumentsPath ()
     return gotDocumentsPath;
 }
 
-string GetProjectsPath ()
+string GetAllProjectsPath ()
 {
     SetPaths();
-    return gotProjectsPath;
+    return gotAllProjectsPath;
+}
+
+string GetProjectPath ()
+{
+    SetPaths();
+    return gotAllProjectsPath  + "\\" + currentProjectName;
 }

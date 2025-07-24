@@ -20,7 +20,7 @@ class Assembler
 
 public:
 
-    Assembler (string& gotPath, PEData& gotPEData);
+    Assembler (string gotPath, PEData& gotPEData);
 
 private:
 

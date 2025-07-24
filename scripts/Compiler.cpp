@@ -5,7 +5,7 @@ using namespace std;
 
 //======================================================
 //======================================================
-Compiler::Compiler (string& gotPath, vector<Thunk>& gotThunks, vector<Declaration>& gotDeclarations, PEData& gotPEData) :  projectPath(gotPath), declarations(gotDeclarations), thunks(gotThunks), baseData(gotPEData)
+Compiler::Compiler (string& gotCode, string gotPath, vector<Thunk>& gotThunks, vector<Declaration>& gotDeclarations, PEData& gotPEData) :  MASMcode(gotCode), projectPath(gotPath), declarations(gotDeclarations), thunks(gotThunks), baseData(gotPEData)
 {
     cout << "Compiler Init" << endl;
 
@@ -21,6 +21,8 @@ Compiler::Compiler (string& gotPath, vector<Thunk>& gotThunks, vector<Declaratio
     DeclareIncludes         ();
     SortDeclarations        ();
     WriteMASMCode           ();
+    SaveToFile();
+    system("pause");
     ConvertMASMCode         ();
     SaveToFile              ();
 }
@@ -489,7 +491,7 @@ void Compiler::WriteMASMCode ()
     } // LOOP END (for)
 
     // ---------- PREPARE FINAL MASM CODE ----------
-    MASMcode += ".686p                  \r\n";
+    MASMcode  = ".686p                  \r\n";
     MASMcode += ".model flat, stdcall   \r\n";
     MASMcode += "option casemap:none    \r\n";
     MASMcode += "                       \r\n";
@@ -565,7 +567,7 @@ void Compiler::ConvertMASMCode ()
 {
     cout << "  Convert MASM Code" << endl;
 
-    MASMcode = ContentConverter(MASMcode).ConvertNumbersAndCommentaries();
+    MASMcode = ContentConverter(MASMcode).ConvertScript();
 }
 
 //======================================================

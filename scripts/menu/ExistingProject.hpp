@@ -6,8 +6,8 @@
 #include <string>
 #include <iostream>
 #include "Work.hpp"
-#include "InjectScript.hpp"
-#include "../GetPath.hpp"
+#include "../Globals.hpp"
+#include "../utils/GetPath.hpp"
 #include "../../CppCore/include/ConsoleUtils.hpp"
 
 void Menu_ExistingProject ();
