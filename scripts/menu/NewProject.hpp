@@ -4,9 +4,9 @@
 #include <iostream>
 #include <string>
 #include <windows.h>
-#include "../../CppCore/include/ReadableWinAPI.hpp"
-#include "../../CppCore/include/FileData.hpp"
-#include "../../CppCore/include/ConsoleUtils.hpp"
+#include "../utils/CppCore/include/ReadableWinAPI.hpp"
+#include "../utils/CppCore/include/FileData.hpp"
+#include "../utils/CppCore/include/ConsoleUtils.hpp"
 #include "../utils/GetPath.hpp"
 #include "../Globals.hpp"
 #include "InjectScript.hpp"

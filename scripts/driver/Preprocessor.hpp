@@ -2,10 +2,12 @@
 #define _HPP_Preprocessor_
 
 #include <string>
+#include <cstring>
 #include <windows.h>
-#include "utils/GetPath.hpp"
-#include "../CppCore/include/FileData.hpp"
-#include "../CppCore/include/StringUtils.hpp"
+#include "../utils/GetPath.hpp"
+#include "../utils/CppCore/include/FileData.hpp"
+#include "../utils/CppCore/include/StringUtils.hpp"
+#include "../utils/CppCore/include/ConsoleUtils.hpp"
 
 using std::string;
 

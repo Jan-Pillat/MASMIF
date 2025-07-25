@@ -8,7 +8,7 @@ Lexer::Lexer (vector<Token>& gotTokens) : tokens(gotTokens)
 {
 
 }
-Lexer::Lexer (vector<Token>& gotTokens, string& script) : tokens(gotTokens)
+Lexer::Lexer (vector<Token>& gotTokens, const char* script) : tokens(gotTokens)
 {
     Tokenize (script);
 }
@@ -16,11 +16,14 @@ Lexer::Lexer (vector<Token>& gotTokens, string& script) : tokens(gotTokens)
 //======================================================
 //======================================================
 
-void Lexer::Tokenize (string& script)
+void Lexer::Tokenize (const char* script)
 {
     cout << "  Tokenize" << endl;
 
-    pointer = &script[0];
+    pointer = script;
+
+    if (pointer == 0)
+        throw  "  LEXER: invalid script pointer! \n";
 
     //! ----- LEX -----
     while (*pointer != '\0')
@@ -99,7 +102,7 @@ void Lexer::LexText    ()
     Token newToken;
 
     bool  hasFinishChar =  false;
-    char* begin         =  pointer++;
+    const char* begin   =  pointer++;
 
     //Find text termination
     while (true)
@@ -125,7 +128,7 @@ void Lexer::LexText    ()
         }
     }
 
-    char* end = pointer++;
+    const char* end = pointer++;
 
 
     newToken.content.append(begin, end-begin);
@@ -142,7 +145,7 @@ void Lexer::LexChars    ()
     Token newToken;
 
     bool hasFinishChar = false;
-    char* begin = pointer++;
+    const char* begin  = pointer++;
 
 
     //Find text termination
@@ -169,7 +172,7 @@ void Lexer::LexChars    ()
         }
     }
 
-    char* end = pointer++;
+    const char* end = pointer++;
 
 
     newToken.content.append(begin, end-begin);
@@ -185,13 +188,13 @@ void Lexer::LexWord    ()
 {
     Token newToken;
 
-    char* begin = pointer;
+    const char* begin = pointer;
 
     //Find text termination
     while (IsAlOrDigit(*pointer) || *pointer=='_')
         pointer++;
 
-    char* end = pointer;
+    const char* end = pointer;
 
 
     newToken.content.assign(begin, end-begin);
@@ -202,7 +205,7 @@ void Lexer::LexWord    ()
 void Lexer::LexNumber  ()
 {
     Token newToken;
-    char* begin = pointer;      //begin of data to save
+    const char* begin = pointer;      //begin of data to save
 
     // --- SKIP SPECIAL CHAR ---
     if (IsSpecialNumBegin())
@@ -220,7 +223,7 @@ void Lexer::LexNumber  ()
             break;
     }
 
-    char* end = pointer;
+    const char* end = pointer;
 
 
     // --- SAVE TOKEN ---
@@ -235,7 +238,7 @@ void Lexer::LexContent ()
     Token newToken;
     pointer++;
 
-    char* begin = pointer;
+    const char* begin = pointer;
 
     //Find text termination
     while(true)
@@ -256,7 +259,7 @@ void Lexer::LexContent ()
         }
     }
 
-    char* end = pointer++;
+    const char* end = pointer++;
 
 
     newToken.content.append(begin, end-begin);
@@ -280,12 +283,12 @@ void Lexer::SkipComment ()
 //!------------------------------------------------------
 void Lexer::LexComment ()
 {
-    char* begin = ++pointer;
+    const char* begin = ++pointer;
 
     while (!IsLineEnd())
         pointer++;
 
-    char* end = pointer;
+    const char* end = pointer;
 
     string gotComment (begin, end-begin);
 
@@ -313,7 +316,7 @@ void Lexer::LexLineEnd ()
 //!------------------------------------------------------
 void Lexer::Include ()
 {
-    char* begin = ++pointer;
+    const char* begin = ++pointer;
 
     while (*pointer != '\0' && *pointer != '#')
         pointer++;
@@ -322,10 +325,10 @@ void Lexer::Include ()
         return;
 
     //Tokenize will change pointer value, so it must be save
-    char* previousPointer = ++pointer;
+    const char* previousPointer = ++pointer;
 
     //Remove blanks at the end of the path
-    char* end = pointer-2;  //pointer = after hashtag,  pointer-1 = hashtag,  pointer-2 = before hashtag
+    const char* end = pointer-2;  //pointer = after hashtag,  pointer-1 = hashtag,  pointer-2 = before hashtag
     while (IsBlank(*end))
         end--;
     if (*end == '#')
@@ -339,7 +342,7 @@ void Lexer::Include ()
 
     //Tokenize file using the path.
     string path (begin, end-begin);
-    Tokenize (path);
+    Tokenize (&path[0]);
 
     //Tokenize has changed pointer value, so return previous pointer.
     pointer = previousPointer;

@@ -4,13 +4,19 @@
 #include <unordered_map>
 #include <algorithm>
 #include <windows.h>
+#include <string>
 #include <vector>
-#include "Token.hpp"
-#include "Lexer.hpp"
-#include "Declarations.hpp"
-#include "utils/StrUniLoadNumber.hpp"
-#include "utils/GetString.hpp"
 
+#include "../utils/Declarations/Token.hpp"
+#include "../utils/Declarations/Thunk.hpp"
+#include "../utils/Declarations/Merge.hpp"
+#include "../utils/Declarations/Declaration.hpp"
+#include "../utils/Declarations/Parsing func.hpp"
+
+#include "../utils/CppCore/include/StringUtils.hpp"
+#include "../utils/GetString.hpp"
+
+using std::string;
 using std::vector;
 using std::unordered_map;
 
@@ -57,12 +63,4 @@ private:
     vector <Thunk>&         thunks;
 };
 
-
-/*
-    vector   <Section>      sections;
-    vector   <Segment>      segments;
-    vector   <Variable>     variables;
-    vector   <Procedure>    procedures;
-    vector   <Merge>        merges;
-*/
 #endif

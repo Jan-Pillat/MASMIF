@@ -1,12 +1,12 @@
-#ifndef _HPP_ContentConverter_
-#define _HPP_ContentConverter_
+#ifndef _HPP_AsmConverter_
+#define _HPP_AsmConverter_
 
 #include <string>
-#include "../../CppCore/include/StringUtils.hpp"
+#include "../utils/CppCore/include/StringUtils.hpp"
 
 using std::string;
 
-class ContentConverter
+class AsmConverter
 {
 private:
 //! ---------- PRIVATE VARIABLES ----------
@@ -43,7 +43,7 @@ public:
     string ConvertScript();
 
 //! ---------- CONSTRUCTORS ----------
-    ContentConverter (const string& content) : content(content) {}
+    AsmConverter (const string& content) : content(content) {}
 };
 
 #endif

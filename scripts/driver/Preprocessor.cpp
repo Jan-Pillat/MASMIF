@@ -1,6 +1,7 @@
 #include "Preprocessor.hpp"
 #include <iostream> //debug
 using namespace std;
+using namespace ConsoleUtils;
 
 
 //======================================================
@@ -19,8 +20,6 @@ Preprocessor::Preprocessor (const string& beginDirectory)
 
 string Preprocessor::ApplyIncludes (const char* gotCode)
 {
-    cout << "    Find And Apply Includes" << endl;
-
     string newCode = "";
 
     //Set begin of normal code
@@ -77,7 +76,7 @@ string Preprocessor::ApplyIncludes (const char* gotCode)
         //Stop if no includings
         if (*pointer == '\0')
         {
-            cout << "      (STOP) - No includings" << endl;
+            cout << "      (END) - No includings" << endl;
             return newCode;
         }
 
@@ -95,7 +94,10 @@ string Preprocessor::ApplyIncludes (const char* gotCode)
         //Skip if path is empty
         if (*pointer == '#')
         {
+            SetColors (YELLOW,BLACK);
             cout << "      (SKIP) - Path is empty" << endl;
+            SetColors (WHITE,BLACK);
+
             pointer++;
             begin = pointer;
             continue;
@@ -114,7 +116,9 @@ string Preprocessor::ApplyIncludes (const char* gotCode)
             //Check is not closed
             if (*pointer == '\0')
             {
+                SetColors(RED,BLACK);
                 cout << "      (STOP) - Including has not closing bracket" << endl;
+                SetColors(WHITE,BLACK);
                 return newCode;
             }
 
@@ -135,7 +139,9 @@ string Preprocessor::ApplyIncludes (const char* gotCode)
         //Stop if no closing #
         if (*pointer == '\0')
         {
+            SetColors(RED,BLACK);
             cout << "      (STOP) - Including has not closing hashtag" << endl;
+            SetColors(WHITE,BLACK);
             return newCode;
         }
 
@@ -156,14 +162,16 @@ string Preprocessor::ApplyIncludes (const char* gotCode)
         //Stop if path is empty.
         if (end == begin)
         {
+            SetColors(YELLOW,BLACK);
             cout << "      (SKIP) - Path is empty" << endl;
+            SetColors(WHITE,BLACK);
             begin = pointer;
             continue;
         }
 
         //Get path.
         string path (begin, end-begin);
-        cout << "  Got path = " << path << endl;
+        cout << "      Got path = " << path << endl;
 
 
         //! ----- CHECK PATH -----
@@ -205,15 +213,25 @@ string Preprocessor::ApplyIncludes (const char* gotCode)
             currentDirectory    = currentDirectory + "\\" + newDirectory;
         }
 
+        char* fileName;
+        string finalPath;
+        finalPath.resize(MAX_PATH);
+
+        GetFullPathNameA (&fullPath[0], MAX_PATH, &finalPath[0], &fileName);
+
+        finalPath.resize(strlen(&finalPath[0]));
+
         //! ----- LOAD FILE -----
-        cout << "  Try to include data from: " << fullPath << endl;
+        cout << "      Try to include data from: " << finalPath << endl;
 
         FileData data;
-        data.LoadTextFile(fullPath);
+        data.LoadTextFile(finalPath);
 
         if (data.IsEmpty())
         {
-            cout << "      PREPROCESSOR: Skip because of no data.   ERROR = " << data.GetErrorDescribePointer() << endl;
+            SetColors(YELLOW,BLACK);
+            cout << "      (SKIP) - because of no data.   ERROR = " << data.GetErrorDescribePointer() << endl;
+            SetColors(WHITE,BLACK);
         }
         else
         {

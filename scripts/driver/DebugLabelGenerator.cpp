@@ -1,10 +1,10 @@
 
-#include "dbgLabeler.hpp"
+#include "DebugLabelGenerator.hpp"
 
 //======================================================
 //======================================================
 
-DbgLabeler::DbgLabeler   (string&  gotPath, vector<Declaration>& gotDeclarations,   PEData& gotPEData)
+DebugLabelGenerator::DebugLabelGenerator   (string&  gotPath, vector<Declaration>& gotDeclarations,   PEData& gotPEData)
                             : path(gotPath),        declarations(gotDeclarations),     base(gotPEData)
 {
     GetFileName   ();
@@ -16,7 +16,7 @@ DbgLabeler::DbgLabeler   (string&  gotPath, vector<Declaration>& gotDeclarations
 //===============================================================================
 //===============================================================================
 
-void    DbgLabeler::GetFileName ()
+void    DebugLabelGenerator::GetFileName ()
 {
     char* begin         = &path[0];
     char* pathPointer   = begin;
@@ -36,7 +36,7 @@ void    DbgLabeler::GetFileName ()
 //===============================================================================
 //===============================================================================
 
-void    DbgLabeler::PrepareLabels ()
+void    DebugLabelGenerator::PrepareLabels ()
 {
     string comments (" \"comments\": [");
     string labels   (" \"labels\": [");
@@ -78,7 +78,7 @@ void    DbgLabeler::PrepareLabels ()
 //===============================================================================
 //===============================================================================
 
-void    DbgLabeler::SetNewPath ()
+void    DebugLabelGenerator::SetNewPath ()
 {
     char* begin         = &path[0];
     char* pathPointer   = begin;
@@ -107,7 +107,7 @@ void    DbgLabeler::SetNewPath ()
 //===============================================================================
 //===============================================================================
 
-void    DbgLabeler::SaveToFile ()
+void    DebugLabelGenerator::SaveToFile ()
 {
     FileData fileData       (finalFileData);
     fileData.SaveTextFile   (newPath);

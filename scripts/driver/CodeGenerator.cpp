@@ -1,13 +1,13 @@
-#include "Compiler.hpp"
+#include "CodeGenerator.hpp"
 #include <iostream> //debug
 using namespace std;
 
 
 //======================================================
 //======================================================
-Compiler::Compiler (string& gotCode, string gotPath, vector<Thunk>& gotThunks, vector<Declaration>& gotDeclarations, PEData& gotPEData) :  MASMcode(gotCode), projectPath(gotPath), declarations(gotDeclarations), thunks(gotThunks), baseData(gotPEData)
+CodeGenerator::CodeGenerator (string& gotCode, string gotPath, vector<Thunk>& gotThunks, vector<Declaration>& gotDeclarations, PEData& gotPEData) :  MASMcode(gotCode), projectPath(gotPath), declarations(gotDeclarations), thunks(gotThunks), baseData(gotPEData)
 {
-    cout << "Compiler Init" << endl;
+    cout << "CodeGenerator Init" << endl;
 
     if (baseData.data.IsEmpty())
     {
@@ -21,16 +21,12 @@ Compiler::Compiler (string& gotCode, string gotPath, vector<Thunk>& gotThunks, v
     DeclareIncludes         ();
     SortDeclarations        ();
     WriteMASMCode           ();
-    SaveToFile();
-    system("pause");
-    ConvertMASMCode         ();
-    SaveToFile              ();
 }
 
 //======================================================
 //======================================================
 
-DWORD Compiler::RvaToOffset (DWORD rva) //rva - relative virtual address
+DWORD CodeGenerator::RvaToOffset (DWORD rva) //rva - relative virtual address
 {
     for (int i = 0;  i<baseData.sections.size();   i++)
     {
@@ -43,17 +39,17 @@ DWORD Compiler::RvaToOffset (DWORD rva) //rva - relative virtual address
     return 0;
 }
 
-char* Compiler::RvaToPointer (DWORD rva) //rva - relative virtual address
+char* CodeGenerator::RvaToPointer (DWORD rva) //rva - relative virtual address
 {
     return baseData.data.GetBeginPointer()+RvaToOffset(rva);
 }
 
-DWORD Compiler::VaToOffset (DWORD va) //va - virtual address
+DWORD CodeGenerator::VaToOffset (DWORD va) //va - virtual address
 {
     return RvaToOffset (va - baseData.OptionalHeader.ImageBase);
 }
 
-char* Compiler::VaToPointer (DWORD va) //va - virtual address
+char* CodeGenerator::VaToPointer (DWORD va) //va - virtual address
 {
     return baseData.data.GetBeginPointer()+VaToOffset(va);
 }
@@ -62,7 +58,7 @@ char* Compiler::VaToPointer (DWORD va) //va - virtual address
 //======================================================
 
 
-void Compiler::LoadBeginBase ()
+void CodeGenerator::LoadBeginBase ()
 {
     if (0<baseData.sections.size())
         beginBase     = baseData.sections[0].header.VirtualAddress;
@@ -78,7 +74,7 @@ void Compiler::LoadBeginBase ()
 //======================================================
 //======================================================
 
-void Compiler::ScanAndDeclareDLLs ()
+void CodeGenerator::ScanAndDeclareDLLs ()
 {
     cout << "Scan And Declare DLLs" << endl;
 
@@ -133,7 +129,7 @@ void Compiler::ScanAndDeclareDLLs ()
 //======================================================
 //======================================================
 
-void Compiler::ScanAndDeclareThunks ()
+void CodeGenerator::ScanAndDeclareThunks ()
 {
     cout << "Scan and declare thunks" << endl;
     for (int i = 0;  i<thunks.size();  i++)
@@ -182,7 +178,7 @@ static bool IsFileExist(const char* path)
     return (attributes != INVALID_FILE_ATTRIBUTES) && !(attributes & FILE_ATTRIBUTE_DIRECTORY);
 }
 
-void Compiler::DeclareIncludes ()
+void CodeGenerator::DeclareIncludes ()
 {
     cout << "DeclareIncludes" << endl;
 
@@ -219,7 +215,7 @@ void Compiler::DeclareIncludes ()
 //======================================================
 //======================================================
 
-void Compiler::SortDeclarations ()
+void CodeGenerator::SortDeclarations ()
 {
     sort  (declarations.begin(), declarations.end(), DeclarationComparison());
 }
@@ -227,7 +223,7 @@ void Compiler::SortDeclarations ()
 //======================================================
 //======================================================
 
-bool Compiler::IsNextDeclarationGroupable (size_t i)
+bool CodeGenerator::IsNextDeclarationGroupable (size_t i)
 {
     if ( (i+1<declarations.size())
       && (declarations[i+1].type == declarations[i].type)
@@ -241,7 +237,7 @@ bool Compiler::IsNextDeclarationGroupable (size_t i)
 
 //------------------------------------------------------
 
-DWORD Compiler::GetOriginalSectionsSize ()
+DWORD CodeGenerator::GetOriginalSectionsSize ()
 {
     cout << "  Get Original Sections Size\n";
 
@@ -274,7 +270,7 @@ DWORD Compiler::GetOriginalSectionsSize ()
 
 //------------------------------------------------------
 
-void Compiler::WriteMASMCode ()
+void CodeGenerator::WriteMASMCode ()
 {
     // ---------- DEBUG INFO ----------
     cout << "Write MASM Code" << endl;
@@ -384,7 +380,7 @@ void Compiler::WriteMASMCode ()
             origin      = declarations[i].address-beginBase;
 
             if (origin > 0)
-                *destination   += "ORG " + ConvertNumberToHexString (origin) + "\r\n";
+                *destination   += "ORG " + ConvertNumberToHexStringH (origin) + "\r\n";
 
 
             // -- LABEL BEGIN DECLARATION --
@@ -514,7 +510,7 @@ void Compiler::WriteMASMCode ()
     MASMcode += MASMcode_Declarations;
 
     MASMcode += "\r\n\r\n";
-    MASMcode += "ORG " + ConvertNumberToHexString (GetOriginalSectionsSize()-1);
+    MASMcode += "ORG " + ConvertNumberToHexStringH (GetOriginalSectionsSize()-1);
     MASMcode += "\r\n";
     MASMcode += "____MAIN_FINISH:\r\n";
     MASMcode += "db 0CCh \r\n";
@@ -558,34 +554,6 @@ void Compiler::WriteMASMCode ()
 
     MASMcode += "\r\n\r\n";
     MASMcode += "END ____start          \r\n";
-}
-
-//======================================================
-//======================================================
-
-void Compiler::ConvertMASMCode ()
-{
-    cout << "  Convert MASM Code" << endl;
-
-    MASMcode = ContentConverter(MASMcode).ConvertScript();
-}
-
-//======================================================
-//======================================================
-
-void Compiler::SaveToFile ()
-{
-    cout << "  Save To File" << endl;
-
-    SetCurrentDirectoryA    (&projectPath[0]);
-    string asmResultPath    = projectPath + "\\result.asm";
-
-    FileData fileData       (MASMcode);
-
-    if (fileData.SaveTextFile   (asmResultPath))
-        cout << "    Done." << endl;
-    else
-        cout << "    Can't create ASM file!" << endl;
 }
 
 

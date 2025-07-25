@@ -1,5 +1,5 @@
 
-#include "Injector.hpp"
+#include "BinaryPatcher.hpp"
 
 #include <iostream> //Debug
 
@@ -8,7 +8,7 @@ using namespace std;
 //!======================================================
 //!======================================================
 
-Injector::Injector   (string& gotPath,      PEData& gotPEData,  PEData& gotResultData,  vector<SectionToCopy>& gotSectionsToCopy,  vector<RawDataToCopy>& gotRawDataToCopy, vector<Merge>& gotMerges)
+BinaryPatcher::BinaryPatcher   (string& gotPath,      PEData& gotPEData,  PEData& gotResultData,  vector<SectionToCopy>& gotSectionsToCopy,  vector<RawDataToCopy>& gotRawDataToCopy, vector<Merge>& gotMerges)
                    :  targetPath (gotPath), base   (gotPEData), result (gotResultData),        sectionsToCopy (gotSectionsToCopy),        rawDataToCopy  (gotRawDataToCopy),       merges (gotMerges)
 {
     IncludeNewSections      ();
@@ -23,7 +23,7 @@ Injector::Injector   (string& gotPath,      PEData& gotPEData,  PEData& gotResul
 //!======================================================
 //!======================================================
 
-void Injector::IncludeNewSections ()
+void BinaryPatcher::IncludeNewSections ()
 {
     cout << "Include New Sections\n";
 
@@ -83,7 +83,7 @@ void Injector::IncludeNewSections ()
 //!======================================================
 
 
-void Injector::RoundVirtualSize ()
+void BinaryPatcher::RoundVirtualSize ()
 {
     cout << "Round Virtual Size\n";
 
@@ -99,7 +99,7 @@ void Injector::RoundVirtualSize ()
 //!======================================================
 //!======================================================
 
-void Injector::MergeSections ()
+void BinaryPatcher::MergeSections ()
 {
     cout << "Merge Sections\n";
 
@@ -182,7 +182,7 @@ void Injector::MergeSections ()
 //!======================================================
 
 
-void Injector::CorrectImageSize ()
+void BinaryPatcher::CorrectImageSize ()
 {
     cout << "Correct Image Size\n";
 
@@ -204,7 +204,7 @@ void Injector::CorrectImageSize ()
 //!======================================================
 
 
-void Injector::RoundRawDataSize ()
+void BinaryPatcher::RoundRawDataSize ()
 {
     cout << "Round Raw Data Offsets\n";
 
@@ -224,46 +224,7 @@ void Injector::RoundRawDataSize ()
 //======================================================
 //======================================================
 
-int GetSectionIndex (PEData& pe, DWORD rva) //rva - relative virtual address
-{
-    for (int i = 0;  i<pe.sections.size();   i++)
-    {
-
-        DWORD begin = pe.sections[i].header.VirtualAddress  +  pe.OptionalHeader.ImageBase;
-
-        DWORD size  = pe.sections[i].header.Misc.VirtualSize;
-        DWORD end   = begin + size;
-        DWORD aligned = size % pe.OptionalHeader.SectionAlignment;
-        if (aligned != 0)
-            end += pe.OptionalHeader.SectionAlignment - aligned;
-
-        if (rva >= begin  &&  rva < end)
-            return i;
-    }
-    return -1;
-}
-
-int RvaToOffset (PEData& pe, DWORD rva) //rva - relative virtual address
-{
-    for (int i = 0;  i<pe.sections.size();   i++)
-    {
-        DWORD begin = pe.sections[i].header.VirtualAddress  +  pe.OptionalHeader.ImageBase;
-
-        DWORD size  = pe.sections[i].header.Misc.VirtualSize;
-        DWORD end   = begin + size;
-        DWORD aligned = size % pe.OptionalHeader.SectionAlignment;
-        if (aligned != 0)
-            end += pe.OptionalHeader.SectionAlignment - aligned;
-
-        if (rva >= begin  &&  rva < end)
-            return rva - begin;
-    }
-    return -1;
-}
-
-//------------------------------------------------------
-
-void Injector::RewriteRawData ()
+void BinaryPatcher::RewriteRawData ()
 {
     cout << "Rewrite Raw Data\n";
 
@@ -317,7 +278,7 @@ void Injector::RewriteRawData ()
 //======================================================
 
 
-void Injector::Inject ()
+void BinaryPatcher::Inject ()
 {
     cout << "Inject\n";
 

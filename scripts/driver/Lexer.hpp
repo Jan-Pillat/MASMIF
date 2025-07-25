@@ -5,10 +5,9 @@
     #include <vector>
     #include <iostream>
 
-    #include "../CppCore/include/StringUtils.hpp"
-    #include "../CppCore/include/FileData.hpp"
-    #include "utils/StrUniLoadNumber.hpp"
-    #include "Token.hpp"
+    #include "../utils/CppCore/include/StringUtils.hpp"
+    #include "../utils/CppCore/include/FileData.hpp"
+    #include "../utils/Declarations/Token.hpp"
 
     using std::string;
     using std::vector;
@@ -17,9 +16,9 @@ class Lexer
 {
 public:
     Lexer           (vector<Token>& gotTokens);
-    Lexer           (vector<Token>& gotTokens, string& script);
+    Lexer           (vector<Token>& gotTokens, const char* script);
 
-    void Tokenize   (string& script);
+    void Tokenize   (const char* script);
 
     vector   <Token>&   tokens;
 
@@ -51,7 +50,7 @@ private:
     void SkipBlanks ();
 
 // ---------- VARIABLES ----------
-    char*    pointer    = nullptr;
+    const char* pointer    = nullptr;
 };
 
 #endif // _HPP_Lexer_

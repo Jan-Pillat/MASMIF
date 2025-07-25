@@ -8,7 +8,7 @@
 #include "Work.hpp"
 #include "../Globals.hpp"
 #include "../utils/GetPath.hpp"
-#include "../../CppCore/include/ConsoleUtils.hpp"
+#include "../utils/CppCore/include/ConsoleUtils.hpp"
 
 void Menu_ExistingProject ();
 

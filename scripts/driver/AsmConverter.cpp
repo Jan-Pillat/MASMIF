@@ -1,9 +1,9 @@
-#include "ContentConverter.hpp"
+#include "AsmConverter.hpp"
 
 //===============================================================
 //===============================================================
 
-string ContentConverter::ConvertScript ()
+string AsmConverter::ConvertScript ()
 {
     while (IsContentNotFullyVerified())
     {
@@ -33,14 +33,14 @@ string ContentConverter::ConvertScript ()
 //!===============================================================
 //!===============================================================
 
-inline bool ContentConverter::IsContentNotFullyVerified ()
+inline bool AsmConverter::IsContentNotFullyVerified ()
 {
     return (*pointer!='\0');
 }
 
 //---------------------------------------------------------------
 
-inline void ContentConverter::SkipNotImportantChars ()
+inline void AsmConverter::SkipNotImportantChars ()
 {
     while ( !IsPunctator(*pointer) && !IsDigit(*pointer) && *pointer!='\0' )
         pointer++;
@@ -48,14 +48,14 @@ inline void ContentConverter::SkipNotImportantChars ()
 
 //---------------------------------------------------------------
 
-inline bool ContentConverter::IsItCharsBegin ()
+inline bool AsmConverter::IsItCharsBegin ()
 {
     return (*pointer=='\'');
 }
 
 //---------------------------------------------------------------
 
-inline void ContentConverter::SkipContainedChars (const char borderChar)
+inline void AsmConverter::SkipContainedChars (const char borderChar)
 {
     while (true)
     {
@@ -77,7 +77,7 @@ inline void ContentConverter::SkipContainedChars (const char borderChar)
 
 //---------------------------------------------------------------
 
-inline void ContentConverter::SkipChars ()
+inline void AsmConverter::SkipChars ()
 {
     pointer++;
     SkipContainedChars ('\'');
@@ -85,14 +85,14 @@ inline void ContentConverter::SkipChars ()
 
 //---------------------------------------------------------------
 
-inline bool ContentConverter::IsItTextBegin ()
+inline bool AsmConverter::IsItTextBegin ()
 {
     return (*pointer=='"');
 }
 
 //---------------------------------------------------------------
 
-inline void ContentConverter::SkipTextButAddNullChar ()
+inline void AsmConverter::SkipTextButAddNullChar ()
 {
     pointer++;
     SkipContainedChars ('"');
@@ -111,14 +111,14 @@ inline void ContentConverter::SkipTextButAddNullChar ()
 
 //---------------------------------------------------------------
 
-inline bool ContentConverter::IsItCommentaryBegin ()
+inline bool AsmConverter::IsItCommentaryBegin ()
 {
     return (*pointer==';' || *pointer=='#');
 }
 
 //---------------------------------------------------------------
 
-inline void ContentConverter::ConvertCommentary ()
+inline void AsmConverter::ConvertCommentary ()
 {
     //Rewrite and commentary begin is always ;
     end = pointer;
@@ -137,7 +137,7 @@ inline void ContentConverter::ConvertCommentary ()
 
 //---------------------------------------------------------------
 
-inline bool ContentConverter::IsItNumberBegin ()
+inline bool AsmConverter::IsItNumberBegin ()
 {
     return (     IsDigit(*pointer)
             ||   *pointer=='$' && IsHexDigit(*(pointer+1))
@@ -146,7 +146,7 @@ inline bool ContentConverter::IsItNumberBegin ()
 
 //---------------------------------------------------------------
 
-inline void ContentConverter::ConvertNumber()
+inline void AsmConverter::ConvertNumber()
 {
     //Copy last content
     end = pointer;
@@ -216,14 +216,14 @@ inline void ContentConverter::ConvertNumber()
 
 //---------------------------------------------------------------
 
-inline void ContentConverter::SkipChar()
+inline void AsmConverter::SkipChar()
 {
     pointer++;
 }
 
 //---------------------------------------------------------------
 
-inline void ContentConverter::FinishConvertedText()
+inline void AsmConverter::FinishConvertedText()
 {
     converted += begin;
 }

@@ -3,8 +3,8 @@
 
 
 #include <windows.h>
-#include "../../CppCore/include/ConsoleUtils.hpp"
-#include "../../CppCore/include/ConsoleInterface.hpp"
+#include "../utils/CppCore/include/ConsoleUtils.hpp"
+#include "../utils/CppCore/include/ConsoleInterface.hpp"
 #include "OpenProjectFolder.hpp"
 #include "InjectScript.hpp"
 #include "ExitProgram.hpp"

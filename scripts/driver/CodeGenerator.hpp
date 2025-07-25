@@ -1,31 +1,30 @@
-#ifndef _HPP_Compiler_
-#define _HPP_Compiler_
+#ifndef _HPP_CodeGenerator_
+#define _HPP_CodeGenerator_
 
 #include <string>
 #include <vector>
 #include <windows.h>
-#include "Declarations.hpp"
-#include "Parser.hpp"
-#include "PEData.hpp"
 
-#include "Globals.hpp"
+#include "../Globals.hpp"
+#include "../utils/GetPath.hpp"
 
-#include "utils/GetPath.hpp"
-#include "utils/ContentConverter.hpp"
-#include "utils/ConvertNumberToHexString.hpp"
+#include "../utils/CppCore/include/PEData.hpp"
+#include "../utils/CppCore/include/FileData.hpp"
+#include "../utils/CppCore/include/StringUtils.hpp"
+#include "../utils/CppCore/include/ReadableWinAPI.hpp"
 
-#include "../CppCore/include/FileData.hpp"
-#include "../CppCore/include/ReadableWinAPI.hpp"
+#include "../utils/Declarations/Thunk.hpp"
+#include "../utils/Declarations/Declaration.hpp"
 
 using std::string;
 using std::vector;
 
-class Compiler
+class CodeGenerator
 {
 
 public:
 
-    Compiler (string& gotCode, string gotPath, vector<Thunk>& gotThunks, vector<Declaration>& gotDeclarations, PEData& gotPEData);
+    CodeGenerator (string& gotCode, string gotPath, vector<Thunk>& gotThunks, vector<Declaration>& gotDeclarations, PEData& gotPEData);
 
 private:
 
@@ -37,8 +36,6 @@ private:
     void DeclareIncludes      ();
     void SortDeclarations     ();
     void WriteMASMCode        ();
-    void ConvertMASMCode      ();
-    void SaveToFile           ();
 
     DWORD RvaToOffset       (DWORD rva);
     char* RvaToPointer      (DWORD rva);

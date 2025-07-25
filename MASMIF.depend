@@ -1,13 +1,6 @@
 # depslib dependency file v1.0
-1752078532 source:c:\users\janpi\documents\c++ projects\masmif\main.cpp
-	<iostream>
-	<windows.h>
-	"CppCore/include/ConsoleUtils.hpp"
-	"CppCore/include/ConsoleInterface.hpp"
-	"scripts/menu/NewProject.hpp"
-	"scripts/menu/ExistingProject.hpp"
-	"scripts/menu/ExitProgram.hpp"
-	"scripts/menu/Settings.hpp"
+1753436141 source:c:\users\janpi\documents\c++ projects\masmif\main.cpp
+	"scripts/menu/_menu.hpp"
 
 1750333840 c:\users\janpi\documents\c++ projects\masmif\cppcore\include\readablewinapi.hpp
 	<windows.h>
@@ -289,22 +282,12 @@
 	"MapParser.hpp"
 	<iostream>
 
-1753382272 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\injectscript.hpp
+1753456615 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\injectscript.hpp
 	<iostream>
 	<windows.h>
-	"..\Globals.hpp"
-	"..\PEData.hpp"
-	"..\Token.hpp"
-	"..\Lexer.hpp"
-	"..\Parser.hpp"
-	"..\Compiler.hpp"
-	"..\Assembler.hpp"
-	"..\MapParser.hpp"
-	"..\Injector.hpp"
-	"..\dbgLabeler.hpp"
-	"..\Preprocessor.hpp"
-	"..\utils\GetPath.hpp"
-	"..\..\CppCore\include\ReadableWinAPI.hpp"
+	"../driver/_driver.hpp"
+	"../utils/GetPath.hpp"
+	"../utils/CppCore/include/ReadableWinAPI.hpp"
 
 1752054080 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\exitprogram.hpp
 	<windows.h>
@@ -312,25 +295,25 @@
 1752063165 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\exitprogram.cpp
 	"ExitProgram.hpp"
 
-1753384090 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\injectscript.cpp
+1753466464 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\injectscript.cpp
 	"InjectScript.hpp"
 
-1753379914 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\newproject.hpp
+1753460378 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\newproject.hpp
 	<iostream>
 	<string>
 	<windows.h>
-	"../../CppCore/include/ReadableWinAPI.hpp"
-	"../../CppCore/include/FileData.hpp"
-	"../../CppCore/include/ConsoleUtils.hpp"
+	"../utils/CppCore/include/ReadableWinAPI.hpp"
+	"../utils/CppCore/include/FileData.hpp"
+	"../utils/CppCore/include/ConsoleUtils.hpp"
 	"../utils/GetPath.hpp"
 	"../Globals.hpp"
 	"InjectScript.hpp"
 	"Work.hpp"
 
-1752160588 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\work.hpp
+1753460441 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\work.hpp
 	<windows.h>
-	"../../CppCore/include/ConsoleUtils.hpp"
-	"../../CppCore/include/ConsoleInterface.hpp"
+	"../utils/CppCore/include/ConsoleUtils.hpp"
+	"../utils/CppCore/include/ConsoleInterface.hpp"
 	"OpenProjectFolder.hpp"
 	"InjectScript.hpp"
 	"ExitProgram.hpp"
@@ -341,14 +324,14 @@
 1752159103 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\work.cpp
 	"Work.hpp"
 
-1753379406 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\existingproject.hpp
+1753460450 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\existingproject.hpp
 	<windows.h>
 	<string>
 	<iostream>
 	"Work.hpp"
 	"../Globals.hpp"
 	"../utils/GetPath.hpp"
-	"../../CppCore/include/ConsoleUtils.hpp"
+	"../utils/CppCore/include/ConsoleUtils.hpp"
 
 1753382234 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\existingproject.cpp
 	"ExistingProject.hpp"
@@ -368,10 +351,9 @@
 1752160359 source:c:\users\janpi\documents\c++ projects\masmif\scripts\getmasmifprojectsfolder.cpp
 	"GetMasmifProjectsFolder.hpp"
 
-1753362483 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\openprojectfolder.hpp
+1753436645 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\openprojectfolder.hpp
 	<iostream>
 	<windows.h>
-	"InjectScript.hpp"
 	"../utils/GetPath.hpp"
 
 1753379970 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\openprojectfolder.cpp
@@ -463,4 +445,346 @@
 1753383598 source:c:\users\janpi\documents\c++ projects\masmif\scripts\preprocessor.cpp
 	"Preprocessor.hpp"
 	<iostream>
+
+1753466447 c:\users\janpi\documents\c++ projects\masmif\scripts\driver\_driver.hpp
+	<string>
+	<vector>
+	"../Globals.hpp"
+	"../utils/GetPath.hpp"
+	"../utils/CppCore/include/PEData.hpp"
+	"../utils/CppCore/include/ConsoleUtils.hpp"
+	"../utils/Declarations/Declaration.hpp"
+	"../utils/Declarations/Token.hpp"
+	"../utils/Declarations/Thunk.hpp"
+	"../utils/Declarations/Merge.hpp"
+	"../utils/Declarations/Map.hpp"
+	"Preprocessor.hpp"
+	"Lexer.hpp"
+	"Parser.hpp"
+	"CodeGenerator.hpp"
+	"AsmConverter.hpp"
+	"MapParser.hpp"
+	"BuildDriver.hpp"
+	"BinaryPatcher.hpp"
+	"DebugLabelGenerator.hpp"
+
+1753442825 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\include\pedata.hpp
+	<windows.h>
+	<vector>
+	<string>
+	"BinaryData.hpp"
+	"FileData.hpp"
+
+1753184213 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\include\binarydata.hpp
+	<cstddef>
+	<cstring>
+
+1752072755 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\include\filedata.hpp
+	<cstddef>
+	<cstring>
+	<string>
+	<algorithm>
+	<windows.h>
+	"BinaryData.hpp"
+
+1753461036 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\declarations\declaration.hpp
+	<string>
+	<windows.h>
+
+1750654545 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\declarations\token.hpp
+	<string>
+
+1753445929 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\declarations\thunk.hpp
+	<windows.h>
+
+1753445916 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\declarations\merge.hpp
+	<string>
+
+1753446031 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\declarations\map.hpp
+	<windows.h>
+
+1753466518 c:\users\janpi\documents\c++ projects\masmif\scripts\driver\preprocessor.hpp
+	<string>
+	<cstring>
+	<windows.h>
+	"../utils/GetPath.hpp"
+	"../utils/CppCore/include/FileData.hpp"
+	"../utils/CppCore/include/StringUtils.hpp"
+	"../utils/CppCore/include/ConsoleUtils.hpp"
+
+1753452180 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\include\stringutils.hpp
+	"StringUtils/CheckChar.hpp"
+	"StringUtils/ConvertNumberToHexString.hpp"
+	"StringUtils/ConvertStringAndWstring.hpp"
+	"StringUtils/GetFirstNullChar.hpp"
+	"StringUtils/StrUniLoadNumber.hpp"
+
+1753452180 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\include\stringutils\checkchar.hpp
+	<cctype>
+
+1753452180 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\include\stringutils\convertnumbertohexstring.hpp
+	<string>
+	"CheckChar.hpp"
+
+1753452180 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\include\stringutils\convertstringandwstring.hpp
+	<cstddef>
+	<string>
+	<windows.h>
+
+1753452180 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\include\stringutils\getfirstnullchar.hpp
+	<cstddef>
+
+1753452180 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\include\stringutils\struniloadnumber.hpp
+
+1753461076 c:\users\janpi\documents\c++ projects\masmif\scripts\driver\lexer.hpp
+	<string>
+	<vector>
+	<iostream>
+	"../utils/CppCore/include/StringUtils.hpp"
+	"../utils/CppCore/include/FileData.hpp"
+	"../utils/Declarations/Token.hpp"
+
+1753460477 c:\users\janpi\documents\c++ projects\masmif\scripts\driver\parser.hpp
+	<unordered_map>
+	<algorithm>
+	<windows.h>
+	<string>
+	<vector>
+	"../utils/Declarations/Token.hpp"
+	"../utils/Declarations/Thunk.hpp"
+	"../utils/Declarations/Merge.hpp"
+	"../utils/Declarations/Declaration.hpp"
+	"../utils/Declarations/Parsing func.hpp"
+	"../utils/CppCore/include/StringUtils.hpp"
+	"../utils/GetString.hpp"
+
+1753445969 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\declarations\parsing func.hpp
+
+1753461396 c:\users\janpi\documents\c++ projects\masmif\scripts\driver\codegenerator.hpp
+	<string>
+	<vector>
+	<windows.h>
+	"../Globals.hpp"
+	"../utils/GetPath.hpp"
+	"../utils/CppCore/include/PEData.hpp"
+	"../utils/CppCore/include/FileData.hpp"
+	"../utils/CppCore/include/StringUtils.hpp"
+	"../utils/CppCore/include/ReadableWinAPI.hpp"
+	"../utils/Declarations/Thunk.hpp"
+	"../utils/Declarations/Declaration.hpp"
+
+1750333840 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\include\readablewinapi.hpp
+	<windows.h>
+	<tchar.h>
+
+1753460520 c:\users\janpi\documents\c++ projects\masmif\scripts\driver\asmconverter.hpp
+	<string>
+	"../utils/CppCore/include/StringUtils.hpp"
+
+1753458733 c:\users\janpi\documents\c++ projects\masmif\scripts\driver\mapparser.hpp
+	<algorithm>
+	<windows.h>
+	<string>
+	<vector>
+	"../utils/Declarations/Token.hpp"
+	"../utils/Declarations/Map.hpp"
+	"../utils/CppCore/include/StringUtils.hpp"
+
+1753460944 c:\users\janpi\documents\c++ projects\masmif\scripts\driver\builddriver.hpp
+	<string>
+	<vector>
+	<cstdlib>
+	<windows.h>
+	"../utils/GetPath.hpp"
+	"../utils/CppCore/include/PEData.hpp"
+	"../utils/CppCore/include/StringUtils.hpp"
+
+1753457266 c:\users\janpi\documents\c++ projects\masmif\scripts\driver\binarypatcher.hpp
+	<algorithm>
+	<windows.h>
+	<string>
+	<vector>
+	"../utils/GetSectionIndex.hpp"
+	"../utils/RvaToOffset.hpp"
+	"../utils/Declarations/Merge.hpp"
+	"../utils/Declarations/Map.hpp"
+	"../utils/CppCore/include/PEData.hpp"
+	"../utils/CppCore/include/FileData.hpp"
+	"../utils/CppCore/include/StringUtils.hpp"
+
+1753446181 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\getsectionindex.hpp
+	<windows.h>
+	"CppCore/include/PEData.hpp"
+
+1753446195 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\rvatooffset.hpp
+	<windows.h>
+	"CppCore/include/PEData.hpp"
+
+1753459907 c:\users\janpi\documents\c++ projects\masmif\scripts\driver\debuglabelgenerator.hpp
+	<string>
+	<vector>
+	"../utils/Declarations/Declaration.hpp"
+	"../utils/CppCore/include/StringUtils.hpp"
+	"../utils/CppCore/include/PEData.hpp"
+	"../utils/CppCore/include/FileData.hpp"
+
+1750333803 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\include\consoleutils.hpp
+	"ConsoleUtils/Colors.hpp"
+	"ConsoleUtils/Position.hpp"
+	"ConsoleUtils/Write.hpp"
+	"ConsoleUtils/Fill.hpp"
+	"ConsoleUtils/Size.hpp"
+	"ConsoleUtils/Keyboard.hpp"
+	"ConsoleUtils/Event.hpp"
+
+1750333803 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\include\consoleutils\colors.hpp
+	<windows.h>
+
+1750333803 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\include\consoleutils\position.hpp
+	<windows.h>
+
+1750333803 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\include\consoleutils\write.hpp
+	<windows.h>
+	<string>
+
+1753452180 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\include\consoleutils\fill.hpp
+	<windows.h>
+	<algorithm>
+	"Colors.hpp"
+
+1750333803 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\include\consoleutils\size.hpp
+	<windows.h>
+
+1750333803 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\include\consoleutils\keyboard.hpp
+	<windows.h>
+
+1750333803 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\include\consoleutils\event.hpp
+	<windows.h>
+
+1750333840 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\include\consoleinterface.hpp
+	<windows.h>
+	<vector>
+	<string>
+	"ConsoleUtils.hpp"
+	"StringUtils.hpp"
+
+1753460351 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\_menu.hpp
+	<iostream>
+	<windows.h>
+	"../utils/CppCore/include/ConsoleUtils.hpp"
+	"../utils/CppCore/include/ConsoleInterface.hpp"
+	"NewProject.hpp"
+	"ExistingProject.hpp"
+	"ExitProgram.hpp"
+	"Settings.hpp"
+
+1753466411 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\_driver.cpp
+	"_driver.hpp"
+	<iostream>
+
+1753459982 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\asmconverter.cpp
+	"AsmConverter.hpp"
+
+1753429179 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\binarypatcher.cpp
+	"BinaryPatcher.hpp"
+	<iostream>
+
+1753457517 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\builddriver.cpp
+	"BuildDriver.hpp"
+	<iostream>
+
+1753461392 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\codegenerator.cpp
+	"CodeGenerator.hpp"
+	<iostream>
+
+1753429293 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\debuglabelgenerator.cpp
+	"DebugLabelGenerator.hpp"
+
+1753465452 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\lexer.cpp
+	"Lexer.hpp"
+
+1751130620 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\lexicon.cpp
+	"Parser.hpp"
+
+1753287036 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\mapparser.cpp
+	"MapParser.hpp"
+	<iostream>
+
+1753262565 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\parser.cpp
+	"Parser.hpp"
+	<iostream>
+
+1753383598 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\preprocessor.cpp
+	"Preprocessor.hpp"
+	<iostream>
+
+1753436348 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\_menu.cpp
+	"_menu.hpp"
+
+1753287751 source:c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\src\binarydata.cpp
+	"../include/BinaryData.hpp"
+
+1750333840 source:c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\src\consoleinterface.cpp
+	"../include/ConsoleInterface.hpp"
+
+1750333803 source:c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\src\consoleutils.cpp
+	"ConsoleUtils/Colors.cpp"
+	"ConsoleUtils/Position.cpp"
+	"ConsoleUtils/Write.cpp"
+	"ConsoleUtils/Fill.cpp"
+	"ConsoleUtils/Size.cpp"
+	"ConsoleUtils/Keyboard.cpp"
+	"ConsoleUtils/Event.cpp"
+
+1750333803 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\src\consoleutils\colors.cpp
+	"../../include/ConsoleUtils/Colors.hpp"
+
+1750333803 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\src\consoleutils\position.cpp
+	"../../include/ConsoleUtils/Position.hpp"
+
+1750333803 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\src\consoleutils\write.cpp
+	"../../include/ConsoleUtils/Write.hpp"
+
+1750333803 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\src\consoleutils\fill.cpp
+	"../../include/ConsoleUtils/Fill.hpp"
+
+1750333803 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\src\consoleutils\size.cpp
+	"../../include/ConsoleUtils/Size.hpp"
+
+1750333803 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\src\consoleutils\keyboard.cpp
+	"../../include/ConsoleUtils/Keyboard.hpp"
+
+1750333803 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\src\consoleutils\event.cpp
+	"../../include/ConsoleUtils/Event.hpp"
+
+1753287769 source:c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\src\filedata.cpp
+	"../include/FileData.hpp"
+
+1753442825 source:c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\src\pedata.cpp
+	"../include/PEData.hpp"
+
+1753452180 source:c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\src\stringutils.cpp
+	"../include/StringUtils.hpp"
+	"StringUtils/StrUniLoadNumber.cpp"
+	"StringUtils/GetFirstNullChar.cpp"
+	"StringUtils/ConvertStringAndWstring.cpp"
+	"StringUtils/ConvertNumberToHexString.cpp"
+
+1753452180 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\src\stringutils\struniloadnumber.cpp
+	"../../include/StringUtils/StrUniLoadNumber.hpp"
+
+1753462003 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\src\stringutils\getfirstnullchar.cpp
+	"../../include/StringUtils/GetFirstNullChar.hpp"
+
+1753452180 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\src\stringutils\convertstringandwstring.cpp
+	"../../include/StringUtils/ConvertStringAndWstring.hpp"
+
+1753452180 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\src\stringutils\convertnumbertohexstring.cpp
+	"../../include/StringUtils/ConvertNumberToHexString.hpp"
+
+1753428982 source:c:\users\janpi\documents\c++ projects\masmif\scripts\utils\getsectionindex.cpp
+	"GetSectionIndex.hpp"
+
+1753429091 source:c:\users\janpi\documents\c++ projects\masmif\scripts\utils\rvatooffset.cpp
+	"RvaToOffset.hpp"
 

@@ -1,14 +1,13 @@
 #ifndef _HPP_MapParser_
 #define _HPP_MapParser_
 
-#include <unordered_map>
 #include <algorithm>
 #include <windows.h>
+#include <string>
 #include <vector>
-#include "Token.hpp"
-#include "Lexer.hpp"
-#include "Declarations.hpp"
-#include "utils/StrUniLoadNumber.hpp"
+#include "../utils/Declarations/Token.hpp"
+#include "../utils/Declarations/Map.hpp"
+#include "../utils/CppCore/include/StringUtils.hpp"
 
 using std::vector;
 

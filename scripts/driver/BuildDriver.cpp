@@ -1,17 +1,17 @@
-#include "Assembler.hpp"
+#include "BuildDriver.hpp"
 #include <iostream> //debug
 using namespace std;
 
 
 //======================================================
 //======================================================
-Assembler::Assembler (string gotPath, PEData& gotPEData) :  projectPath(gotPath), baseData(gotPEData)
+BuildDriver::BuildDriver (PEData& gotPEData) :  baseData(gotPEData)
 {
-    cout << "Assembler Init" << endl;
+    cout << "BuildDriver Init" << endl;
 
     if (baseData.data.IsEmpty())
     {
-        cout << "(STOP) - base data is empty" << endl;
+        cout << "  (STOP) - base data is empty" << endl;
         return;
     }
 
@@ -21,9 +21,11 @@ Assembler::Assembler (string gotPath, PEData& gotPEData) :  projectPath(gotPath)
 //======================================================
 //======================================================
 
-void Assembler::InvokeMASM ()
+void BuildDriver::InvokeMASM ()
 {
-    cout << "Invoke MASM" << endl;
+    cout << "  Invoke MASM" << endl;
+
+    string projectPath      = GetProjectPath();
 
     SetCurrentDirectoryA    (&projectPath[0]);
     string asmResultPath    = projectPath + "\\result.asm";
