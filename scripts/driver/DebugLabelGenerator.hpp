@@ -3,8 +3,9 @@
 
 #include <string>
 #include <vector>
+#include <algorithm>
 
-#include "../utils/Declarations/Declaration.hpp"
+#include "../utils/Declarations/DebugLabel.hpp"
 #include "../utils/CppCore/include/StringUtils.hpp"
 #include "../utils/CppCore/include/PEData.hpp"
 #include "../utils/CppCore/include/FileData.hpp"
@@ -15,7 +16,7 @@ using std::vector;
 class DebugLabelGenerator
 {
 public:
-    DebugLabelGenerator (string& targetFileName, vector<Declaration>& gotDeclarations, PEData& gotPEData);
+    DebugLabelGenerator (string& targetFileName, vector<DebugLabel>& gotDebugLabels, PEData& gotPEData);
 
     void GetFileName    ();
     void PrepareLabels  ();
@@ -23,7 +24,7 @@ public:
     void SaveToFile     ();
 
 private:
-    vector <Declaration>&   declarations;
+    vector <DebugLabel>&   debugLabels;
     string  path;
     string  newPath;
     string  fileName;

@@ -398,12 +398,16 @@ void CodeGenerator::WriteMASMCode ()
         // -------- CONTENT --------
         if (declarations[i].type == SEGMENT)
         {
-            *destination   +=  declarations[i].content + "\r\n";
+            *destination            +=  declarations[i].content + "\r\n";
+            MASMcode_Publications   +=  ContentAnalyser(declarations[i].content).GetPublications();
         }
         else if (declarations[i].type == VARIABLE)
         {
             while (true)
             {
+                // -- PUBLICATION --
+                MASMcode_Publications   += "PUBLIC\t" + declarations[i].name + "\r\n";
+
                 // -- DECLARATION --
                 *destination   += declarations[i].name;
 

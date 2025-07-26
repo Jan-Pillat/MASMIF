@@ -1,4 +1,4 @@
-#include "Parser.hpp"
+#include "Lexicon.hpp"
 
 using namespace std;
 
@@ -69,5 +69,42 @@ unordered_map <string, Parser::FuncParse> Parser::generalKeywords =
     {"SBYTE",   {ParseVariable, FuncArgs( 1, CPU, SIGNED) } },
     //ADDITIONAL
 //  {"TEXT",    {ParseVariable, NULL} },
+};
+
+// ---------- ASSEMBLY DECLARATIONS ----------
+
+unordered_set <string> assemblyDeclarations =
+{
+    // -- SHORT VARIABLE DECLARATIONS --
+    {"DB"},
+    {"DW"},
+    {"DD"},
+    {"DF"},
+    {"DQ"},
+    {"DO"},
+    // -- LONG VARIABLE DECLARATIONS --
+    // UNSIGNED
+    {"BYTE"},
+    {"WORD"},
+    {"DWORD"},
+    {"FWORD"},
+    {"QWORD"},
+    {"OWORD"},
+    // SIGNED
+    {"SBYTE"},
+    {"SWORD"},
+    {"SDWORD"},
+    {"SFWORD"},
+    {"SQWORD"},
+    {"SOWORD"},
+    // FLOAT
+    {"REAL4"},
+    {"REAL8"},
+    {"REAL10"},
+    // -- OTHER DECLARATIONS --
+    {"PROC"},
+    {"STRUCT"},
+    {"MACRO"},
+
 };
 

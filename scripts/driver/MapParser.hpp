@@ -7,6 +7,7 @@
 #include <vector>
 #include "../utils/Declarations/Token.hpp"
 #include "../utils/Declarations/Map.hpp"
+#include "../utils/Declarations/DebugLabel.hpp"
 #include "../utils/CppCore/include/StringUtils.hpp"
 
 using std::vector;
@@ -14,15 +15,17 @@ using std::vector;
 class MapParser
 {
 public:
-    MapParser (vector<Token>& gotTokens,  vector<SectionToCopy>& gotSectionsToCopy,  vector<RawDataToCopy>& gotRawDataToCopy);
+    MapParser (vector<Token>& gotTokens,  vector<SectionToCopy>& gotSectionsToCopy,  vector<RawDataToCopy>& gotRawDataToCopy,  vector<DebugLabel>& gotDebugLabels);
 
 private:
     bool GetToken               ();
     bool GetTokenOnlyToLineEnd  ();
     bool ShowNextToken          ();
 
-    void PrepareSectionsToCopyAndMapDeclarations    ();
-    void CalculateAndDeclareRawDataToCopy           ();
+    void FindSectionBegin       ();
+    void PrepareSectionsToCopy  ();
+    void PrepareMapDeclarations ();
+    void ParseMapDeclarations   ();
 
     vector   <Token>&   tokens;
     size_t   iterator   = 0;
@@ -31,6 +34,7 @@ private:
 
     vector   <SectionToCopy>&   sectionsToCopy;
     vector   <RawDataToCopy>&   rawDataToCopy;
+    vector   <DebugLabel>&      debugLabels;
 
     vector   <MapDeclaration>   mapDeclarations;
 };

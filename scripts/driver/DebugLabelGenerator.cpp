@@ -4,8 +4,8 @@
 //======================================================
 //======================================================
 
-DebugLabelGenerator::DebugLabelGenerator   (string&  gotPath, vector<Declaration>& gotDeclarations,   PEData& gotPEData)
-                            : path(gotPath),        declarations(gotDeclarations),     base(gotPEData)
+DebugLabelGenerator::DebugLabelGenerator   (string&  gotPath, vector<DebugLabel>& gotDebugLabels,   PEData& gotPEData)
+                            : path(gotPath),        debugLabels(gotDebugLabels),     base(gotPEData)
 {
     GetFileName   ();
     PrepareLabels ();
@@ -31,6 +31,7 @@ void    DebugLabelGenerator::GetFileName ()
     }
 
     fileName.assign(lastSlash+1);
+    transform(fileName.begin(),fileName.end(),fileName.begin(),::tolower);
 }
 
 //===============================================================================
@@ -44,12 +45,11 @@ void    DebugLabelGenerator::PrepareLabels ()
     bool    itsFirstComment = true;
     bool    itsFirstLabel   = true;
 
-    for (int i = 0;  i < declarations.size();  i++)
+    for (int i = 0;  i < debugLabels.size();  i++)
     {
-        if ( (declarations[i].type == VARIABLE)
-        ||   (declarations[i].type == PROCEDURE) )
-        {
-            DWORD address = declarations[i].address - base.OptionalHeader.ImageBase;
+        //if (debugLabels[i].type == LABEL) //COMMENT
+        //{
+            DWORD address = debugLabels[i].virtualAddress - base.OptionalHeader.ImageBase;
 
             if (itsFirstLabel)
             {
@@ -64,9 +64,9 @@ void    DebugLabelGenerator::PrepareLabels ()
             labels += "   \"module\": \""  +   fileName  + "\",\n";
             labels += "   \"address\": \"" +   ConvertNumberToHexString0x(address) + "\",\n";
             labels += "   \"manual\": true,\n";
-            labels += "   \"text\": \""    +   declarations[i].name + "\"\n";
+            labels += "   \"text\": \""    +   debugLabels[i].name + "\"\n";
             labels += "  }";
-        }
+        //}
     }
 
     comments += "\n ],";

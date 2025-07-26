@@ -225,7 +225,7 @@ void Driver::LexMap()
 void Driver::ParseMap()
 {
     cout << "Parsing map..." << endl;
-    MapParser mapParser (mapTokens, sectionsToCopy, rawDataToCopy);
+    MapParser mapParser (mapTokens, sectionsToCopy, rawDataToCopy, debugLabels);
 }
 
 //! ---------- Load result.exe ----------
@@ -266,7 +266,7 @@ void Driver::Patch()
 void Driver::GenerateLabels()
 {
     cout << "Creating x64dbg labels..." << endl;
-    DebugLabelGenerator debugLabelGenerator (targetPath, declarations, base);
+    DebugLabelGenerator debugLabelGenerator (targetPath, debugLabels, base);
 }
 
 //! ---------- Success ----------

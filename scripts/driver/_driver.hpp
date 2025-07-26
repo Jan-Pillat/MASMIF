@@ -10,6 +10,7 @@
 #include "../utils/CppCore/include/ConsoleUtils.hpp"
 
 #include "../utils/Declarations/Declaration.hpp"
+#include "../utils/Declarations/DebugLabel.hpp"
 #include "../utils/Declarations/Token.hpp"
 #include "../utils/Declarations/Thunk.hpp"
 #include "../utils/Declarations/Merge.hpp"
@@ -81,6 +82,7 @@ private:
     vector  <Token>         mapTokens;
     vector  <SectionToCopy> sectionsToCopy;
     vector  <RawDataToCopy> rawDataToCopy;
+    vector  <DebugLabel>    debugLabels;
 };
 
 #endif

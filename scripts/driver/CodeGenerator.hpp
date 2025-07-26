@@ -5,9 +5,10 @@
 #include <vector>
 #include <windows.h>
 
+#include "ContentAnalyser.hpp"
+
 #include "../Globals.hpp"
 #include "../utils/GetPath.hpp"
-
 #include "../utils/CppCore/include/PEData.hpp"
 #include "../utils/CppCore/include/FileData.hpp"
 #include "../utils/CppCore/include/StringUtils.hpp"

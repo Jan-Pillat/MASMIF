@@ -52,11 +52,14 @@
 		<Unit filename="scripts/driver/BuildDriver.hpp" />
 		<Unit filename="scripts/driver/CodeGenerator.cpp" />
 		<Unit filename="scripts/driver/CodeGenerator.hpp" />
+		<Unit filename="scripts/driver/ContentAnalyser.cpp" />
+		<Unit filename="scripts/driver/ContentAnalyser.hpp" />
 		<Unit filename="scripts/driver/DebugLabelGenerator.cpp" />
 		<Unit filename="scripts/driver/DebugLabelGenerator.hpp" />
 		<Unit filename="scripts/driver/Lexer.cpp" />
 		<Unit filename="scripts/driver/Lexer.hpp" />
 		<Unit filename="scripts/driver/Lexicon.cpp" />
+		<Unit filename="scripts/driver/Lexicon.hpp" />
 		<Unit filename="scripts/driver/MapParser.cpp" />
 		<Unit filename="scripts/driver/MapParser.hpp" />
 		<Unit filename="scripts/driver/Parser.cpp" />
@@ -94,6 +97,7 @@
 		<Unit filename="scripts/utils/CppCore/src/FileData.cpp" />
 		<Unit filename="scripts/utils/CppCore/src/PEData.cpp" />
 		<Unit filename="scripts/utils/CppCore/src/StringUtils.cpp" />
+		<Unit filename="scripts/utils/Declarations/DebugLabel.hpp" />
 		<Unit filename="scripts/utils/Declarations/Declaration.hpp" />
 		<Unit filename="scripts/utils/Declarations/Map.hpp" />
 		<Unit filename="scripts/utils/Declarations/Merge.hpp" />

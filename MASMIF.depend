@@ -446,7 +446,7 @@
 	"Preprocessor.hpp"
 	<iostream>
 
-1753466447 c:\users\janpi\documents\c++ projects\masmif\scripts\driver\_driver.hpp
+1753559229 c:\users\janpi\documents\c++ projects\masmif\scripts\driver\_driver.hpp
 	<string>
 	<vector>
 	"../Globals.hpp"
@@ -454,6 +454,7 @@
 	"../utils/CppCore/include/PEData.hpp"
 	"../utils/CppCore/include/ConsoleUtils.hpp"
 	"../utils/Declarations/Declaration.hpp"
+	"../utils/Declarations/DebugLabel.hpp"
 	"../utils/Declarations/Token.hpp"
 	"../utils/Declarations/Thunk.hpp"
 	"../utils/Declarations/Merge.hpp"
@@ -487,11 +488,11 @@
 	<windows.h>
 	"BinaryData.hpp"
 
-1753461036 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\declarations\declaration.hpp
+1753549265 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\declarations\declaration.hpp
 	<string>
 	<windows.h>
 
-1750654545 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\declarations\token.hpp
+1753547651 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\declarations\token.hpp
 	<string>
 
 1753445929 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\declarations\thunk.hpp
@@ -500,7 +501,7 @@
 1753445916 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\declarations\merge.hpp
 	<string>
 
-1753446031 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\declarations\map.hpp
+1753534687 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\declarations\map.hpp
 	<windows.h>
 
 1753466518 c:\users\janpi\documents\c++ projects\masmif\scripts\driver\preprocessor.hpp
@@ -536,7 +537,7 @@
 
 1753452180 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\include\stringutils\struniloadnumber.hpp
 
-1753461076 c:\users\janpi\documents\c++ projects\masmif\scripts\driver\lexer.hpp
+1753547651 c:\users\janpi\documents\c++ projects\masmif\scripts\driver\lexer.hpp
 	<string>
 	<vector>
 	<iostream>
@@ -560,10 +561,11 @@
 
 1753445969 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\declarations\parsing func.hpp
 
-1753461396 c:\users\janpi\documents\c++ projects\masmif\scripts\driver\codegenerator.hpp
+1753557420 c:\users\janpi\documents\c++ projects\masmif\scripts\driver\codegenerator.hpp
 	<string>
 	<vector>
 	<windows.h>
+	"ContentAnalyser.hpp"
 	"../Globals.hpp"
 	"../utils/GetPath.hpp"
 	"../utils/CppCore/include/PEData.hpp"
@@ -577,17 +579,18 @@
 	<windows.h>
 	<tchar.h>
 
-1753460520 c:\users\janpi\documents\c++ projects\masmif\scripts\driver\asmconverter.hpp
+1753549265 c:\users\janpi\documents\c++ projects\masmif\scripts\driver\asmconverter.hpp
 	<string>
 	"../utils/CppCore/include/StringUtils.hpp"
 
-1753458733 c:\users\janpi\documents\c++ projects\masmif\scripts\driver\mapparser.hpp
+1753559496 c:\users\janpi\documents\c++ projects\masmif\scripts\driver\mapparser.hpp
 	<algorithm>
 	<windows.h>
 	<string>
 	<vector>
 	"../utils/Declarations/Token.hpp"
 	"../utils/Declarations/Map.hpp"
+	"../utils/Declarations/DebugLabel.hpp"
 	"../utils/CppCore/include/StringUtils.hpp"
 
 1753460944 c:\users\janpi\documents\c++ projects\masmif\scripts\driver\builddriver.hpp
@@ -620,10 +623,11 @@
 	<windows.h>
 	"CppCore/include/PEData.hpp"
 
-1753459907 c:\users\janpi\documents\c++ projects\masmif\scripts\driver\debuglabelgenerator.hpp
+1753564819 c:\users\janpi\documents\c++ projects\masmif\scripts\driver\debuglabelgenerator.hpp
 	<string>
 	<vector>
-	"../utils/Declarations/Declaration.hpp"
+	<algorithm>
+	"../utils/Declarations/DebugLabel.hpp"
 	"../utils/CppCore/include/StringUtils.hpp"
 	"../utils/CppCore/include/PEData.hpp"
 	"../utils/CppCore/include/FileData.hpp"
@@ -678,11 +682,11 @@
 	"ExitProgram.hpp"
 	"Settings.hpp"
 
-1753466411 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\_driver.cpp
+1753561210 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\_driver.cpp
 	"_driver.hpp"
 	<iostream>
 
-1753459982 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\asmconverter.cpp
+1753549265 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\asmconverter.cpp
 	"AsmConverter.hpp"
 
 1753429179 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\binarypatcher.cpp
@@ -693,20 +697,20 @@
 	"BuildDriver.hpp"
 	<iostream>
 
-1753461392 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\codegenerator.cpp
+1753557362 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\codegenerator.cpp
 	"CodeGenerator.hpp"
 	<iostream>
 
-1753429293 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\debuglabelgenerator.cpp
+1753564890 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\debuglabelgenerator.cpp
 	"DebugLabelGenerator.hpp"
 
-1753465452 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\lexer.cpp
+1753547651 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\lexer.cpp
 	"Lexer.hpp"
 
-1751130620 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\lexicon.cpp
-	"Parser.hpp"
+1753557743 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\lexicon.cpp
+	"Lexicon.hpp"
 
-1753287036 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\mapparser.cpp
+1753561667 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\mapparser.cpp
 	"MapParser.hpp"
 	<iostream>
 
@@ -714,7 +718,7 @@
 	"Parser.hpp"
 	<iostream>
 
-1753383598 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\preprocessor.cpp
+1753467558 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\preprocessor.cpp
 	"Preprocessor.hpp"
 	<iostream>
 
@@ -787,4 +791,23 @@
 
 1753429091 source:c:\users\janpi\documents\c++ projects\masmif\scripts\utils\rvatooffset.cpp
 	"RvaToOffset.hpp"
+
+1753557765 c:\users\janpi\documents\c++ projects\masmif\scripts\driver\contentanalyser.hpp
+	<string>
+	<vector>
+	"Lexer.hpp"
+	"Lexicon.hpp"
+	"../utils/Declarations/Token.hpp"
+
+1753557808 c:\users\janpi\documents\c++ projects\masmif\scripts\driver\lexicon.hpp
+	<string>
+	<unordered_set>
+	"Parser.hpp"
+
+1753560881 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\declarations\debuglabel.hpp
+	<string>
+	<windows.h>
+
+1753557585 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\contentanalyser.cpp
+	"ContentAnalyser.hpp"
 

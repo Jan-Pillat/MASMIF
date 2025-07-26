@@ -8,17 +8,19 @@ using namespace std;
 //======================================================
 //======================================================
 
-MapParser::MapParser   (vector<Token>& gotTokens,  vector<SectionToCopy>& gotSectionsToCopy,   vector<RawDataToCopy>& gotRawDataToCopy)
-                            :  tokens (gotTokens),        sectionsToCopy (gotSectionsToCopy),         rawDataToCopy  (gotRawDataToCopy)
+MapParser::MapParser   (vector<Token>& gotTokens,  vector<SectionToCopy>& gotSectionsToCopy,   vector<RawDataToCopy>& gotRawDataToCopy,    vector<DebugLabel>& gotDebugLabels)
+                            :  tokens (gotTokens),        sectionsToCopy (gotSectionsToCopy),         rawDataToCopy  (gotRawDataToCopy),   debugLabels        (gotDebugLabels)
 {
-    PrepareSectionsToCopyAndMapDeclarations ();
-    CalculateAndDeclareRawDataToCopy        ();
+    FindSectionBegin        ();
+    PrepareSectionsToCopy   ();
+    PrepareMapDeclarations  ();
+    ParseMapDeclarations    ();
 }
 
 //======================================================
 //======================================================
 
-void    MapParser::PrepareSectionsToCopyAndMapDeclarations ()
+void    MapParser::FindSectionBegin ()
 {
         // --- find section declaration segment ---
     while (GetToken())
@@ -37,9 +39,13 @@ void    MapParser::PrepareSectionsToCopyAndMapDeclarations ()
 
         break; // found!
     }
+}
 
+//======================================================
+//======================================================
 
-
+void    MapParser::PrepareSectionsToCopy ()
+{
     // --- find section declaration ---
     SectionToCopy  newSectionToCopy;
     while (true)
@@ -96,9 +102,13 @@ void    MapParser::PrepareSectionsToCopyAndMapDeclarations ()
         // - FINISH -
         sectionsToCopy.push_back(newSectionToCopy);
     }
+}
 
+//======================================================
+//======================================================
 
-
+void    MapParser::PrepareMapDeclarations ()
+{
     // --- find element declaration ---
     MapDeclaration newMapDeclaration;
     while (true)
@@ -143,9 +153,25 @@ void    MapParser::PrepareSectionsToCopyAndMapDeclarations ()
 
         newMapDeclaration.name = gotToken->content;
 
-        // - GET VIRTUAL ADDRESS -
+        // - SKIP @ -
         if (!GetToken())
             break;
+        if (gotToken->type == TYPE_SPECIAL)
+            if (gotToken->content=="@")
+            {
+                if (!GetToken())
+                    break;
+                if (gotToken->type != TYPE_NUMBER)
+                    continue;
+                if (!GetToken())
+                    break;
+            }
+            else
+            {
+                continue;
+            }
+
+        // - GET VIRTUAL ADDRESS -
         if (gotToken->type != TYPE_NUMBER)
             continue;
 
@@ -161,12 +187,11 @@ void    MapParser::PrepareSectionsToCopyAndMapDeclarations ()
 //======================================================
 //======================================================
 
-// It is: ____BEG_
-#define RAW_DATA_BEGIN 0x5F4745425F5F5F5F
-// It is: ____END_
-#define RAW_DATA_END 0x5F444E455F5F5F5F
+#define SPECIAL_BEGIN 0x5F5F5F5F            // It is: ____
+#define RAW_DATA_BEGIN 0x5F4745425F5F5F5F   // It is: ____BEG_
+#define RAW_DATA_END 0x5F444E455F5F5F5F     // It is: ____END_
 
-void    MapParser::CalculateAndDeclareRawDataToCopy ()
+void    MapParser::ParseMapDeclarations ()
 {
     cout << "Calculate And Declare Raw Data To Copy" << endl;
 
@@ -196,6 +221,10 @@ void    MapParser::CalculateAndDeclareRawDataToCopy ()
                             break;
                         }
                     }
+            }
+            else if (*reinterpret_cast<unsigned int*>(&mapDeclarations[i].name[1]) != SPECIAL_BEGIN)
+            {
+                debugLabels.emplace_back (&mapDeclarations[i].name[1], mapDeclarations[i].virtualAddress);
             }
         }
     }
