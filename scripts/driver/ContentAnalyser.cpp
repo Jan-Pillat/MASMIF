@@ -15,7 +15,7 @@ string ContentAnalyser::GetPublications ()
 
 inline void ContentAnalyser::LexContent ()
 {
-    Lexer lexer (tokens, &content[0]);
+    Lexer (tokens, &(*content)[0]);
 }
 
 //---------------------------------------------------------------
@@ -68,6 +68,22 @@ inline void ContentAnalyser::FindAndWritePublications ()
         //Take off line end
         GetToken();
     }
+}
+
+//!===============================================================
+//!===============================================================
+
+
+void    ContentAnalyser::SetContent    (const string& content)
+{
+    this->content = &content;
+}
+
+
+void    ContentAnalyser::SetAndLexContent    (const string& content)
+{
+    this->content = &content;
+    Lexer (tokens, &content[0]);
 }
 
 //!===============================================================

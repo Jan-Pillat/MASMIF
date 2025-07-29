@@ -27,6 +27,7 @@ void Driver::Run ()
         DoPreprocessing ();
         DoLexing        ();
         DoParsing       ();
+        ConvertAndAutoDeclareText();
         GenerateCode    ();
         ConvertCode     ();
         SaveCode        ();
@@ -142,6 +143,29 @@ void Driver::DoParsing()
     }
 }
 
+//! ---------- Text declaration ----------
+
+void Driver::ConvertAndAutoDeclareText()
+{
+    cout << "Auto text declaring..." << endl;
+
+    cout << "  declarations.size() = " << declarations.size() << endl;
+    for (size_t i=0; i<declarations.size(); i++)
+        if (declarations[i].type == SEGMENT  ||  declarations[i].type == PROCEDURE  ||  declarations[i].type == VARIABLE)
+            declarations[i].content = AsmConverter(declarations[i].content).ExchangeAutodeclaredTexts(&textsToDeclare);
+
+    for (const auto& [key, value] : textsToDeclare)
+    {
+        Declaration newDeclaration;
+        newDeclaration.intoNewSection   = true;
+        newDeclaration.type             = VARIABLE;
+        newDeclaration.content          = key;
+        newDeclaration.declaration      = "BYTE";
+        newDeclaration.name             = "____TXT_" + to_string(value);
+        declarations.push_back (newDeclaration);
+    }
+}
+
 //! ---------- Generator ----------
 
 void Driver::GenerateCode()
@@ -154,8 +178,10 @@ void Driver::GenerateCode()
 
 void Driver::ConvertCode()
 {
+    cout << "Time to convert. " << endl;
+    system ("pause");
     cout << "Code converting..." << endl;
-    MASMcode = AsmConverter(MASMcode).ConvertScript();
+    MASMcode = AsmConverter(MASMcode).ConvertSyntax();
 }
 
 //! ---------- Save script ----------
@@ -186,6 +212,12 @@ void Driver::Build()
 
     cout << "Assembling..." << endl;
     BuildDriver buildDriver (base);
+
+    string resultPath      = GetProjectPath()+"\\result.obj";
+    DWORD attributes = GetFileAttributesA (&resultPath[0]);
+    if (attributes == INVALID_FILE_ATTRIBUTES  ||  attributes&FILE_ATTRIBUTE_DIRECTORY)
+        throw "Build FAILED!";
+
     system ("pause");
     system ("cls");
 }
@@ -299,4 +331,15 @@ void Driver::PrintTokens (vector <Token>& tokens)
 {
     for (size_t i = 0;  i<tokens.size();  i++)
         cout << "TOKEN " << i << ':' << endl << "  type: " << tokenTypeDescription[tokens[i].type] << endl << "  content: " << tokens[i].content << endl << endl;
+}
+
+// ========== PRINT DEBUG ==========
+
+void Driver::SlowPrintTokens (vector <Token>& tokens)
+{
+    for (size_t i = 0;  i<tokens.size();  i++)
+    {
+        cout << "TOKEN " << i << ':' << endl << "  type: " << tokenTypeDescription[tokens[i].type] << endl << "  content: " << tokens[i].content << endl << endl;
+        system ("pause>nul");
+    }
 }

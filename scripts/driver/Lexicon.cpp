@@ -108,3 +108,22 @@ unordered_set <string> assemblyDeclarations =
 
 };
 
+// ---------- ASSEMBLY COMMANDS ----------
+
+unordered_set <string> assemblyCommands =
+{
+    // -- STACK --
+    {"PUSH"},
+    {"POP"},
+    // --  --
+    {"CALL"},
+    // --  --
+    {"MOV"},
+    {"MOVZX"},
+    {"MOVSX"},
+    {"ADD"},
+    {"ADC"},
+    {"SUB"},
+    {"SBB"},
+};
+

@@ -10,6 +10,7 @@ Lexer::Lexer (vector<Token>& gotTokens) : tokens(gotTokens)
 }
 Lexer::Lexer (vector<Token>& gotTokens, const char* script) : tokens(gotTokens)
 {
+    currentLine = 0;
     Tokenize (script);
 }
 
@@ -136,6 +137,7 @@ void Lexer::LexText    ()
     if (!hasFinishChar)
         newToken.content += '"';
 
+    newToken.line = currentLine;
     newToken.type = TYPE_TEXT;
     tokens.push_back (newToken);
 }
@@ -180,6 +182,7 @@ void Lexer::LexChars    ()
     if (!hasFinishChar)
         newToken.content += '\'';
 
+    newToken.line = currentLine;
     newToken.type = TYPE_CHARS;
     tokens.push_back (newToken);
 }
@@ -198,6 +201,7 @@ void Lexer::LexWord    ()
 
 
     newToken.content.assign(begin, end-begin);
+    newToken.line = currentLine;
     newToken.type = TYPE_WORD;
     tokens.push_back (newToken);
 }
@@ -228,6 +232,7 @@ void Lexer::LexNumber  ()
 
     // --- SAVE TOKEN ---
     newToken.content.assign(begin, end-begin);
+    newToken.line = currentLine;
     newToken.type = TYPE_NUMBER;
     tokens.push_back (newToken);
 
@@ -236,6 +241,7 @@ void Lexer::LexNumber  ()
 void Lexer::LexContent ()
 {
     Token newToken;
+    newToken.line = currentLine;
     pointer++;
 
     const char* begin = pointer;
@@ -244,7 +250,12 @@ void Lexer::LexContent ()
     while(true)
     {
         while (*pointer!='\0' && *pointer!='}')
-            pointer++;
+        {
+            if (IsLineEnd())
+                SkipLineEnd();
+            else
+                pointer++;
+        }
 
         if (*(pointer-1)=='\\')
         {
@@ -269,16 +280,21 @@ void Lexer::LexContent ()
 //!------------------------------------------------------
 void Lexer::LexSpecial ()
 {
-    Token newToken;
-    newToken.content = *pointer++;
-    newToken.type = TYPE_SPECIAL;
-    tokens.push_back (newToken);
+    tokens.emplace_back (*pointer++, TYPE_SPECIAL, currentLine);
 }
 //!------------------------------------------------------
 void Lexer::SkipComment ()
 {
     while (!IsLineEnd())
         pointer++;
+}
+//!------------------------------------------------------
+void Lexer::SkipLineEnd ()
+{
+    if (*pointer=='\r'&&*(pointer+1)=='\n')
+        pointer++;
+    pointer++;
+    currentLine++;
 }
 //!------------------------------------------------------
 void Lexer::LexComment ()
@@ -295,18 +311,19 @@ void Lexer::LexComment ()
     LexLineEnd (&gotComment[0]);
 }
 //!------------------------------------------------------
-void Lexer::LexLineEnd (char* content)
+void Lexer::LexLineEnd (const char* content)
 {
-    while (true)
+    if (!IsLineEnd())
+        return;
+
+    while (IsLineEnd())
     {
         while (IsLineEnd())
-            pointer++;
+            SkipLineEnd();
         if (IsCommentBegin())
             SkipComment();
-        else
-            break;
     }
-    tokens.emplace_back (content, TYPE_LINEEND);
+    tokens.emplace_back (content, TYPE_LINEEND, currentLine);
 }
 //!------------------------------------------------------
 void Lexer::LexLineEnd ()

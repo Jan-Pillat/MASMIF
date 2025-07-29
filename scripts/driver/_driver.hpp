@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 #include "../Globals.hpp"
 #include "../utils/GetPath.hpp"
@@ -20,6 +21,7 @@
 #include "Lexer.hpp"
 #include "Parser.hpp"
 #include "CodeGenerator.hpp"
+#include "AsmParser.hpp"
 #include "AsmConverter.hpp"
 #include "MapParser.hpp"
 #include "BuildDriver.hpp"
@@ -28,6 +30,7 @@
 
 using std::string;
 using std::vector;
+using std::unordered_map;
 
 
 
@@ -49,6 +52,7 @@ private:
     void        DoPreprocessing ();
     void        DoLexing        ();
     void        DoParsing       ();
+    void        ConvertAndAutoDeclareText();
     void        GenerateCode    ();
     void        ConvertCode     ();
     void        SaveCode        ();
@@ -64,6 +68,7 @@ private:
 
     void        ClearMemory     ();
     void        PrintTokens     (vector <Token>& tokens);
+    void        SlowPrintTokens (vector <Token>& tokens);
 
 
     FileData    script;
@@ -83,6 +88,8 @@ private:
     vector  <SectionToCopy> sectionsToCopy;
     vector  <RawDataToCopy> rawDataToCopy;
     vector  <DebugLabel>    debugLabels;
+
+    unordered_map   <string, size_t>  textsToDeclare;
 };
 
 #endif

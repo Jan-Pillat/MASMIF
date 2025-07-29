@@ -37,23 +37,34 @@ struct Token
 {
     string          content;
     enum TokenType  type;
+    size_t          line;
 
     Token ()
     {
         content = "";
         type    = TYPE_UNDEF;
+        line    = 0;
     }
 
-    Token (string& newContent, enum TokenType newType)
+    Token (const string& newContent, const enum TokenType newType, const size_t newLine)
     {
         content = newContent;
         type    = newType;
+        line    = newLine;
     }
 
-    Token (const char* newContent, enum TokenType newType)
+    Token (const char* newContent, const enum TokenType newType, const size_t newLine)
     {
         content = newContent;
         type    = newType;
+        line    = newLine;
+    }
+
+    Token (const char newContent, const enum TokenType newType, const size_t newLine)
+    {
+        content = newContent;
+        type    = newType;
+        line    = newLine;
     }
 };
 

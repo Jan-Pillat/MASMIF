@@ -14,7 +14,7 @@ class ContentAnalyser
 {
 private:
 //! ---------- PRIVATE VARIABLES ----------
-    const string& content;
+    const string* content;
 
     string publications = "";
 
@@ -33,10 +33,13 @@ private:
 
 public:
 //! ---------- PUBLIC METHODS ----------
-    string GetPublications ();
+    string  GetPublications ();
+
+    void    SetContent      (const string& content);
+    void    SetAndLexContent(const string& content);
 
 //! ---------- CONSTRUCTORS ----------
-    ContentAnalyser (const string& content) : content(content) {}
+    ContentAnalyser (const string& content) { SetContent(content); }
 };
 
 #endif

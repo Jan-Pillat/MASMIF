@@ -1,5 +1,6 @@
 #include "CodeGenerator.hpp"
 #include <iostream> //debug
+#include "../utils/CppCore/include/ConsoleUtils.hpp"
 using namespace std;
 
 
@@ -7,11 +8,11 @@ using namespace std;
 //======================================================
 CodeGenerator::CodeGenerator (string& gotCode, string gotPath, vector<Thunk>& gotThunks, vector<Declaration>& gotDeclarations, PEData& gotPEData) :  MASMcode(gotCode), projectPath(gotPath), declarations(gotDeclarations), thunks(gotThunks), baseData(gotPEData)
 {
-    cout << "CodeGenerator Init" << endl;
+    cout << "  CodeGenerator Init" << endl;
 
     if (baseData.data.IsEmpty())
     {
-        cout << "(STOP) - base data is empty" << endl;
+        cout << "    (STOP) - base data is empty" << endl;
         return;
     }
 
@@ -76,7 +77,7 @@ void CodeGenerator::LoadBeginBase ()
 
 void CodeGenerator::ScanAndDeclareDLLs ()
 {
-    cout << "Scan And Declare DLLs" << endl;
+    cout << "    Scan And Declare DLLs" << endl;
 
     // -- SAFEGUARD --
     if (baseData.data.IsEmpty())
@@ -89,12 +90,12 @@ void CodeGenerator::ScanAndDeclareDLLs ()
 
     if (importTableRva == 0)
     {
-        cout << "  No import table!" << endl;
+        cout << "      No import table!" << endl;
         return;
     }
     else
     {
-        cout << "  Import table is OK, equals " << hex << importTableRva << dec<< endl;
+        cout << "      Import table is OK, equals " << hex << importTableRva << dec<< endl;
     }
 
     IMAGE_IMPORT_DESCRIPTOR* dllDescriptor  = reinterpret_cast<IMAGE_IMPORT_DESCRIPTOR*>(pointer+RvaToOffset(importTableRva));
@@ -131,7 +132,7 @@ void CodeGenerator::ScanAndDeclareDLLs ()
 
 void CodeGenerator::ScanAndDeclareThunks ()
 {
-    cout << "Scan and declare thunks" << endl;
+    cout << "    Scan and declare thunks" << endl;
     for (int i = 0;  i<thunks.size();  i++)
     {
         char* thunkPointer      =   baseData.data.GetBeginPointer() + VaToOffset(thunks[i].address);
@@ -180,11 +181,11 @@ static bool IsFileExist(const char* path)
 
 void CodeGenerator::DeclareIncludes ()
 {
-    cout << "DeclareIncludes" << endl;
+    cout << "    DeclareIncludes" << endl;
 
     if (!autoInclude)
     {
-        cout << "    autoInclude = false" << endl;
+        cout << "        autoInclude = false" << endl;
         return;
     }
 
@@ -217,7 +218,23 @@ void CodeGenerator::DeclareIncludes ()
 
 void CodeGenerator::SortDeclarations ()
 {
-    sort  (declarations.begin(), declarations.end(), DeclarationComparison());
+    cout << "    Sort Declarations" << endl;
+    if (declarations.size()>0)
+    {/*
+        cout << "      Declarations count = " << declarations.size() << endl << "      Got declarations:\n";
+        for (int i = 0;  i<declarations.size(); i++)
+        {
+            cout << dec <<"        (" << i << ")name = " << declarations[i].name << endl << hex << "           address = 0x" << declarations[i].address << endl;
+        }*/
+
+        //cout << "      Time to sort:\n";
+        sort  (declarations.begin(), declarations.end(), DeclarationComparison());
+        cout << "      Done." << endl;
+    }
+    else
+    {
+        cout << "      No declarations!" << endl;
+    }
 }
 
 //======================================================
@@ -239,7 +256,7 @@ bool CodeGenerator::IsNextDeclarationGroupable (size_t i)
 
 DWORD CodeGenerator::GetOriginalSectionsSize ()
 {
-    cout << "  Get Original Sections Size\n";
+    cout << "      Get Original Sections Size\n";
 
     // ----- FIND FARTHEST SECTION END -----
     DWORD   end  =  baseData.sections[0].header.VirtualAddress  +  baseData.sections[0].header.Misc.VirtualSize;
@@ -273,7 +290,7 @@ DWORD CodeGenerator::GetOriginalSectionsSize ()
 void CodeGenerator::WriteMASMCode ()
 {
     // ---------- DEBUG INFO ----------
-    cout << "Write MASM Code" << endl;
+    cout << "    Write MASM Code" << endl;
 
     // ---------- VARIABLES ----------
     int labelCount      = 0;
@@ -307,7 +324,7 @@ void CodeGenerator::WriteMASMCode ()
 
         if ( (declarations[i].address < beginBase) && (!declarations[i].intoNewSection) )
         {
-            cout << "  Incorrect address: " << hex << "0x" << declarations[i].address << dec << endl;
+            cout << "      Incorrect address: " << hex << "0x" << declarations[i].address << dec << endl;
             continue;
         }
 
@@ -337,12 +354,14 @@ void CodeGenerator::WriteMASMCode ()
 
 
         // ---- SIGNATURE ----
+
+        if (!declarations[i].content.empty())
         if (declarations[i].type == SEGMENT)
         {
             *destination += "\r\n\r\n;========== SEGMENT:  " + declarations[i].name + " ==========\r\n";
         }
 
-        else if ( (declarations[i].type == PROCEDURE) /*&& (declarations[i].content != "")*/ )
+        else if ( (declarations[i].type == PROCEDURE))
         {
             *destination += "\r\n\r\n;---------- PROCEDURE:  " + declarations[i].name + " ----------\r\n";
         }
@@ -384,6 +403,7 @@ void CodeGenerator::WriteMASMCode ()
 
 
             // -- LABEL BEGIN DECLARATION --
+            if (!declarations[i].content.empty())
             if ( (declarations[i].type == SEGMENT)
             ||   (declarations[i].type == VARIABLE)
             ||   (declarations[i].type == PROCEDURE) )
@@ -471,7 +491,7 @@ void CodeGenerator::WriteMASMCode ()
         }
         else
         {
-            cout << "  unrecognized type  (" << declarations[i].type << ")\n";
+            cout << "      unrecognized type  (" << declarations[i].type << ")\n";
         }
 
 
@@ -479,6 +499,7 @@ void CodeGenerator::WriteMASMCode ()
         // -------- LABEL END DECLARATION --------
         if (!declarations[i].intoNewSection)
         {
+            if (!declarations[i].content.empty())
             if ( (declarations[i].type == SEGMENT)
             ||   (declarations[i].type == VARIABLE)
             ||   (declarations[i].type == PROCEDURE) )
@@ -558,6 +579,8 @@ void CodeGenerator::WriteMASMCode ()
 
     MASMcode += "\r\n\r\n";
     MASMcode += "END ____start          \r\n";
+
+    cout << "      Done." << endl;
 }
 
 

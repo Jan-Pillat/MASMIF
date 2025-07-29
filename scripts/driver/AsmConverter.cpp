@@ -1,9 +1,82 @@
 #include "AsmConverter.hpp"
+#include <iostream> //debug
 
-//===============================================================
-//===============================================================
+using namespace std;
 
-string AsmConverter::ConvertScript ()
+//!===============================================================
+//!===============================================================
+
+string AsmConverter::ExchangeAutodeclaredTexts (unordered_map<string, size_t>* textsToDeclare)
+{
+    cout << "  ExchangeAutodeclaredTexts\n";
+
+    this->textsToDeclare = textsToDeclare;
+
+    while (IsContentNotFullyVerified())
+    {
+        cout << "    Try to find command...\n";
+        // ----- FIND COMMAND -----
+        while (IsContentNotFullyVerified())
+        {
+            SkipBlanks  ();
+
+            if (IsItWordBegin())
+                if (TryToFindCommand())
+                    break;
+
+            SkipLine ();
+        }
+        if (!IsContentNotFullyVerified())
+            cout << "    Try to find text...\n";
+        else
+            cout << "    End\n";
+        // ----- FIND TEXT -----
+        while (IsContentNotFullyVerified())
+        {
+            SkipBlanks  ();
+
+            if (IsItCharsBegin())
+                SkipChars ();
+
+            else if (IsItTextBegin())
+            {
+                DeclareText ();
+                SkipLine    ();
+                break;
+            }
+
+            else if (IsItCommentaryBegin())
+            {
+                SkipLine ();
+                break;
+            }
+
+            else if (IsItNumberBegin())
+                SkipNumber ();
+
+            else if (IsItWordBegin())
+                //if (IsItOffsetWord())
+                //    DeleteOffsetWord()
+                //else
+                    SkipWord();
+
+            else if (IsContentNotFullyVerified())
+                SkipChar();
+        }
+
+    }
+
+    FinishConvertedText();
+
+    return  converted;
+}
+
+
+//!===============================================================
+//!===============================================================
+
+
+string AsmConverter::ConvertSyntax ()
 {
     while (IsContentNotFullyVerified())
     {
@@ -30,8 +103,9 @@ string AsmConverter::ConvertScript ()
     return  converted;
 }
 
-//!===============================================================
-//!===============================================================
+
+//===============================================================
+
 
 inline bool AsmConverter::IsContentNotFullyVerified ()
 {
@@ -92,6 +166,14 @@ inline bool AsmConverter::IsItTextBegin ()
 
 //---------------------------------------------------------------
 
+inline void AsmConverter::SkipText ()
+{
+    pointer++;
+    SkipContainedChars ('"');
+}
+
+//---------------------------------------------------------------
+
 inline void AsmConverter::SkipTextButAddNullChar ()
 {
     pointer++;
@@ -107,6 +189,14 @@ inline void AsmConverter::SkipTextButAddNullChar ()
 
     pointer++;
     begin = pointer;
+}
+
+//---------------------------------------------------------------
+
+inline void AsmConverter::SkipBlanks ()
+{
+    while (IsBlank(*pointer))
+        pointer++;
 }
 
 //---------------------------------------------------------------
@@ -127,12 +217,7 @@ inline void AsmConverter::ConvertCommentary ()
     pointer++;
     begin = pointer;
 
-    //Goto line end
-    while (*pointer != '\r' && *pointer != '\n' && *pointer != '\0')
-        pointer++;
-    //Skip line end
-    while (*pointer == '\r' || *pointer == '\n')
-        pointer++;
+    SkipLine ();
 }
 
 //---------------------------------------------------------------
@@ -219,6 +304,123 @@ inline void AsmConverter::ConvertNumber()
 inline void AsmConverter::SkipChar()
 {
     pointer++;
+}
+
+//---------------------------------------------------------------
+
+inline void AsmConverter::SkipNumber()
+{
+    while (IsHexDigit(*pointer))
+        pointer++;
+}
+
+//---------------------------------------------------------------
+
+inline bool AsmConverter::IsItLineEnd ()
+{
+    return (*pointer == '\r' || *pointer == '\n');
+}
+
+//---------------------------------------------------------------
+
+inline bool AsmConverter::IsItLineOrStringEnd ()
+{
+    return (*pointer == '\r' || *pointer == '\n' || *pointer == '\0');
+}
+
+//---------------------------------------------------------------
+
+inline void AsmConverter::SkipLine ()
+{
+    //Goto line end
+    while (!IsItLineOrStringEnd())
+        pointer++;
+    //Skip line end
+    while (IsItLineEnd())
+        pointer++;
+}
+
+//---------------------------------------------------------------
+
+inline bool AsmConverter::IsItWordBegin ()
+{
+    return (IsAlphabetic(*pointer) || *pointer == '_');
+}
+
+//---------------------------------------------------------------
+
+inline bool AsmConverter::IsItWordInside ()
+{
+    return (IsAlphabetic(*pointer) || IsNum(*pointer) || *pointer == '_');
+}
+
+//---------------------------------------------------------------
+
+inline void AsmConverter::SkipWord ()
+{
+    while (IsItWordInside())
+        pointer++;
+}
+
+//---------------------------------------------------------------
+
+inline bool AsmConverter::TryToFindCommand()
+{
+    cout << "      func: TryToFindCommand\n";
+    cout << "      append content\n";
+    end = pointer;
+    converted.append (begin, end-begin);
+
+    cout << "      get word\n";
+    begin = pointer;
+    while (IsItWordInside())
+        pointer++;
+    end = pointer;
+    string gotWord (begin, end-begin);
+
+    cout << "      transform\n";
+    transform (gotWord.begin(), gotWord.end(), gotWord.begin(), ::toupper);
+    cout << "      search it in assemblyCommands\n";
+    if (assemblyCommands.find(gotWord) != assemblyCommands.end())
+        return true;
+    else
+        return false;
+}
+
+//---------------------------------------------------------------
+
+inline bool AsmConverter::DeclareText()
+{
+    if (*pointer=='"')
+    {
+        end = pointer;
+        converted.append (begin, end-begin);
+        begin = pointer++;
+
+        while (*pointer!='"' && !IsItLineOrStringEnd())
+            pointer++;
+
+        end = ++pointer;
+        string foundText (begin, end-begin);
+
+        if (textsToDeclare->find(foundText) == textsToDeclare->end())
+        {
+            converted += "OFFSET ____TXT_";
+            converted += to_string(textsToDeclare->size());
+            converted += " ";
+            (*textsToDeclare)[foundText] = textsToDeclare->size();
+        }
+        else
+        {
+            converted += "OFFSET ____TXT_";
+            converted += to_string((*textsToDeclare)[foundText]);
+            converted += " ";
+        }
+
+        begin = pointer;
+        return true;
+    }
+    return false;
 }
 
 //---------------------------------------------------------------

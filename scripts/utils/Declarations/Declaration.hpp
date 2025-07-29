@@ -61,12 +61,9 @@ struct Declaration
 
 struct DeclarationComparison
 {
-    operator () (const Declaration& l,  const Declaration& r)
+    bool operator () (const Declaration& l,  const Declaration& r)
     {
-        if (l.address <= r.address)
-            return true;
-        else
-            return false;
+        return (l.address < r.address);
     }
 };
 

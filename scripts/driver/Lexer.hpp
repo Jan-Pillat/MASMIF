@@ -22,6 +22,8 @@ public:
 
     vector   <Token>&   tokens;
 
+    size_t  currentLine;
+
 private:
     void LexText    ();
     void LexChars   ();
@@ -31,9 +33,10 @@ private:
     void LexSpecial ();
     void LexComment ();
     void LexLineEnd ();
-    void LexLineEnd (char* content);
+    void LexLineEnd (const char* content);
 
     void SkipComment();
+    void SkipLineEnd();
     void Include    ();
 
     bool IsWordBegin        ();

@@ -46,6 +46,8 @@
 		<Unit filename="scripts/Globals.hpp" />
 		<Unit filename="scripts/driver/AsmConverter.cpp" />
 		<Unit filename="scripts/driver/AsmConverter.hpp" />
+		<Unit filename="scripts/driver/AsmParser.cpp" />
+		<Unit filename="scripts/driver/AsmParser.hpp" />
 		<Unit filename="scripts/driver/BinaryPatcher.cpp" />
 		<Unit filename="scripts/driver/BinaryPatcher.hpp" />
 		<Unit filename="scripts/driver/BuildDriver.cpp" />

@@ -2,9 +2,13 @@
 #define _HPP_AsmConverter_
 
 #include <string>
+#include <algorithm>
+#include <unordered_map>
+#include "Lexicon.hpp"
 #include "../utils/CppCore/include/StringUtils.hpp"
 
 using std::string;
+using std::unordered_map;
 
 class AsmConverter
 {
@@ -21,6 +25,8 @@ private:
 
     string converted    = "";
 
+    unordered_map<string, size_t>* textsToDeclare;
+
 
 //! ---------- PRIVATE METHODS ----------
     bool IsContentNotFullyVerified  ();
@@ -36,11 +42,24 @@ private:
     void SkipChar                   ();
     void FinishConvertedText        ();
 
+    void SkipText                   ();
+    void SkipBlanks                 ();
+    void SkipNumber                 ();
+    bool IsItLineEnd                ();
+    bool IsItLineOrStringEnd        ();
+    bool IsItWordBegin              ();
+    bool IsItWordInside             ();
+    void SkipWord                   ();
+    bool TryToFindCommand           ();
+    bool DeclareText                ();
+
     void SkipContainedChars         (const char borderChar);
+    void SkipLine                   ();
 
 public:
 //! ---------- PUBLIC METHODS ----------
-    string ConvertScript();
+    string ExchangeAutodeclaredTexts(unordered_map<string, size_t>* gotTextsToDeclare);
+    string ConvertSyntax();
 
 //! ---------- CONSTRUCTORS ----------
     AsmConverter (const string& content) : content(content) {}
