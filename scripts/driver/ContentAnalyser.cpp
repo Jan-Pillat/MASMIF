@@ -64,9 +64,6 @@ inline void ContentAnalyser::FindAndWritePublications ()
             while (GetToken())
                 if (gotToken->type == TYPE_LINEEND)
                     break;
-
-        //Take off line end
-        GetToken();
     }
 }
 

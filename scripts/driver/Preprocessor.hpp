@@ -28,6 +28,7 @@ public:
 //! ---------- VARIABLES ----------
 
     string  currentDirectory;
+    string  currentFile;
 };
 
 #endif

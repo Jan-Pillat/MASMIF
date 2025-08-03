@@ -9,10 +9,12 @@ using namespace ConsoleUtils;
 Preprocessor::Preprocessor ()
 {
     currentDirectory = GetProjectPath();
+    currentFile      = "MAIN";
 }
 Preprocessor::Preprocessor (const string& beginDirectory)
 {
     currentDirectory = beginDirectory;
+    currentFile      = "BEGIN SCRIPT";
 }
 
 //======================================================
@@ -20,9 +22,10 @@ Preprocessor::Preprocessor (const string& beginDirectory)
 
 string Preprocessor::ApplyIncludes (const char* gotCode)
 {
-    string newCode = "";
+    FileData data;
 
-    //Set begin of normal code
+    //! ----- INIT VARIABLES -----
+    string newCode      = "";
     const char* begin   = gotCode;
     const char* pointer = begin;
 
@@ -75,13 +78,9 @@ string Preprocessor::ApplyIncludes (const char* gotCode)
 
         //Stop if no includings
         if (*pointer == '\0')
-        {
-            cout << "      (END) - No includings" << endl;
             return newCode;
-        }
 
         //Begin is found
-        cout << "  Found including at index:" << (DWORD)(pointer-gotCode) << "!" << " (*pointer=" << *(pointer) << ")" << endl;
         pointer++;
         begin  = pointer;
 
@@ -95,7 +94,7 @@ string Preprocessor::ApplyIncludes (const char* gotCode)
         if (*pointer == '#')
         {
             SetColors (YELLOW,BLACK);
-            cout << "      (SKIP) - Path is empty" << endl;
+            cout << "      (SKIP) - Path is empty in file " << currentDirectory << endl;
             SetColors (WHITE,BLACK);
 
             pointer++;
@@ -117,7 +116,7 @@ string Preprocessor::ApplyIncludes (const char* gotCode)
             if (*pointer == '\0')
             {
                 SetColors(RED,BLACK);
-                cout << "      (STOP) - Including has not closing bracket" << endl;
+                cout << "      (STOP) - Including has not closing bracket in file " << currentDirectory << endl;
                 SetColors(WHITE,BLACK);
                 return newCode;
             }
@@ -140,7 +139,7 @@ string Preprocessor::ApplyIncludes (const char* gotCode)
         if (*pointer == '\0')
         {
             SetColors(RED,BLACK);
-            cout << "      (STOP) - Including has not closing hashtag" << endl;
+            cout << "      (STOP) - Including has not closing hashtag in file " << currentDirectory << endl;
             SetColors(WHITE,BLACK);
             return newCode;
         }
@@ -163,7 +162,7 @@ string Preprocessor::ApplyIncludes (const char* gotCode)
         if (end == begin)
         {
             SetColors(YELLOW,BLACK);
-            cout << "      (SKIP) - Path is empty" << endl;
+            cout << "      (SKIP) - Path is empty in file " << currentDirectory << endl;
             SetColors(WHITE,BLACK);
             begin = pointer;
             continue;
@@ -171,7 +170,6 @@ string Preprocessor::ApplyIncludes (const char* gotCode)
 
         //Get path.
         string path (begin, end-begin);
-        cout << "      Got path = " << path << endl;
 
 
         //! ----- CHECK PATH -----
@@ -198,6 +196,7 @@ string Preprocessor::ApplyIncludes (const char* gotCode)
 
 
         //! ----- SET NEW DIRECTORY -----
+        string previousFile      = currentFile;
         string previousDirectory = currentDirectory;
         string newDirectory   (begin, lastSlash-begin);
         string fullPath;
@@ -222,24 +221,23 @@ string Preprocessor::ApplyIncludes (const char* gotCode)
         finalPath.resize(strlen(&finalPath[0]));
 
         //! ----- LOAD FILE -----
-        cout << "      Try to include data from: " << finalPath << endl;
-
-        FileData data;
         data.LoadTextFile(finalPath);
 
         if (data.IsEmpty())
         {
             SetColors(YELLOW,BLACK);
-            cout << "      (SKIP) - because of no data.   ERROR = " << data.GetErrorDescribePointer() << endl;
+            cout << "      (SKIP) - cannot load file from path \"" << finalPath << "\" Which is in file \"" << currentFile << "\".   ERROR = " << data.GetErrorDescribePointer() << endl;
             SetColors(WHITE,BLACK);
         }
         else
         {
+            currentFile = finalPath;
             //! ----- INCLUDE DATA -----
             newCode += ApplyIncludes(data.GetBeginPointer());
         }
 
         currentDirectory    =   previousDirectory;
+        currentFile         =   previousFile;
         begin               =   pointer;
     }
 }

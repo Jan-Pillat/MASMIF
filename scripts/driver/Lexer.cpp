@@ -19,8 +19,6 @@ Lexer::Lexer (vector<Token>& gotTokens, const char* script) : tokens(gotTokens)
 
 void Lexer::Tokenize (const char* script)
 {
-    cout << "  Tokenize" << endl;
-
     pointer = script;
 
     if (pointer == 0)

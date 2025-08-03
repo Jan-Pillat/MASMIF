@@ -90,12 +90,12 @@ void CodeGenerator::ScanAndDeclareDLLs ()
 
     if (importTableRva == 0)
     {
-        cout << "      No import table!" << endl;
+        cout << "      No import table! RVA=" << hex << importTableRva << dec << endl;
         return;
     }
     else
     {
-        cout << "      Import table is OK, equals " << hex << importTableRva << dec<< endl;
+        cout << "      Import table RVA=" << hex << importTableRva << dec << endl;
     }
 
     IMAGE_IMPORT_DESCRIPTOR* dllDescriptor  = reinterpret_cast<IMAGE_IMPORT_DESCRIPTOR*>(pointer+RvaToOffset(importTableRva));

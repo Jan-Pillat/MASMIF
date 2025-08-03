@@ -25,7 +25,7 @@ BinaryPatcher::BinaryPatcher   (string& gotPath,      PEData& gotPEData,  PEData
 
 void BinaryPatcher::IncludeNewSections ()
 {
-    cout << "Include New Sections\n";
+    cout << "  Include Sections\n";
 
     if (sectionsToCopy.size() <= 1)
         return;
@@ -33,7 +33,7 @@ void BinaryPatcher::IncludeNewSections ()
 
     for (int i = 0;  i<sectionsToCopy.size();  i++)
     {
-        cout << "  Section nr." << i << "; name = " << sectionsToCopy[i].name << endl;
+        cout << "    Section nr." << i << "; name = " << sectionsToCopy[i].name << endl;
 
         IMAGE_SECTION_HEADER    header;
 
@@ -85,7 +85,7 @@ void BinaryPatcher::IncludeNewSections ()
 
 void BinaryPatcher::RoundVirtualSize ()
 {
-    cout << "Round Virtual Size\n";
+    cout << "  Round Virtual Size\n";
 
     for (int i = 0;  i<base.sections.size();  i++)
     {
@@ -101,7 +101,7 @@ void BinaryPatcher::RoundVirtualSize ()
 
 void BinaryPatcher::MergeSections ()
 {
-    cout << "Merge Sections\n";
+    cout << "  Merge Sections\n";
 
     for (int currentMerge = 0;  currentMerge < merges.size();  currentMerge++)
     {
@@ -131,9 +131,9 @@ void BinaryPatcher::MergeSections ()
         if (firstSectionIndex == -1  ||  secondSectionIndex == -1)
         {
             if (firstSectionIndex == -1)
-                cout << "    first section NOT FOUND!" << endl;
+                cout << "      first section NOT FOUND!" << endl;
             if (secondSectionIndex == -1)
-                cout << "    second section NOT FOUND!" << endl;
+                cout << "      second section NOT FOUND!" << endl;
             continue;
         }
 
@@ -175,7 +175,7 @@ void BinaryPatcher::MergeSections ()
         base.FileHeader.NumberOfSections -= 1;
     }
 
-    cout << "    END" << endl;
+    cout << "      END" << endl;
 }
 
 //!======================================================
@@ -184,7 +184,7 @@ void BinaryPatcher::MergeSections ()
 
 void BinaryPatcher::CorrectImageSize ()
 {
-    cout << "Correct Image Size\n";
+    cout << "  Correct Image Size\n";
 
     if (base.sections.size() == 0)
         return;
@@ -206,7 +206,7 @@ void BinaryPatcher::CorrectImageSize ()
 
 void BinaryPatcher::RoundRawDataSize ()
 {
-    cout << "Round Raw Data Offsets\n";
+    cout << "  Round Raw Data Offsets\n";
 
     for (int i = 0;  i<base.sections.size();  i++)
     {
@@ -226,7 +226,7 @@ void BinaryPatcher::RoundRawDataSize ()
 
 void BinaryPatcher::RewriteRawData ()
 {
-    cout << "Rewrite Raw Data\n";
+    cout << "  Rewrite Raw Data\n";
 
     for (int i = 0;  i<rawDataToCopy.size();  i++)
     {
@@ -241,7 +241,7 @@ void BinaryPatcher::RewriteRawData ()
 
                 if (targetRawDataOffset == -1)
                 {
-                    cout << "  (SKIP) - there is no correct raw data offset in target file (rawDataToCopy["<<i<<"].virtualAddress = " << rawDataToCopy[i].virtualAddress << ")" << endl;
+                    cout << "    (SKIP) - there is no correct raw data offset in target file (rawDataToCopy["<<i<<"].virtualAddress = " << rawDataToCopy[i].virtualAddress << ")" << endl;
                     continue;
                 }
                 else
@@ -257,7 +257,7 @@ void BinaryPatcher::RewriteRawData ()
                 int     sourceRawDataOffset   =  RvaToOffset(result,   rawDataToCopy[i].virtualAddress);
                 if (sourceRawDataOffset == -1)
                 {
-                    cout << "  (SKIP) - there is no correct raw data offset in source file (rawDataToCopy["<<i<<"].virtualAddress = " << rawDataToCopy[i].virtualAddress << ")" << endl;
+                    cout << "    (SKIP) - there is no correct raw data offset in source file (rawDataToCopy["<<i<<"].virtualAddress = " << rawDataToCopy[i].virtualAddress << ")" << endl;
                     continue;
                 }
 
@@ -268,9 +268,9 @@ void BinaryPatcher::RewriteRawData ()
                 // ---------- WRITE ----------
                 memcpy (targetRawDataPointer, sourceRawDataPointer, rawDataToCopy[i].size);
             }
-            else cout << "  (SKIP) - No section for this address in target file! (rawDataToCopy["<<i<<"].virtualAddress = " << rawDataToCopy[i].virtualAddress << ")" << endl;
+            else cout << "    (SKIP) - No section for this address in target file! (rawDataToCopy["<<i<<"].virtualAddress = " << rawDataToCopy[i].virtualAddress << ")" << endl;
         }
-        else cout << "  (SKIP) - No section for this address in source file! (rawDataToCopy["<<i<<"].virtualAddress = " << rawDataToCopy[i].virtualAddress << ")" << endl;
+        else cout << "    (SKIP) - No section for this address in source file! (rawDataToCopy["<<i<<"].virtualAddress = " << rawDataToCopy[i].virtualAddress << ")" << endl;
     }
 }
 
@@ -280,7 +280,7 @@ void BinaryPatcher::RewriteRawData ()
 
 void BinaryPatcher::Inject ()
 {
-    cout << "Inject\n";
+    cout << "  Inject\n";
 
     FileData finalData;
 

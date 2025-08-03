@@ -8,14 +8,11 @@ using namespace std;
 
 string AsmConverter::ExchangeAutodeclaredTexts (unordered_map<string, size_t>* textsToDeclare)
 {
-    cout << "  ExchangeAutodeclaredTexts\n";
-
     this->textsToDeclare = textsToDeclare;
 
     while (IsContentNotFullyVerified())
     {
-        cout << "    Try to find command...\n";
-        // ----- FIND COMMAND -----
+        //! ----- FIND COMMAND -----
         while (IsContentNotFullyVerified())
         {
             SkipBlanks  ();
@@ -26,11 +23,8 @@ string AsmConverter::ExchangeAutodeclaredTexts (unordered_map<string, size_t>* t
 
             SkipLine ();
         }
-        if (!IsContentNotFullyVerified())
-            cout << "    Try to find text...\n";
-        else
-            cout << "    End\n";
-        // ----- FIND TEXT -----
+
+        //! ----- FIND TEXT -----
         while (IsContentNotFullyVerified())
         {
             SkipBlanks  ();
@@ -366,21 +360,17 @@ inline void AsmConverter::SkipWord ()
 
 inline bool AsmConverter::TryToFindCommand()
 {
-    cout << "      func: TryToFindCommand\n";
-    cout << "      append content\n";
     end = pointer;
     converted.append (begin, end-begin);
 
-    cout << "      get word\n";
     begin = pointer;
     while (IsItWordInside())
         pointer++;
     end = pointer;
     string gotWord (begin, end-begin);
 
-    cout << "      transform\n";
     transform (gotWord.begin(), gotWord.end(), gotWord.begin(), ::toupper);
-    cout << "      search it in assemblyCommands\n";
+
     if (assemblyCommands.find(gotWord) != assemblyCommands.end())
         return true;
     else

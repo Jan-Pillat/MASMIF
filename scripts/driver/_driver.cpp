@@ -149,7 +149,6 @@ void Driver::ConvertAndAutoDeclareText()
 {
     cout << "Auto text declaring..." << endl;
 
-    cout << "  declarations.size() = " << declarations.size() << endl;
     for (size_t i=0; i<declarations.size(); i++)
         if (declarations[i].type == SEGMENT  ||  declarations[i].type == PROCEDURE  ||  declarations[i].type == VARIABLE)
             declarations[i].content = AsmConverter(declarations[i].content).ExchangeAutodeclaredTexts(&textsToDeclare);
@@ -264,6 +263,8 @@ void Driver::ParseMap()
 
 void Driver::LoadResult()
 {
+    cout << "Result.exe loading..." << endl;
+
     string      resultPath  = GetProjectPath()+"\\result.exe";
 
     result.LoadPEFile(&resultPath[0]);
@@ -276,6 +277,8 @@ void Driver::LoadResult()
 
 void Driver::LoadTargetPath()
 {
+    cout << "Target path loading..." << endl;
+
     FileData    fileWithPath;
     fileWithPath.LoadTextFile(GetProjectPath()+"\\target.path");
 
