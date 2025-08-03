@@ -193,39 +193,42 @@ void    MapParser::PrepareMapDeclarations ()
 
 void    MapParser::ParseMapDeclarations ()
 {
-    cout << "Calculate And Declare Raw Data To Copy" << endl;
+    cout << "Parse Map Declarations" << endl;
 
     for (int i = 0;  i<mapDeclarations.size();  i++)
     {
-        if (mapDeclarations[i].name.length() >= 10)
+        // ---------- RAW DAT ----------
+
+        if ( (mapDeclarations[i].name.length() >= 10)   //min = 10 because special name = 4*'_' + BEG/END + 1*'_' + number
+        &&   (*reinterpret_cast<unsigned long long*>(&mapDeclarations[i].name[1]) == RAW_DATA_BEGIN) )
         {
-            if (*reinterpret_cast<unsigned long long*>(&mapDeclarations[i].name[1]) == RAW_DATA_BEGIN)
-            {
-                string number = &mapDeclarations[i].name[9];
+            string number = &mapDeclarations[i].name[9];
 
-                for (int nextI = i+1;  nextI<mapDeclarations.size();  nextI++)
-                    if (*reinterpret_cast<unsigned long long*>(&mapDeclarations[nextI].name[1]) == RAW_DATA_END)
+            for (int nextI = i+1;  nextI<mapDeclarations.size();  nextI++)
+                if (*reinterpret_cast<unsigned long long*>(&mapDeclarations[nextI].name[1]) == RAW_DATA_END)
+                {
+                    if (&mapDeclarations[nextI].name[9] == number)
                     {
-                        if (&mapDeclarations[nextI].name[9] == number)
-                        {
-                            RawDataToCopy  newRawDataToCopy;
+                        RawDataToCopy  newRawDataToCopy;
 
-                            newRawDataToCopy.virtualAddress = mapDeclarations[i].virtualAddress;
-                            newRawDataToCopy.size           = mapDeclarations[nextI].virtualAddress - mapDeclarations[i].virtualAddress;
+                        newRawDataToCopy.virtualAddress = mapDeclarations[i].virtualAddress;
+                        newRawDataToCopy.size           = mapDeclarations[nextI].virtualAddress - mapDeclarations[i].virtualAddress;
 
-                            rawDataToCopy.push_back(newRawDataToCopy);
+                        rawDataToCopy.push_back(newRawDataToCopy);
 
-                            if (nextI-i == 1)
-                                i++;
+                        if (nextI-i == 1)
+                            i++;
 
-                            break;
-                        }
+                        break;
                     }
-            }
-            else if (*reinterpret_cast<unsigned int*>(&mapDeclarations[i].name[1]) != SPECIAL_BEGIN)
-            {
-                debugLabels.emplace_back (&mapDeclarations[i].name[1], mapDeclarations[i].virtualAddress);
-            }
+                }
+        }
+
+        // ---------- OTHER LABELS ----------
+
+        else if ( (mapDeclarations[i].name.length() < 5) || (*reinterpret_cast<unsigned int*>(&mapDeclarations[i].name[1]) != SPECIAL_BEGIN) )
+        {
+            debugLabels.emplace_back (&mapDeclarations[i].name[1], mapDeclarations[i].virtualAddress);
         }
     }
     cout << "  END" << endl;
