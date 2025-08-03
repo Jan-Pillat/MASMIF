@@ -392,7 +392,7 @@ void CodeGenerator::WriteMASMCode ()
 
 
 
-        // -------- ORIGIN NAD LABEL BEGIN --------
+        // -------- ORIGIN AND LABEL BEGIN --------
         if (!declarations[i].intoNewSection)
         {
             // ---- ORIGIN ----
@@ -442,6 +442,8 @@ void CodeGenerator::WriteMASMCode ()
         }
         else if (declarations[i].type == PROCEDURE)
         {
+            // -- PUBLICATION --
+            MASMcode_Publications   += "PUBLIC\t" + declarations[i].name + "\r\n";
             // -- PROCEDURE DECLARATION --
             *destination   += declarations[i].name + "\tPROC\r\n";
             // -- CONTENT --
