@@ -392,7 +392,8 @@ void    Parser::ParseVariable    ()
     Declaration newVariable;
 
     auto position = generalKeywords.find(gotToken->content);
-    newVariable.size = position->second.argument.attributes.bytes;
+    if (position != generalKeywords.end())
+        newVariable.size = position->second.argument.attributes.bytes;
 
     newVariable.declaration = gotToken->content;
 
@@ -443,6 +444,25 @@ void    Parser::ParseVariable    ()
 
     newVariable.type = VARIABLE;
     declarations.push_back (newVariable);
+}
+
+
+
+//------------------------------------------------------
+
+
+
+void    Parser::ParseOwnVar    ()
+{
+    if (!GetTokenOnlyToLineEnd() || gotToken->type!= TYPE_WORD)
+    {
+        while (GetTokenOnlyToLineEnd()) {}
+        return;
+    }
+    else
+    {
+        ParseVariable ();
+    }
 }
 
 

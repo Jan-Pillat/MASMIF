@@ -69,6 +69,8 @@ unordered_map <string, Parser::FuncParse> Parser::generalKeywords =
     {"SBYTE",   {ParseVariable, FuncArgs( 1, CPU, SIGNED) } },
     //ADDITIONAL
 //  {"TEXT",    {ParseVariable, NULL} },
+    //OWN
+    {"VAR",     {ParseOwnVar,   NULL} },
 };
 
 // ---------- ASSEMBLY DECLARATIONS ----------

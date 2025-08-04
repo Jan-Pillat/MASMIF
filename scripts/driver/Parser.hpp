@@ -38,6 +38,7 @@ private:
     void ParseSection           ();
     void ParseSegment           ();
     void ParseVariable          ();
+    void ParseOwnVar            ();
     void ParseProcedure         ();
     void ParseMerge             ();
     void ParseThunk             ();
