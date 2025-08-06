@@ -244,7 +244,7 @@ bool CodeGenerator::IsNextDeclarationGroupable (size_t i)
 {
     if ( (i+1<declarations.size())
       && (declarations[i+1].type == declarations[i].type)
-      && (declarations[i+1].address - declarations[i].address == declarations[i].size) )
+      && ((declarations[i+1].address - declarations[i].address == declarations[i].size) || (declarations[i+1].intoNewSection==true&&declarations[i].intoNewSection==true)) )
     {
         return true;
     }
@@ -432,7 +432,10 @@ void CodeGenerator::WriteMASMCode ()
                 *destination   += declarations[i].name;
 
                 // -- CONTENT --
-                *destination   += '\t' + declarations[i].declaration + '\t' + declarations[i].content + "\r\n";
+                if (declarations[i].declaration == "TEXT")
+                    *destination   += "\tBYTE\t" + declarations[i].content + "\r\n";
+                else
+                    *destination   += '\t' + declarations[i].declaration + '\t' + declarations[i].content + "\r\n";
 
                 if ( IsNextDeclarationGroupable(i) )
                     i++;

@@ -127,7 +127,7 @@ void Lexer::LexText    ()
         }
     }
 
-    const char* end = pointer++;
+    const char* end = pointer;
 
 
     newToken.content.append(begin, end-begin);
@@ -172,7 +172,7 @@ void Lexer::LexChars    ()
         }
     }
 
-    const char* end = pointer++;
+    const char* end = pointer;
 
 
     newToken.content.append(begin, end-begin);

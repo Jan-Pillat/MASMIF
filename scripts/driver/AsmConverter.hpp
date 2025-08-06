@@ -24,6 +24,7 @@ private:
     bool  isBin         = false;
 
     string converted    = "";
+    string gotWord      = "";
 
     unordered_map<string, size_t>* textsToDeclare;
 
@@ -34,7 +35,8 @@ private:
     bool IsItCharsBegin             ();
     void SkipChars                  ();
     bool IsItTextBegin              ();
-    void SkipTextButAddNullChar     ();
+    void ConvertChars               ();
+    void ConvertTextToCharsAddNullChar();
     bool IsItCommentaryBegin        ();
     void ConvertCommentary          ();
     bool IsItNumberBegin            ();
@@ -46,11 +48,14 @@ private:
     void SkipBlanks                 ();
     void SkipNumber                 ();
     bool IsItLineEnd                ();
-    bool IsItLineOrStringEnd        ();
+    bool IsItLineOrContentEnd       ();
     bool IsItWordBegin              ();
     bool IsItWordInside             ();
     void SkipWord                   ();
-    bool TryToFindCommand           ();
+    bool TryToGetWord               ();
+    bool CheckIsItCommandOrDeclaration();
+    bool GetWordAndCheckIsItCommandOrDeclaration();
+    bool IsItKeywordToAvoid         ();
     bool DeclareText                ();
 
     void SkipContainedChars         (const char borderChar);

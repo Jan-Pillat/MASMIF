@@ -7,6 +7,9 @@
 #include <string>
 #include <vector>
 
+#include "Lexer.hpp"
+#include "AsmConverter.hpp"
+
 #include "../utils/Declarations/Token.hpp"
 #include "../utils/Declarations/Thunk.hpp"
 #include "../utils/Declarations/Merge.hpp"

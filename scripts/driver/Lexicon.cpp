@@ -68,7 +68,7 @@ unordered_map <string, Parser::FuncParse> Parser::generalKeywords =
     {"SWORD",   {ParseVariable, FuncArgs( 2, CPU, SIGNED) } },
     {"SBYTE",   {ParseVariable, FuncArgs( 1, CPU, SIGNED) } },
     //ADDITIONAL
-//  {"TEXT",    {ParseVariable, NULL} },
+    {"TEXT",    {ParseVariable, NULL} },
     //OWN
     {"VAR",     {ParseOwnVar,   NULL} },
 };
@@ -127,5 +127,25 @@ unordered_set <string> assemblyCommands =
     {"ADC"},
     {"SUB"},
     {"SBB"},
+};
+
+// ---------- ASSEMBLY KEYWORDS TO AVOID ----------
+
+unordered_set <string> keywordsToAvoidByConverter =
+{
+    {"COMMENT"},
+    {"INCLUDELIB"},
+    {"INCLUDE"},
+    {"EQU"},
+    {"DEFINE"},
+    {"EXTERNDEF"},
+    {"OPTION"},
+    {"ASSUME"},
+    {"MACRO"},
+    {"ENDM"},
+    {"IFDEF"},
+    {"IFNDEF"},
+
+    {"TEXT"},
 };
 

@@ -391,11 +391,11 @@ void    Parser::ParseVariable    ()
 {
     Declaration newVariable;
 
+    newVariable.declaration = gotToken->content;
+
     auto position = generalKeywords.find(gotToken->content);
     if (position != generalKeywords.end())
         newVariable.size = position->second.argument.attributes.bytes;
-
-    newVariable.declaration = gotToken->content;
 
     while (GetTokenOnlyToLineEnd())
     {
@@ -440,6 +440,24 @@ void    Parser::ParseVariable    ()
                     GetToken();
                     newVariable.content = gotToken->content;
                 }
+    }
+
+    if (!newVariable.content.empty()  && newVariable.declaration == "TEXT"  &&  *newVariable.content.cbegin()=='"'  &&  *(newVariable.content.cend()-1)=='"')
+    {
+        newVariable.size = 0;
+        vector <Token> tokensFromContent;
+
+        string convertedContent = AsmConverter(newVariable.content).ConvertSyntax();
+        Lexer (tokensFromContent, convertedContent.c_str());
+
+        for (size_t i=0; i<tokensFromContent.size(); i++)
+        {
+            if (tokensFromContent[i].type == TYPE_CHARS)
+                newVariable.size += strlen (&tokensFromContent[i].content[0])-2; //-2*'\''
+
+            else if (tokensFromContent[i].type == TYPE_NUMBER)
+                newVariable.size += 1;
+        }
     }
 
     newVariable.type = VARIABLE;

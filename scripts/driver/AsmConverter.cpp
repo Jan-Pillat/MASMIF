@@ -17,15 +17,21 @@ string AsmConverter::ExchangeAutodeclaredTexts (unordered_map<string, size_t>* t
         {
             SkipBlanks  ();
 
-            if (IsItWordBegin())
-                if (TryToFindCommand())
+            if (TryToGetWord() && !IsItKeywordToAvoid())
+            {
+                SkipBlanks  ();
+
+                if (!IsItWordBegin() || (TryToGetWord() && !IsItKeywordToAvoid()) )
                     break;
+            }
+            else if (!IsItCommentaryBegin() && !IsItLineOrContentEnd())
+                break;
 
             SkipLine ();
         }
 
         //! ----- FIND TEXT -----
-        while (IsContentNotFullyVerified())
+        while (!IsItLineOrContentEnd())
         {
             SkipBlanks  ();
 
@@ -35,8 +41,6 @@ string AsmConverter::ExchangeAutodeclaredTexts (unordered_map<string, size_t>* t
             else if (IsItTextBegin())
             {
                 DeclareText ();
-                SkipLine    ();
-                break;
             }
 
             else if (IsItCommentaryBegin())
@@ -77,13 +81,13 @@ string AsmConverter::ConvertSyntax ()
         SkipNotImportantChars ();
 
         if (IsItCharsBegin())
-            SkipChars ();
+            ConvertChars ();
 
         else if (IsItTextBegin())
-            SkipTextButAddNullChar();
+            ConvertTextToCharsAddNullChar();
 
-        else if (IsItCommentaryBegin())
-            ConvertCommentary();
+//        else if (IsItCommentaryBegin())
+//            ConvertCommentary();
 
         else if (IsItNumberBegin())
             ConvertNumber();
@@ -168,20 +172,224 @@ inline void AsmConverter::SkipText ()
 
 //---------------------------------------------------------------
 
-inline void AsmConverter::SkipTextButAddNullChar ()
+inline void AsmConverter::ConvertChars ()
 {
+    end = pointer;
+    converted.append(begin, end-begin);
+    bool charsAreOpen = false;
+    bool neededComma = false;
+
     pointer++;
-    SkipContainedChars ('"');
+    begin = pointer;
+
+    while (true)
+    {
+        if (!charsAreOpen)
+            if (*pointer != '\r' && *pointer != '\n' && *pointer != '\0' && *pointer != '\\' && *pointer != '\'')
+            {
+                if (neededComma)
+                    converted.append (",");
+                converted.append ("'");
+                charsAreOpen = true;
+                neededComma  = true;
+            }
+
+
+        while (*pointer != '\r' && *pointer != '\n' && *pointer != '\0' && *pointer != '\\' && *pointer != '\'')
+            pointer++;
+
+
+        if (*pointer == '\\')
+        {
+            end = pointer;
+            converted.append(begin, end-begin);
+            pointer++;
+
+            if (*pointer == '\0')
+            {
+                begin = pointer;
+                converted.append(1,'\\');
+                break;
+            }
+            else
+            {
+                begin = pointer+1;
+
+                if (charsAreOpen)
+                {
+                    converted.append(1,'\'');
+                    charsAreOpen = false;
+                }
+
+                if (neededComma)
+                    converted.append(1,',');
+                else
+                    neededComma = true;
+
+
+                if (*pointer == 'a')    converted.append(ConvertNumberToHexStringH('\a')); else
+                if (*pointer == 'b')    converted.append(ConvertNumberToHexStringH('\b')); else
+                if (*pointer == 'e')    converted.append(ConvertNumberToHexStringH('\e')); else
+                if (*pointer == 'f')    converted.append(ConvertNumberToHexStringH('\f')); else
+                if (*pointer == 'n')    converted.append(ConvertNumberToHexStringH('\n')); else
+                if (*pointer == 'r')    converted.append(ConvertNumberToHexStringH('\r')); else
+                if (*pointer == 't')    converted.append(ConvertNumberToHexStringH('\t')); else
+                if (*pointer == 'v')    converted.append(ConvertNumberToHexStringH('\v')); else
+                if (*pointer == '0')    converted.append(ConvertNumberToHexStringH('\0')); else
+                if (*pointer == '\'')   converted.append(ConvertNumberToHexStringH('\'')); else
+                                        converted.append(ConvertNumberToHexStringH(*pointer));
+            }
+        }
+        else
+        {
+            break;
+        }
+
+        pointer++;
+    }
+
 
     end = pointer;
     converted.append(begin, end-begin);
 
-    if (*pointer == '"')
-        converted.append("\",0");
-    else
-        converted.append("\"\",0");
+    if (charsAreOpen)
+        converted.append("'");
+
+    if (*pointer == '\'')
+        pointer++;
+
+    begin = pointer;
+}
+
+//---------------------------------------------------------------
+
+inline void AsmConverter::ConvertTextToCharsAddNullChar ()
+{
+    end = pointer;
+    converted.append(begin, end-begin);
+    bool charsAreOpen = false;
+    bool neededComma = false;
 
     pointer++;
+    begin = pointer;
+
+    while (true)
+    {
+        if (!charsAreOpen)
+            if (*pointer != '\r' && *pointer != '\n' && *pointer != '\0' && *pointer != '\\' && *pointer != '\'' && *pointer != '"')
+            {
+                if (neededComma)
+                    converted.append (",");
+                converted.append ("'");
+                charsAreOpen = true;
+                neededComma  = true;
+            }
+
+
+        while (*pointer != '\r' && *pointer != '\n' && *pointer != '\0' && *pointer != '\\' && *pointer != '\'' && *pointer != '"')
+            pointer++;
+
+
+        if (*pointer == '\\')
+        {
+            end = pointer;
+            converted.append(begin, end-begin);
+            pointer++;
+
+            if (*pointer == '\0')
+            {
+                begin = pointer;
+                converted.append(1,'\\');
+                break;
+            }
+            else
+            {
+                begin = pointer+1;
+
+                if (*pointer == '"')
+                {
+                    if (!charsAreOpen)
+                    {
+                        if (neededComma)
+                            converted.append(1,',');
+                        else
+                            neededComma = true;
+
+                        converted.append(1,'\'');
+                        charsAreOpen = true;
+                    }
+
+                    converted.append(1,'"');
+                }
+                else
+                {
+                    if (charsAreOpen)
+                    {
+                        converted.append(1,'\'');
+                        charsAreOpen = false;
+                    }
+
+                    if (neededComma)
+                        converted.append(1,',');
+                    else
+                        neededComma = true;
+
+
+                    if (*pointer == 'a')    converted.append(ConvertNumberToHexStringH('\a')); else
+                    if (*pointer == 'b')    converted.append(ConvertNumberToHexStringH('\b')); else
+                    if (*pointer == 'e')    converted.append(ConvertNumberToHexStringH('\e')); else
+                    if (*pointer == 'f')    converted.append(ConvertNumberToHexStringH('\f')); else
+                    if (*pointer == 'n')    converted.append(ConvertNumberToHexStringH('\n')); else
+                    if (*pointer == 'r')    converted.append(ConvertNumberToHexStringH('\r')); else
+                    if (*pointer == 't')    converted.append(ConvertNumberToHexStringH('\t')); else
+                    if (*pointer == 'v')    converted.append(ConvertNumberToHexStringH('\v')); else
+                    if (*pointer == '0')    converted.append(ConvertNumberToHexStringH('\0')); else
+                    if (*pointer == '\'')   converted.append(ConvertNumberToHexStringH('\'')); else
+                                            converted.append(ConvertNumberToHexStringH(*pointer));
+                }
+            }
+        }
+        else if (*pointer == '\'')
+        {
+            end = pointer;
+            converted.append(begin, end-begin);
+            begin = pointer+1;
+
+            if (charsAreOpen)
+            {
+                converted.append(1,'\'');
+                charsAreOpen = false;
+            }
+
+            if (neededComma)
+                converted.append(1,',');
+            else
+                neededComma = true;
+
+            converted.append("27h");
+        }
+        else
+        {
+            break;
+        }
+
+        pointer++;
+    }
+
+
+    end = pointer;
+    converted.append(begin, end-begin);
+
+    if (charsAreOpen)
+        converted.append("',");
+    else if (neededComma)
+        converted.append (",");
+
+    converted.append ("0");
+
+    if (*pointer == '"')
+        pointer++;
+
     begin = pointer;
 }
 
@@ -317,7 +525,7 @@ inline bool AsmConverter::IsItLineEnd ()
 
 //---------------------------------------------------------------
 
-inline bool AsmConverter::IsItLineOrStringEnd ()
+inline bool AsmConverter::IsItLineOrContentEnd ()
 {
     return (*pointer == '\r' || *pointer == '\n' || *pointer == '\0');
 }
@@ -327,7 +535,7 @@ inline bool AsmConverter::IsItLineOrStringEnd ()
 inline void AsmConverter::SkipLine ()
 {
     //Goto line end
-    while (!IsItLineOrStringEnd())
+    while (!IsItLineOrContentEnd())
         pointer++;
     //Skip line end
     while (IsItLineEnd())
@@ -358,8 +566,11 @@ inline void AsmConverter::SkipWord ()
 
 //---------------------------------------------------------------
 
-inline bool AsmConverter::TryToFindCommand()
+inline bool AsmConverter::TryToGetWord ()
 {
+    if (!IsItWordBegin())
+        return false;
+
     end = pointer;
     converted.append (begin, end-begin);
 
@@ -367,11 +578,40 @@ inline bool AsmConverter::TryToFindCommand()
     while (IsItWordInside())
         pointer++;
     end = pointer;
-    string gotWord (begin, end-begin);
+    gotWord.assign (begin, end-begin);
 
     transform (gotWord.begin(), gotWord.end(), gotWord.begin(), ::toupper);
 
+    return true;
+}
+
+//---------------------------------------------------------------
+
+inline bool AsmConverter::CheckIsItCommandOrDeclaration()
+{
     if (assemblyCommands.find(gotWord) != assemblyCommands.end())
+        return true;
+    else if (assemblyDeclarations.find(gotWord) != assemblyDeclarations.end())
+        return true;
+    else
+        return false;
+}
+
+//---------------------------------------------------------------
+
+inline bool AsmConverter::GetWordAndCheckIsItCommandOrDeclaration()
+{
+    if (TryToGetWord())
+        return CheckIsItCommandOrDeclaration();
+    else
+        return false;
+}
+
+//---------------------------------------------------------------
+
+inline bool AsmConverter::IsItKeywordToAvoid ()
+{
+    if (keywordsToAvoidByConverter.find(gotWord) != keywordsToAvoidByConverter.end())
         return true;
     else
         return false;
@@ -387,8 +627,24 @@ inline bool AsmConverter::DeclareText()
         converted.append (begin, end-begin);
         begin = pointer++;
 
-        while (*pointer!='"' && !IsItLineOrStringEnd())
-            pointer++;
+        while (true)
+        {
+            while (*pointer!='"' && *pointer!='\\' && !IsItLineOrContentEnd())
+                pointer++;
+
+            if (*pointer=='\\')
+            {
+                pointer++;
+                if (*pointer=='\0')
+                    break;
+                else
+                    *pointer++;
+            }
+            else
+            {
+                break;
+            }
+        }
 
         end = ++pointer;
         string foundText (begin, end-begin);
