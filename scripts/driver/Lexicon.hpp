@@ -11,6 +11,7 @@ using std::unordered_set;
 extern unordered_set <string> assemblyDeclarations;
 extern unordered_set <string> assemblyCommands;
 extern unordered_set <string> keywordsToAvoidByConverter;
+extern unordered_set <string> asmRegisters;
 
 #endif // _HPP_Lexicon_
 

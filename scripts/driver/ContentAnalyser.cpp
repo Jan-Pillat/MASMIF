@@ -27,7 +27,7 @@ inline void ContentAnalyser::FindAndWritePublications ()
         if (gotToken->type == TYPE_WORD)
             if (ShowNextToken())
                 if (nextToken->type == TYPE_WORD)
-                    if (assemblyDeclarations.find(nextToken->content) != assemblyDeclarations.end())
+                    if (assemblyDeclarations.find(GetUppercase(nextToken->content)) != assemblyDeclarations.end())
                     {
                         string& labelName = gotToken->content;
                         bool    dontPublic = false;

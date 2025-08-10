@@ -56,7 +56,11 @@ struct Declaration
 
     //for: Variable
     string declaration;
-//    VariableAttributes variableAttributes = {NON, NOT_APPLICABLE, 0};
+
+    //for: Procedure
+    string uses;
+    string parameters;
+    string locals;
 };
 
 struct DeclarationComparison

@@ -123,7 +123,7 @@ string Preprocessor::ApplyIncludes (const char* gotCode)
 
             string command (begin, pointer-begin);
 
-            if (stricmp (&command[0], "binary"))
+            if (!stricmp (&command[0], "binary"))
                 asBinary = true;
 
             pointer++;

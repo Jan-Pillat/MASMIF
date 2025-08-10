@@ -302,7 +302,7 @@ void CodeGenerator::WriteMASMCode ()
     // ---------- WRITE ----------
     for (int i = 0;  i<declarations.size();  i++)
     {
-        // ---- DECLARATION SEGMENTS ARE FIRST ----
+        //! ---- DECLARATION SEGMENTS ARE FIRST ----
         if (declarations[i].type == DECLARATION)
         {
             if ( declarations[i].name != "" )
@@ -321,16 +321,22 @@ void CodeGenerator::WriteMASMCode ()
         }
 
 
+        //! ----  ----
+        if ( declarations[i].name.empty() )
+            if ( declarations[i].type == VARIABLE || declarations[i].type == PROCEDURE || declarations[i].type == DLL)
+                continue;
 
+
+        //! ---- CHECK ADDRESS CORRECTION ----
         if ( (declarations[i].address < beginBase) && (!declarations[i].intoNewSection) )
         {
-            cout << "      Incorrect address: " << hex << "0x" << declarations[i].address << dec << endl;
+            cout << "      Incorrect address: " << hex << "0x" << declarations[i].address << dec << "  name=" << declarations[i].name << endl;
             continue;
         }
 
 
 
-        // ---- DESTINATION ----
+        //! ---- DESTINATION ----
         string* destination = &MASMcode_Declarations;
 
         if (declarations[i].intoNewSection)
@@ -448,7 +454,21 @@ void CodeGenerator::WriteMASMCode ()
             // -- PUBLICATION --
             MASMcode_Publications   += "PUBLIC\t" + declarations[i].name + "\r\n";
             // -- PROCEDURE DECLARATION --
-            *destination   += declarations[i].name + "\tPROC\r\n";
+            *destination   += declarations[i].name + "\tPROC";
+            // -- USES --
+            if (declarations[i].uses!="")
+                *destination += "\tUSES" + declarations[i].uses;
+            // -- PARAMETERS --
+            if (declarations[i].parameters!="")
+            {
+                if (declarations[i].uses!="")
+                    *destination += ",\t";
+                else
+                    *destination += "\t";
+                *destination += declarations[i].parameters;
+            }
+            // -- LINE END --
+            *destination   += "\r\n";
             // -- CONTENT --
             if (declarations[i].content!="")
                 *destination   += declarations[i].content + "\r\n";

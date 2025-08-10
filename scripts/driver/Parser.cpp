@@ -16,9 +16,7 @@ Parser::Parser   (vector<Token>& gotTokens, vector<Merge>& gotMerges, vector<Thu
         if (gotToken->type != TYPE_WORD)
             continue;
 
-        transform (gotToken->content.begin(), gotToken->content.end(), gotToken->content.begin(), ::toupper);
-
-        auto position = generalKeywords.find(gotToken->content);
+        auto position = generalKeywords.find(GetUppercase(gotToken->content));
         if (position != generalKeywords.end())
         {
             (this->*position->second.func)();
@@ -85,21 +83,46 @@ bool    Parser::ShowNextToken    ()
 //======================================================
 
 
+bool Parser::IsItAddressBegin ()
+{
+    if ( (gotToken->type == TYPE_SPECIAL) && (gotToken->content == "[") )
+        return true;
+
+    if (!ShowNextToken())
+        return false;
+
+    if ( (gotToken->type == TYPE_WORD) && (!stricmp(gotToken->content.c_str(),"ADDRESS")) )
+        if ( (nextToken->type == TYPE_SPECIAL) && (nextToken->content == ":") )
+            return true;
+
+    return false;
+}
+
+//------------------------------------------------------
+
 bool Parser::SetAddress (Declaration& destination)
 {
     static DWORD newIndex = 1; // This is so that the declarations of new sections are in order
 
     // --- CHECK IS BEGIN CORRECT ---
-    if ( (gotToken->type != TYPE_SPECIAL) || (gotToken->content != "[") )
+    if (!IsItAddressBegin())
         return false;
 
     // --- DON'T SET ADDRESS SECOND A TIME ---
     if (destination.address != 0)
     {
-        while (GetTokenOnlyToLineEnd())
+        if (gotToken->type == TYPE_SPECIAL)
         {
-            if ( ((gotToken->type == TYPE_SPECIAL) && (gotToken->content == "]"))  ||  (gotToken->type == TYPE_LINEEND) )
-                return false;
+            while (GetTokenOnlyToLineEnd())
+            {
+                if ( ((gotToken->type == TYPE_SPECIAL) && (gotToken->content == "]"))  ||  (gotToken->type == TYPE_LINEEND) )
+                    return false;
+            }
+        }
+        else
+        {
+            GetToken(); //pop ADDRESS
+            GetToken(); //pop :
         }
         return false;
     }
@@ -109,47 +132,44 @@ bool Parser::SetAddress (Declaration& destination)
 
     if (gotToken->type == TYPE_SPECIAL)
     {
-        if (gotToken->content == "[")
+        while (GetTokenOnlyToLineEnd())
         {
-            while (GetTokenOnlyToLineEnd())
+            if (gotToken->type == TYPE_NUMBER)
             {
-                if (gotToken->type == TYPE_NUMBER)
-                {
-                    destination.address         = StrGetNum<int>(&gotToken->content[0]);
-                    destination.intoNewSection  = false;
-                    result                      = true;
-                }
-                else if ((gotToken->type == TYPE_WORD) && (gotToken->content == "NEW"))
-                {
-                    destination.address         = newIndex++;
-                    destination.intoNewSection  = true;
-                    result                      = true;
-                }
-                else if ((gotToken->type == TYPE_SPECIAL) && (gotToken->content == "]") || (gotToken->type == TYPE_LINEEND))
-                {
-                    break;
-                }
+                destination.address         = StrGetNum<int>(&gotToken->content[0]);
+                destination.intoNewSection  = false;
+                result                      = true;
+            }
+            else if ((gotToken->type == TYPE_WORD) && (!stricmp(gotToken->content.c_str(),"NEW")))
+            {
+                destination.address         = newIndex++;
+                destination.intoNewSection  = true;
+                result                      = true;
+            }
+            else if ((gotToken->type == TYPE_SPECIAL) && (gotToken->content == "]") || (gotToken->type == TYPE_LINEEND))
+            {
+                break;
             }
         }
     }
     else if (gotToken->type == TYPE_WORD)
     {
-        if (gotToken->content == "ADDRESS")
-            if (ShowNextToken())
-                if (nextToken->type == TYPE_NUMBER)
-                {
-                    GetToken();
-                    destination.address         =   StrGetNum<DWORD>(&gotToken->content[0]);
-                    destination.intoNewSection  =   false;
-                    result                      =   true;
-                }
-                else if ( (nextToken->type == TYPE_WORD) && (nextToken->content == "NEW") )
-                {
-                    GetToken();
-                    destination.address         =   newIndex++;
-                    destination.intoNewSection  =   true;
-                    result                      =   true;
-                }
+        GetToken(); // pop ADDRESS
+
+        if (!GetToken()) return false; // pop :
+
+        if (gotToken->type == TYPE_NUMBER)
+        {
+            destination.address         =   StrGetNum<DWORD>(&gotToken->content[0]);
+            destination.intoNewSection  =   false;
+            result                      =   true;
+        }
+        else if ( (gotToken->type == TYPE_WORD) && (!stricmp(gotToken->content.c_str(),"NEW")) )
+        {
+            destination.address         =   newIndex++;
+            destination.intoNewSection  =   true;
+            result                      =   true;
+        }
     }
 
     return result;
@@ -157,19 +177,45 @@ bool Parser::SetAddress (Declaration& destination)
 
 //------------------------------------------------------
 
+bool Parser::IsItSizeBegin ()
+{
+    if ( (gotToken->type == TYPE_SPECIAL) && (gotToken->content == "(") )
+        return true;
+
+    if (!ShowNextToken())
+        return false;
+
+    if ( (gotToken->type == TYPE_WORD) && (!stricmp(gotToken->content.c_str(),"SIZE")) )
+        if ( (nextToken->type == TYPE_SPECIAL) && (nextToken->content == ":") )
+            return true;
+
+    return false;
+}
+
+
+//------------------------------------------------------
+
 bool Parser::SetSize (Declaration& destination)
 {
     // --- CHECK IS BEGIN CORRECT ---
-    if ( (gotToken->type != TYPE_SPECIAL) || (gotToken->content != "(") )
+    if (!IsItSizeBegin())
         return false;
 
     // -- DON'T SET SIZE A SECOND TIME --
     if (destination.size != 0)
     {
-        while (GetTokenOnlyToLineEnd())
+        if (gotToken->type == TYPE_SPECIAL)
         {
-            if ( ((gotToken->type == TYPE_SPECIAL) && (gotToken->content == ")"))  ||  (gotToken->type == TYPE_LINEEND) )
-                return false;
+            while (GetTokenOnlyToLineEnd())
+            {
+                if ( ((gotToken->type == TYPE_SPECIAL) && (gotToken->content == ")"))  ||  (gotToken->type == TYPE_LINEEND) )
+                    return false;
+            }
+        }
+        else
+        {
+            GetToken(); //pop SIZE
+            GetToken(); //pop :
         }
         return false;
     }
@@ -178,7 +224,7 @@ bool Parser::SetSize (Declaration& destination)
     bool result = false;
 
     //  SIZE IN ( )
-    if ( (gotToken->type == TYPE_SPECIAL) && (gotToken->content == "(") )
+    if (gotToken->type == TYPE_SPECIAL)
     {
         while (GetTokenOnlyToLineEnd())
         {
@@ -186,7 +232,7 @@ bool Parser::SetSize (Declaration& destination)
             {
                 destination.size = StrGetNum<int>(&gotToken->content[0]);
             }
-            else if ( (gotToken->type == TYPE_WORD) && (gotToken->content == "UNTIL") )
+            else if ( (gotToken->type == TYPE_WORD) && (!stricmp(gotToken->content.c_str(),"UNTIL")) )
             {
                 if (GetTokenOnlyToLineEnd())
                 {
@@ -197,7 +243,7 @@ bool Parser::SetSize (Declaration& destination)
                     }
                     else if (gotToken->type == TYPE_WORD)
                     {
-                        auto position = assemblyKeyword.find(gotToken->content);
+                        auto position = assemblyKeyword.find(GetUppercase(gotToken->content));
                         if (position != assemblyKeyword.end())
                         {
                             destination.until        = true;
@@ -214,35 +260,162 @@ bool Parser::SetSize (Declaration& destination)
     }
 
     //  SIZE AFTER "SIZE"
-    else if ( (gotToken->type == TYPE_WORD) && (gotToken->content == "SIZE") )
+    else if (gotToken->type == TYPE_WORD)
     {
-        if (ShowNextToken())
-            if (nextToken->type == TYPE_NUMBER)
-            {
-                GetToken();
-                destination.size = StrGetNum<DWORD>(&gotToken->content[0]);
-            }
-            else if ( (nextToken->type == TYPE_WORD) && (nextToken->content == "UNTIL") )
-            {
-                if (ShowNextToken())
-                    if (nextToken->type == TYPE_NUMBER)
+        GetToken(); // pop SIZE
+
+        if (!GetToken()) // pop :
+            return false;
+
+        if (gotToken->type == TYPE_NUMBER)
+        {
+            destination.size = StrGetNum<DWORD>(&gotToken->content[0]);
+        }
+        else if ( (gotToken->type == TYPE_WORD) && (!stricmp(gotToken->content.c_str(),"UNTIL")) )
+        {
+            if (GetToken())
+                if (nextToken->type == TYPE_NUMBER)
+                {
+                    destination.until        = true;
+                    destination.untilBinNum  = (BYTE)StrGetNum<int>(&nextToken->content[0]);
+                }
+                else if (nextToken->type == TYPE_WORD)
+                {
+                    auto position = assemblyKeyword.find(GetUppercase(nextToken->content));
+                    if (position != assemblyKeyword.end())
                     {
                         destination.until        = true;
-                        destination.untilBinNum  = (BYTE)StrGetNum<int>(&nextToken->content[0]);
+                        destination.untilBinNum  = position->second;
                     }
-                    else if (nextToken->type == TYPE_WORD)
-                    {
-                        auto position = assemblyKeyword.find(nextToken->content);
-                        if (position != assemblyKeyword.end())
-                        {
-                            destination.until        = true;
-                            destination.untilBinNum  = position->second;
-                        }
-                    }
-            }
+                }
+        }
     }
 
     return result;
+}
+
+//------------------------------------------------------
+
+bool Parser::SetUses (Declaration& destination)
+{
+    if (!ShowNextToken())
+        return false;
+
+    if ( (gotToken->type == TYPE_WORD) && (!stricmp(gotToken->content.c_str(),"USES")) && (nextToken->type==TYPE_SPECIAL) && (nextToken->content==":") )
+    {
+        GetToken(); //pop USES
+
+        while (GetTokenOnlyToLineEnd()) //pop : and rest
+            if (gotToken->type == TYPE_WORD)
+            {
+                if (asmRegisters.find(GetUppercase(gotToken->content)) != asmRegisters.end())
+                {
+                    destination.uses += " " + gotToken->content;
+                }
+
+                if (ShowNextToken()  &&  nextToken->type==TYPE_SPECIAL  && nextToken->content==",")
+                {
+                    GetToken();
+                    continue;
+                }
+
+                break;
+            }
+            else break;
+
+
+        if (destination.uses != "")
+            return true;
+    }
+
+    return false;
+}
+
+//------------------------------------------------------
+
+bool Parser::IsItParamBegin ()
+{
+    if (!ShowNextToken())
+        return false;
+
+    if ( (gotToken->type == TYPE_SPECIAL) && (gotToken->content == "(") )
+        if ( (nextToken->type == TYPE_SPECIAL) && (nextToken->content == "(") )
+            return true;
+
+    if ( (gotToken->type == TYPE_WORD) && (!stricmp(gotToken->content.c_str(),"PARAM")) )
+        if ( (nextToken->type == TYPE_SPECIAL) && (nextToken->content == ":") )
+            return true;
+
+    return false;
+}
+
+//------------------------------------------------------
+
+bool Parser::SetParam (Declaration& destination)
+{
+    if (!IsItParamBegin())
+        return false;
+
+    GetToken();
+
+    if (gotToken->content == "(")
+    {
+        while (GetTokenOnlyToLineEnd())
+        {
+            if ( (gotToken->type == TYPE_SPECIAL) && (gotToken->content == ")") )
+            {
+                if (ShowNextToken())
+                    if ( (nextToken->type == TYPE_SPECIAL) && (nextToken->content == ")") )
+                        GetToken();
+                break;
+            }
+            else if (gotToken->type==TYPE_WORD)
+            {
+                if ( (ShowNextToken()) && (nextToken->type==TYPE_WORD) )
+                {
+                    if (!destination.parameters.empty())
+                        destination.parameters += ", ";
+                    destination.parameters += nextToken->content + ":" + gotToken->content;
+                }
+
+                GetToken();
+            }
+        }
+    }
+    else
+    {
+        while (GetTokenOnlyToLineEnd())
+        {
+            if (ShowNextToken())
+            {
+                if (nextToken->type==TYPE_WORD)
+                {
+                    if (!destination.parameters.empty())
+                        destination.parameters += ", ";
+                    destination.parameters += nextToken->content + ":" + gotToken->content;
+                }
+
+                GetToken();
+
+                if (ShowNextToken())
+                {
+                    if ( (nextToken->type == TYPE_SPECIAL) && (nextToken->content == ",") )
+                    {
+                        GetToken();
+                        continue;
+                    }
+                }
+            }
+
+            break;
+        }
+    }
+
+
+    if (destination.parameters != "")
+        return true;
+    else
+        return false;
 }
 
 
@@ -291,7 +464,7 @@ void    Parser::ParseSection    ()
         // ---------- CONTENT ----------
         if (gotToken->type == TYPE_WORD)
         {
-            auto position = sectionKeywords.find(gotToken->content);
+            auto position = sectionKeywords.find(GetUppercase(gotToken->content));
             if (position != sectionKeywords.end())
             {
                 newSection.attributes   |=  position->second;
@@ -393,7 +566,7 @@ void    Parser::ParseVariable    ()
 
     newVariable.declaration = gotToken->content;
 
-    auto position = generalKeywords.find(gotToken->content);
+    auto position = generalKeywords.find(GetUppercase(gotToken->content));
     if (position != generalKeywords.end())
         newVariable.size = position->second.argument.attributes.bytes;
 
@@ -442,7 +615,7 @@ void    Parser::ParseVariable    ()
                 }
     }
 
-    if (!newVariable.content.empty()  && newVariable.declaration == "TEXT"  &&  *newVariable.content.cbegin()=='"'  &&  *(newVariable.content.cend()-1)=='"')
+    if (!newVariable.content.empty()  && !stricmp(newVariable.declaration.c_str(),"TEXT")  &&  *newVariable.content.cbegin()=='"'  &&  *(newVariable.content.cend()-1)=='"')
     {
         newVariable.size = 0;
         vector <Token> tokensFromContent;
@@ -497,8 +670,12 @@ void    Parser::ParseProcedure    ()
     {
         // ---------- ADDRESS ----------
         if (!SetAddress(newProcedure))
+        // ---------- PARAM ----------
+        if (!SetParam(newProcedure))
         // ---------- SIZE ----------
         if (!SetSize(newProcedure))
+        // ---------- USES ----------
+        if (!SetUses(newProcedure))
         // ---------- CONTENT ----------
         if (gotToken->type == TYPE_CONTENT)
         {
@@ -618,7 +795,7 @@ void    Parser::ParseThunk    ()
         if (gotToken->type == TYPE_WORD)
         {
             if (newThunk.count == 0)
-                if (gotToken->content == "SIZE")
+                if (!stricmp(gotToken->content.c_str(),"SIZE"))
                     if (ShowNextToken())
                         if (nextToken->type == TYPE_NUMBER)
                         {
@@ -628,7 +805,7 @@ void    Parser::ParseThunk    ()
                         }
 
             if (newThunk.address == 0)
-                if (gotToken->content == "ADDRESS")
+                if (!stricmp(gotToken->content.c_str(),"ADDRESS"))
                     if (ShowNextToken())
                         if (nextToken->type == TYPE_NUMBER)
                         {
@@ -687,7 +864,7 @@ void    Parser::ParseDeclaration    ()
         else if (gotToken->type == TYPE_WORD)
         {
             if (newDeclaration.address == 0)
-                if (gotToken->content == "NR")
+                if (!stricmp(gotToken->content.c_str(),"NR"))
                     if (ShowNextToken())
                         if (nextToken->type == TYPE_NUMBER)
                         {

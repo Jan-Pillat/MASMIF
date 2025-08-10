@@ -152,7 +152,7 @@ void Driver::ConvertAndAutoDeclareText()
     for (size_t i=0; i<declarations.size(); i++)
         if (declarations[i].type == SEGMENT
         ||  declarations[i].type == PROCEDURE
-        ||  (declarations[i].type == VARIABLE && keywordsToAvoidByConverter.find(declarations[i].declaration)==keywordsToAvoidByConverter.end()) )
+        ||  (declarations[i].type == VARIABLE && keywordsToAvoidByConverter.find(GetUppercase(declarations[i].declaration))==keywordsToAvoidByConverter.end()) )
         {
             declarations[i].content = AsmConverter(declarations[i].content).ExchangeAutodeclaredTexts(&textsToDeclare);
         }

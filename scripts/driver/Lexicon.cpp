@@ -149,3 +149,45 @@ unordered_set <string> keywordsToAvoidByConverter =
     {"TEXT"},
 };
 
+// ---------- REGISTERS ----------
+
+unordered_set <string> asmRegisters =
+{
+    //64-bit
+    {"RAX"},
+    {"RBX"},
+    {"RCX"},
+    {"RDX"},
+    {"RSI"},
+    {"RDI"},
+    {"RBP"},
+    {"RSP"},
+    //32-bit
+    {"EAX"},
+    {"EBX"},
+    {"ECX"},
+    {"EDX"},
+    {"ESI"},
+    {"EDI"},
+    {"EBP"},
+    {"ESP"},
+    //16-bit,
+    {"AX"},
+    {"BX"},
+    {"CX"},
+    {"DX"},
+    {"SI"},
+    {"DI"},
+    {"BP"},
+    {"SP"},
+    //8-bit,
+    {"AL"},
+    {"BL"},
+    {"CL"},
+    {"DL"},
+    {"AH"},
+    {"BH"},
+    {"CH"},
+    {"DH"},
+};
+

@@ -35,8 +35,14 @@ private:
     bool GetTokenOnlyToLineEnd  ();
     bool ShowNextToken          ();
 
+    bool IsItAddressBegin       ();
+    bool IsItSizeBegin          ();
+    bool IsItParamBegin         ();
+
     bool SetAddress             (Declaration& destination);
     bool SetSize                (Declaration& destination);
+    bool SetUses                (Declaration& destination);
+    bool SetParam               (Declaration& destination);
 
     void ParseSection           ();
     void ParseSegment           ();
