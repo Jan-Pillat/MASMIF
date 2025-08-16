@@ -242,6 +242,9 @@ void Lexer::LexContent ()
     newToken.line = currentLine;
     pointer++;
 
+    while (IsSpace(*pointer))
+        pointer++;
+
     const char* begin = pointer;
 
     //Find text termination
