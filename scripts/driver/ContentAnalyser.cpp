@@ -25,39 +25,44 @@ inline void ContentAnalyser::FindAndWritePublications ()
     while (GetToken())
     {
         if (gotToken->type == TYPE_WORD)
-            if (ShowNextToken())
-                if (nextToken->type == TYPE_WORD)
-                    if (assemblyDeclarations.find(GetUppercase(nextToken->content)) != assemblyDeclarations.end())
-                    {
-                        string& labelName = gotToken->content;
-                        bool    dontPublic = false;
-
-                        if (nextToken->content == "PROC") //Skip procedure content - don't public anything inside procedure
+            if (assemblyCommands.find(GetUppercase(gotToken->content)) == assemblyCommands.end())
+                if (ShowNextToken())
+                    if (nextToken->type == TYPE_WORD)
+                        if (assemblyDeclarations.find(GetUppercase(nextToken->content)) != assemblyDeclarations.end())
                         {
-                            while (GetToken())
-                                if (gotToken->type == TYPE_WORD  &&  gotToken->content == "ENDP")
-                                    break;
-                        }
-                        else if (nextToken->content == "STRUCT")
-                        {
-                            while (GetToken())
-                                if (gotToken->type == TYPE_WORD  &&  gotToken->content == "ENDS")
-                                    break;
+                            string& labelName = gotToken->content;
+                            bool    dontPublic = false;
 
-                            dontPublic = true;
-                        }
-                        else if (nextToken->content == "MACRO")
-                        {
-                            while (GetToken())
-                                if (gotToken->type == TYPE_WORD  &&  gotToken->content == "ENDM")
-                                    break;
+                            if (nextToken->content == "PROC") //Skip procedure content - don't public anything inside procedure
+                            {
+                                while (GetToken())
+                                    if (gotToken->type == TYPE_WORD  &&  gotToken->content == "ENDP")
+                                        break;
+                            }
+                            else if (nextToken->content == "STRUCT")
+                            {
+                                while (GetToken())
+                                    if (gotToken->type == TYPE_WORD  &&  gotToken->content == "ENDS")
+                                        break;
 
-                            dontPublic = true;
-                        }
+                                dontPublic = true;
+                            }
+                            else if (nextToken->content == "MACRO")
+                            {
+                                while (GetToken())
+                                    if (gotToken->type == TYPE_WORD  &&  gotToken->content == "ENDM")
+                                        break;
 
-                        if (!dontPublic)
-                            publications += "PUBLIC\t" + labelName + "\r\n";
-                    }
+                                dontPublic = true;
+                            }
+                            else
+                            {
+                                dontPublic = true;
+                            }
+
+                            if (!dontPublic)
+                                publications += "PUBLIC\t" + labelName + "\r\n";
+                        }
 
         //Goto next line
         if (gotToken->type != TYPE_LINEEND)

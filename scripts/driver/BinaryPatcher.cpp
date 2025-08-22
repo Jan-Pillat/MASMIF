@@ -67,7 +67,7 @@ void BinaryPatcher::IncludeNewSections ()
             base.sections.emplace_back (&header, result.sections[i].rawData.GetBeginPointer());
         }
         //! ---------- OTHER ----------
-        else if (sectionsToCopy[i].name == "____othe")
+        else if (sectionsToCopy[i].name == "____rest")
         {
             header.Characteristics      = IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_WRITE | IMAGE_SCN_CNT_CODE | IMAGE_SCN_MEM_EXECUTE;
 
