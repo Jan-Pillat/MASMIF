@@ -438,10 +438,17 @@ void CodeGenerator::WriteMASMCode ()
                 *destination   += declarations[i].name;
 
                 // -- CONTENT --
-                if (declarations[i].declaration == "TEXT")
-                    *destination   += "\tBYTE\t" + declarations[i].content + "\r\n";
+                if (declarations[i].content.empty())
+                {
+                    *destination   += ":\r\n";
+                }
                 else
-                    *destination   += '\t' + declarations[i].declaration + '\t' + declarations[i].content + "\r\n";
+                {
+                    if (declarations[i].declaration == "TEXT")
+                        *destination   += "\tBYTE\t" + declarations[i].content + "\r\n";
+                    else
+                        *destination   += '\t' + declarations[i].declaration + '\t' + declarations[i].content + "\r\n";
+                }
 
                 if ( IsNextDeclarationGroupable(i) )
                     i++;
