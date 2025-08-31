@@ -16,10 +16,12 @@ static void SelectProject ()
 
 void Menu_ExistingProject ()
 {
-
     // ---------- VISUAL ----------
     projectsMenu.buttonLeft[1]      = projectsMenu.buttonLeft[0];
     projectsMenu.buttonRight[1]     = projectsMenu.buttonRight[0];
+
+    // ---------- Delete other options ----------
+    projectsMenu.options.clear();
 
     // ---------- Find projects ----------
     string path = GetAllProjectsPath() + "\\*";
@@ -45,6 +47,8 @@ void Menu_ExistingProject ()
 
     if (projectsMenu.options.size() == 0)
         projectsMenu.AddOption(NoOptions, "NO PROJECTS",  "", "");
+    else
+        projectsMenu.AddOption(NoOptions, "<<BACK>>",  "", "");
 
     projectsMenu.Start();
 }

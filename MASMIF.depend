@@ -310,18 +310,20 @@
 	"InjectScript.hpp"
 	"Work.hpp"
 
-1753460441 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\work.hpp
+1756653506 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\work.hpp
 	<windows.h>
 	"../utils/CppCore/include/ConsoleUtils.hpp"
 	"../utils/CppCore/include/ConsoleInterface.hpp"
 	"OpenProjectFolder.hpp"
+	"OpenTargetFolder.hpp"
 	"InjectScript.hpp"
+	"ChangeTarget.hpp"
 	"ExitProgram.hpp"
 
 1753382560 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\newproject.cpp
 	"NewProject.hpp"
 
-1752159103 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\work.cpp
+1756654461 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\work.cpp
 	"Work.hpp"
 
 1753460450 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\existingproject.hpp
@@ -819,7 +821,7 @@
 	<string>
 	<windows.h>
 
-1755863980 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\contentanalyser.cpp
+1755864435 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\contentanalyser.cpp
 	"ContentAnalyser.hpp"
 
 1753799817 source:c:\users\janpi\documents\c++ projects\masmif\scripts\driver\asmparser.cpp
@@ -843,4 +845,24 @@
 
 1755343588 c:\users\janpi\documents\c++ projects\masmif\scripts\utils\cppcore\src\stringutils\getuppercase.cpp
 	"../../include/StringUtils/GetUppercase.hpp"
+
+1756653340 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\changetarget.hpp
+	<iostream>
+	<string>
+	<windows.h>
+	"../utils/CppCore/include/ReadableWinAPI.hpp"
+	"../utils/CppCore/include/FileData.hpp"
+	"../utils/GetPath.hpp"
+
+1756653673 c:\users\janpi\documents\c++ projects\masmif\scripts\menu\opentargetfolder.hpp
+	<iostream>
+	<windows.h>
+	"../utils/GetPath.hpp"
+	"../utils/CppCore/include/FileData.hpp"
+
+1756653038 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\changetarget.cpp
+	"ChangeTarget.hpp"
+
+1756654158 source:c:\users\janpi\documents\c++ projects\masmif\scripts\menu\opentargetfolder.cpp
+	"OpenTargetFolder.hpp"
 

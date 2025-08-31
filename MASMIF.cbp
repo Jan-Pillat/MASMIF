@@ -70,6 +70,8 @@
 		<Unit filename="scripts/driver/Preprocessor.hpp" />
 		<Unit filename="scripts/driver/_driver.cpp" />
 		<Unit filename="scripts/driver/_driver.hpp" />
+		<Unit filename="scripts/menu/ChangeTarget.cpp" />
+		<Unit filename="scripts/menu/ChangeTarget.hpp" />
 		<Unit filename="scripts/menu/ExistingProject.cpp" />
 		<Unit filename="scripts/menu/ExistingProject.hpp" />
 		<Unit filename="scripts/menu/ExitProgram.cpp" />
@@ -80,6 +82,8 @@
 		<Unit filename="scripts/menu/NewProject.hpp" />
 		<Unit filename="scripts/menu/OpenProjectFolder.cpp" />
 		<Unit filename="scripts/menu/OpenProjectFolder.hpp" />
+		<Unit filename="scripts/menu/OpenTargetFolder.cpp" />
+		<Unit filename="scripts/menu/OpenTargetFolder.hpp" />
 		<Unit filename="scripts/menu/Settings.cpp" />
 		<Unit filename="scripts/menu/Settings.hpp" />
 		<Unit filename="scripts/menu/Work.cpp" />
