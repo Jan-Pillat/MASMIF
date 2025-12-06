@@ -58,6 +58,9 @@ char* CodeGenerator::VaToPointer (DWORD va) //va - virtual address
 //======================================================
 //======================================================
 
+//////////////////////////////////////////////////////////////////////////
+//This finds the smallest section address (the beginning of everything) //
+//////////////////////////////////////////////////////////////////////////
 
 void CodeGenerator::LoadBeginBase ()
 {
@@ -135,10 +138,12 @@ void CodeGenerator::ScanAndDeclareThunks ()
     cout << "    Scan and declare thunks" << endl;
     for (int i = 0;  i<thunks.size();  i++)
     {
+        //Goto thunk in raw data
         char* thunkPointer      =   baseData.data.GetBeginPointer() + VaToOffset(thunks[i].address);
         DWORD currentAddress    =   thunks[i].address - thunkSize; //-thunkSize because loop uses +=thunkSize
         DWORD count             =   0;
 
+        //Find all jumps
         while ((unsigned char)*(thunkPointer) == 0xFF  &&  *(thunkPointer+1) == 0x25) //jmp dword ptr []
         {
             if (thunks[i].count > 0   &&   count++ >= thunks[i].count)
@@ -152,13 +157,14 @@ void CodeGenerator::ScanAndDeclareThunks ()
 
             thunkPointer += 2;
 
+            //Get function pointer
             DWORD pointerValue = *reinterpret_cast<DWORD*>(thunkPointer);
 
             thunkPointer += 4;
 
+            //Check which DLL contains the function pointer
             for (int decl_i=0;  decl_i<declarations.size();  decl_i++)
             {
-
                 if ( (declarations[decl_i].type == DLL)  &&  (declarations[decl_i].address == pointerValue) )
                 {
                     thunkDeclaration.name = declarations[decl_i].name;
@@ -166,6 +172,7 @@ void CodeGenerator::ScanAndDeclareThunks ()
                 }
             }
 
+            //Save declaration
             declarations.push_back (thunkDeclaration);
         }
     }
@@ -296,6 +303,7 @@ void CodeGenerator::WriteMASMCode ()
     int labelCount      = 0;
     int dllCount        = 0;
     int thunkCount      = 0;
+    int nonameCount     = 0;
 
     DWORD origin        = 0;
 
@@ -440,7 +448,7 @@ void CodeGenerator::WriteMASMCode ()
                 // -- CONTENT --
                 if (declarations[i].content.empty())
                 {
-                    *destination   += ":\r\n";
+                    *destination   += "\t" + declarations[i].declaration + "\t?\r\n";//":\r\n";
                 }
                 else
                 {
@@ -450,7 +458,7 @@ void CodeGenerator::WriteMASMCode ()
                         *destination   += '\t' + declarations[i].declaration + '\t' + declarations[i].content + "\r\n";
                 }
 
-                if ( IsNextDeclarationGroupable(i) )
+                if ( IsNextDeclarationGroupable(i) && (declarations[i].content.empty()==declarations[i+1].content.empty()) )
                     i++;
                 else
                     break;
@@ -505,7 +513,8 @@ void CodeGenerator::WriteMASMCode ()
             // -- JUMP THUNK DECLARATIONS --
             while (true)
             {
-                if (autoInclude)
+                if ( (autoInclude)
+                ||   (assemblyCommands.find(GetUppercase(declarations[i].name)) != assemblyCommands.end()) )
                     *destination += "_";
 
                 *destination   +=  declarations[i].name + ":\tjmp dword ptr [" + declarations[i].name + "_pointer]\r\n";
