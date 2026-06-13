@@ -61,10 +61,14 @@ private:
     void SkipContainedChars         (const char borderChar);
     void SkipLine                   ();
 
+    bool IsItColon                  ();
+    void ConvertColonLabelToLabelDirective();
+
 public:
 //! ---------- PUBLIC METHODS ----------
     string ExchangeAutodeclaredTexts(unordered_map<string, size_t>* gotTextsToDeclare);
     string ConvertSyntax();
+    string ConvertLabels();
 
 //! ---------- CONSTRUCTORS ----------
     AsmConverter (const string& content) : content(content) {}

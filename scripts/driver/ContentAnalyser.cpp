@@ -1,4 +1,6 @@
 #include "ContentAnalyser.hpp"
+#include <iostream>
+using namespace std;
 
 //===============================================================
 //===============================================================
@@ -20,24 +22,38 @@ inline void ContentAnalyser::LexContent ()
 
 //---------------------------------------------------------------
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//FindAndWritePublications
+//------------------------
+//The function looks for procedure declarations in CONTENT to make their names visible so that labels can be created for x64dbg
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 inline void ContentAnalyser::FindAndWritePublications ()
 {
     while (GetToken())
     {
-        if (gotToken->type == TYPE_WORD)
-            if (assemblyCommands.find(GetUppercase(gotToken->content)) == assemblyCommands.end())
+        if (gotToken->type == TYPE_WORD) // if got token is a word...
+            if (assemblyCommands.find(GetUppercase(gotToken->content)) == assemblyCommands.end()) // if got token isn't an assembly command...
                 if (ShowNextToken())
-                    if (nextToken->type == TYPE_WORD)
-                        if (assemblyDeclarations.find(GetUppercase(nextToken->content)) != assemblyDeclarations.end())
+                    if (nextToken->type == TYPE_WORD) //if the next token is a word...
+                        if (assemblyDeclarations.find(GetUppercase(nextToken->content)) != assemblyDeclarations.end()) // if the next token is an assembly declaration...
                         {
                             string& labelName = gotToken->content;
                             bool    dontPublic = false;
 
+                            cout << "---------- " << labelName << endl;
+
                             if (nextToken->content == "PROC") //Skip procedure content - don't public anything inside procedure
                             {
                                 while (GetToken())
-                                    if (gotToken->type == TYPE_WORD  &&  gotToken->content == "ENDP")
+                                    if (gotToken->type == TYPE_LINEEND)
                                         break;
+                            }
+                            else if (nextToken->content == "LABEL")
+                            {
+                                while (GetToken())
+                                    if (gotToken->type == TYPE_LINEEND)
+                                        break;
+
                             }
                             else if (nextToken->content == "STRUCT")
                             {

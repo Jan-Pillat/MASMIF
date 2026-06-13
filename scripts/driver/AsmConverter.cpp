@@ -102,6 +102,34 @@ string AsmConverter::ConvertSyntax ()
 }
 
 
+//!===============================================================
+//!===============================================================
+
+
+string AsmConverter::ConvertLabels ()
+{
+    while (IsContentNotFullyVerified())
+    {
+        SkipBlanks  ();
+
+        if (IsItWordBegin())
+        {
+            SkipWord    ();
+            SkipBlanks  ();
+
+            if (IsItColon())
+                ConvertColonLabelToLabelDirective();
+        }
+
+        SkipLine ();
+    }
+
+    FinishConvertedText();
+
+    return  converted;
+}
+
+
 //===============================================================
 
 
@@ -667,6 +695,25 @@ inline bool AsmConverter::DeclareText()
         return true;
     }
     return false;
+}
+
+//---------------------------------------------------------------
+
+inline bool AsmConverter::IsItColon ()
+{
+    return (*pointer==':');
+}
+
+//---------------------------------------------------------------
+
+inline void AsmConverter::ConvertColonLabelToLabelDirective ()
+{
+    //Rewrite and commentary begin is always ;
+    end = pointer;
+    converted.append(begin, end-begin);
+    converted.append("\tLABEL\tNEAR\r\n");              //Replace colon
+    pointer++;
+    begin = pointer;
 }
 
 //---------------------------------------------------------------

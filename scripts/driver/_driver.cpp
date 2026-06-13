@@ -147,7 +147,7 @@ void Driver::DoParsing()
 
 void Driver::ConvertAndAutoDeclareText()
 {
-    cout << "Auto text declaring..." << endl;
+    cout << "Auto text declaring and content converting..." << endl;
 
     for (size_t i=0; i<declarations.size(); i++)
         if (declarations[i].type == SEGMENT
@@ -155,6 +155,8 @@ void Driver::ConvertAndAutoDeclareText()
         ||  (declarations[i].type == VARIABLE && keywordsToAvoidByConverter.find(GetUppercase(declarations[i].declaration))==keywordsToAvoidByConverter.end()) )
         {
             declarations[i].content = AsmConverter(declarations[i].content).ExchangeAutodeclaredTexts(&textsToDeclare);
+            declarations[i].content = AsmConverter(declarations[i].content).ConvertSyntax();
+            declarations[i].content = AsmConverter(declarations[i].content).ConvertLabels();
         }
 
     for (const auto& [key, value] : textsToDeclare)
@@ -181,10 +183,9 @@ void Driver::GenerateCode()
 
 void Driver::ConvertCode()
 {
-    cout << "Time to convert. " << endl;
-    system ("pause");
     cout << "Code converting..." << endl;
     MASMcode = AsmConverter(MASMcode).ConvertSyntax();
+    MASMcode = AsmConverter(MASMcode).ConvertLabels();
 }
 
 //! ---------- Save script ----------

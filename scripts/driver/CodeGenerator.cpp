@@ -489,6 +489,7 @@ void CodeGenerator::WriteMASMCode ()
         {
             // -- PUBLICATION --
             MASMcode_Publications   += "PUBLIC\t" + declarations[i].name + "\r\n";
+            MASMcode_Publications   +=  ContentAnalyser(declarations[i].content).GetPublications();
             // -- PROCEDURE DECLARATION --
             *destination   += declarations[i].name + "\tPROC";
             // -- USES --
