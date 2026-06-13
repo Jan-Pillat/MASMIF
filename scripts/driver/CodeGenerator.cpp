@@ -406,7 +406,8 @@ void CodeGenerator::WriteMASMCode ()
 
 
 
-        // -------- ORIGIN AND LABEL BEGIN --------
+        //! ================ ORIGIN AND LABEL BEGIN ================
+
         if (!declarations[i].intoNewSection)
         {
             // ---- ORIGIN ----
@@ -428,13 +429,30 @@ void CodeGenerator::WriteMASMCode ()
         }
 
 
+        //! ================ CONTENT ================
 
-        // -------- CONTENT --------
+        //! -------- SEGMENT --------
+
         if (declarations[i].type == SEGMENT)
         {
-            *destination            +=  declarations[i].content + "\r\n";
+            // -- PUBLICATION --
             MASMcode_Publications   +=  ContentAnalyser(declarations[i].content).GetPublications();
+
+            // -- BEGIN LABEL --
+            *destination            +=  "\t" + declarations[i].name + "\tLABEL\tBYTE\r\n";
+
+            // -- CONTENT --
+            *destination            +=  declarations[i].content + "\r\n";
+
+            // -- SIZE LIMITER --
+            if (declarations[i].size > 0)
+                *destination    += "\tIF ($-" + declarations[i].name + ") GT " + ConvertNumberToHexStringH(declarations[i].size) + "\r\n"
+                                +  "\t\t.ERR <'" + declarations[i].name + "' has too large code>\r\n"
+                                +  "\tENDIF\r\n";
         }
+
+        //! -------- VARIABLE --------
+
         else if (declarations[i].type == VARIABLE)
         {
             while (true)
@@ -464,6 +482,9 @@ void CodeGenerator::WriteMASMCode ()
                     break;
             }
         }
+
+        //! -------- PROCEDURE --------
+
         else if (declarations[i].type == PROCEDURE)
         {
             // -- PUBLICATION --
@@ -483,13 +504,21 @@ void CodeGenerator::WriteMASMCode ()
                 *destination += declarations[i].parameters;
             }
             // -- LINE END --
-            *destination   += "\r\n";
+            *destination    += "\r\n";
             // -- CONTENT --
             if (declarations[i].content!="")
-                *destination   += declarations[i].content + "\r\n";
+                *destination    += declarations[i].content + "\r\n";
+            // -- SIZE LIMITER --
+            if (declarations[i].size > 0)
+                *destination    += "\tIF ($-" + declarations[i].name + ") GT " + ConvertNumberToHexStringH(declarations[i].size) + "\r\n"
+                                +  "\t\t.ERR <'" + declarations[i].name + "' has too large code>\r\n"
+                                +  "\tENDIF\r\n";
             // -- FINISH --
-            *destination   += declarations[i].name + "\tENDP\r\n";
+            *destination    += declarations[i].name + "\tENDP\r\n";
         }
+
+        //! -------- DLL --------
+
         else if (declarations[i].type == DLL)
         {
             // -- DLL FUNC POINTER DECLARATIONS --
@@ -508,6 +537,9 @@ void CodeGenerator::WriteMASMCode ()
 
             dllCount++;
         }
+
+        //! -------- THUNK --------
+
         else if (declarations[i].type == THUNK)
         {
             // -- JUMP THUNK DECLARATIONS --
@@ -530,6 +562,9 @@ void CodeGenerator::WriteMASMCode ()
 
             thunkCount++;
         }
+
+        //! -------- UNRECOGNIZED --------
+
         else
         {
             cout << "      unrecognized type  (" << declarations[i].type << ")\n";
